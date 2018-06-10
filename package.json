@@ -1,0 +1,16 @@
+{
+  "name": "ppr1978_folder",
+  "version": "1.0.0",
+  "description": "Predictive Peng-Robinson 1978 Equation of State",
+  "main": "PPR78_module.js",
+  "dependencies": {
+    "@types/mathjs": "^3.20.0",
+    "mathjs": "^4.2.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Steve Calderone",
+  "license": "ISC"
+}
