@@ -1,6 +1,6 @@
 "use strict";
 
-/**
+/** This code contains custom functions that require the gsheets SpreadsheetApp API
 * Validates that the required pure component data named ranges are available.
 *
 * @customfunction
