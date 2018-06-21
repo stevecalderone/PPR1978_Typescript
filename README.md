@@ -23,6 +23,35 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '*********************************************************************************************
 
+
+To use this code in Google Sheets do a find and replace in eosCode.js to delete the following lines or sections of code:
+
+1
+all instances of 'exports.* = *;'
+for example:
+'exports.phaseCp = phaseCp;'
+
+2
+located at the top of eosCode.js
+'Object.defineProperty(exports, "__esModule", { value: true });'
+'var findCubicRoots_js_1 = require("./findCubicRoots.js");'
+'var Math = require("mathjs");'
+
+3
+Two instances of 'findCubicRoots_js_1.'
+
+Change
+Z = findCubicRoots_js_1.getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b, (-a * b + Math.pow(b, 2) + Math.pow(b, 3)), phase);
+to
+Z = getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b, (-a * b + Math.pow(b, 2) + Math.pow(b, 3)), phase);
+
+and 
+Z = findCubicRoots_js_1.getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b, (-a * b + Math.pow(b, 2) + Math.pow(b, 3)), phase);
+to
+Z = getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b, (-a * b + Math.pow(b, 2) + Math.pow(b, 3)), phase);
+
+This revised code can be then pasted into the code.gs
+
 References
 
 1
