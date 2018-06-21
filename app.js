@@ -103,7 +103,7 @@ try {
     //console.log(newVar)
     //let myDerivatives: (number)[][] = []
     //newVar = PhaseZ(dataRange, tempC, pBara, inputMoles,  Phase, UseBinaries, 0, 0, Decomp, myErrorMsg)
-    newVar = eosCode_1.FlashTP(dataRange, 80, pBara, inputMoles);
+    newVar = eosCode_1.FlashTP(dataRange, 80, pBara, inputMoles, false, 0, 0, Decomp);
     console.log(newVar);
 }
 catch (myErrorHandler) {

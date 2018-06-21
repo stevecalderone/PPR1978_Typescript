@@ -107,7 +107,7 @@ try{
     //console.log(newVar)
     //let myDerivatives: (number)[][] = []
     //newVar = PhaseZ(dataRange, tempC, pBara, inputMoles,  Phase, UseBinaries, 0, 0, Decomp, myErrorMsg)
-    newVar = FlashTP(dataRange,80, pBara, inputMoles)
+    newVar = FlashTP(dataRange,80, pBara, inputMoles, false, 0,0,Decomp)
     console.log(newVar)
 
 }catch(myErrorHandler){
