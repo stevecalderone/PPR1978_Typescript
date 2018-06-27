@@ -3427,7 +3427,7 @@ function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinaries, kij
 exports.PhaseZ = PhaseZ;
 /******************************************************************************* */
 /**
-* Calculates compressibility given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+* Calculates real molar volume given T (C), P (pbara), mole amounts, phase (vapor or liquid) and a dataSet.
 *
 * @customfunction
 */
