@@ -3318,7 +3318,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
 
         outputArray[0] = T_New - 273.15;
 
-        if(guess === 0) {
+        if(guess === -500) {
             outputArray[1] = initialTempC;
         }else {
             outputArray[1] = guess;
@@ -3746,7 +3746,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
 
         outputArray[0] = T_New - 273.15;
 
-        if(guess === 0) {
+        if(guess === -500) {
             outputArray[1] = initialTempC;
         }else {
             outputArray[1] = guess;

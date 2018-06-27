@@ -3001,7 +3001,7 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
         }
         //'<= Used for warning messages
         outputArray[0] = T_New - 273.15;
-        if (guess === 0) {
+        if (guess === -500) {
             outputArray[1] = initialTempC;
         }
         else {
@@ -3340,7 +3340,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
             myErrorMsg = "Dew temperature equilibrium test failed. Returned dew temperature may be inacurate";
         }
         outputArray[0] = T_New - 273.15;
-        if (guess === 0) {
+        if (guess === -500) {
             outputArray[1] = initialTempC;
         }
         else {
