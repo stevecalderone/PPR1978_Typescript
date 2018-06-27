@@ -2983,7 +2983,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
         let BubT_Found: boolean= false;
         let passedTempK: number = 0;
         let binaries: (number)[][] = [];
-        let initialTempK: number = 0
+        let initialTempC: number = 0
 
         let inputDataArray: (any)[] = [];
     
@@ -3037,9 +3037,9 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
         if(guess !== -500) {
             T_Bub = guess;
         }else {
-            initialTempK = calculate_T_BubDew_Est([[-500],[-500]], -500, [-500], "bubble", errorMsgsOn,dataSet, moleComp, pBara);
-            if(initialTempK !== 0) {
-                T_Bub = initialTempK + 273.15;        //'Index 0 = Bubble Point and Index 1 = Dew Point
+            initialTempC = calculate_T_BubDew_Est([[-500],[-500]], -500, [-500], "bubble", errorMsgsOn,dataSet, moleComp, pBara);
+            if(initialTempC !== 0) {
+                T_Bub = initialTempC + 273.15;        //'Index 0 = Bubble Point and Index 1 = Dew Point
             }else {
                 T_Bub = 0;
                 myErrorMsg = "Calculate_T_BubDew_Est calculation failed to provide bubble T estimate.";
@@ -3319,7 +3319,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
         outputArray[0] = T_New - 273.15;
 
         if(guess === 0) {
-            outputArray[1] = initialTempK - 273.15;
+            outputArray[1] = initialTempC;
         }else {
             outputArray[1] = guess;
         }
@@ -3375,7 +3375,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
         let T_Low: number = 0;
         let T_Hi: number = 0;
         let T_New: number = 0;
-        let initialTempK: number = 0;
+        let initialTempC: number = 0;
         let xi_Initial_Sum: number = 0;
         let T_Dew: number = 0;
         let T_Dew_C: number = 0;
@@ -3457,9 +3457,9 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
         if(guess !== -500) {
             T_Dew = guess;
         }else {
-            initialTempK = calculate_T_BubDew_Est([[-500],[-500]], -500, [-500], "dew", errorMsgsOn,dataSet, moleComp, pBara);
-            if(initialTempK !== 0) {
-                T_Dew = initialTempK + 273.15;        //'Index 0 = Bubble Point and Index 1 = Dew Point
+            initialTempC = calculate_T_BubDew_Est([[-500],[-500]], -500, [-500], "dew", errorMsgsOn,dataSet, moleComp, pBara);
+            if(initialTempC !== 0) {
+                T_Dew = initialTempC + 273.15;        //'Index 0 = Bubble Point and Index 1 = Dew Point
             }else {
                 T_Dew = 0;
                 myErrorMsg = "Calculate_T_BubDew_Est calculation failed to provide bubble T estimate.";
@@ -3747,7 +3747,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
         outputArray[0] = T_New - 273.15;
 
         if(guess === 0) {
-            outputArray[1] = initialTempK- 273.15;
+            outputArray[1] = initialTempC;
         }else {
             outputArray[1] = guess;
         }

@@ -2747,7 +2747,7 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
         var BubT_Found = false;
         var passedTempK = 0;
         var binaries = [];
-        var initialTempK = 0;
+        var initialTempC = 0;
         var inputDataArray = [];
         inputDataArray = validateData(dataRange, -500, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, Guess, false);
         var dataSet = inputDataArray[idx.datasetArray];
@@ -2790,9 +2790,9 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
             T_Bub = guess;
         }
         else {
-            initialTempK = calculate_T_BubDew_Est([[-500], [-500]], -500, [-500], "bubble", errorMsgsOn, dataSet, moleComp, pBara);
-            if (initialTempK !== 0) {
-                T_Bub = initialTempK + 273.15; //'Index 0 = Bubble Point and Index 1 = Dew Point
+            initialTempC = calculate_T_BubDew_Est([[-500], [-500]], -500, [-500], "bubble", errorMsgsOn, dataSet, moleComp, pBara);
+            if (initialTempC !== 0) {
+                T_Bub = initialTempC + 273.15; //'Index 0 = Bubble Point and Index 1 = Dew Point
             }
             else {
                 T_Bub = 0;
@@ -3002,7 +3002,7 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
         //'<= Used for warning messages
         outputArray[0] = T_New - 273.15;
         if (guess === 0) {
-            outputArray[1] = initialTempK - 273.15;
+            outputArray[1] = initialTempC;
         }
         else {
             outputArray[1] = guess;
@@ -3052,7 +3052,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
         var T_Low = 0;
         var T_Hi = 0;
         var T_New = 0;
-        var initialTempK = 0;
+        var initialTempC = 0;
         var xi_Initial_Sum = 0;
         var T_Dew = 0;
         var T_Dew_C = 0;
@@ -3123,9 +3123,9 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
             T_Dew = guess;
         }
         else {
-            initialTempK = calculate_T_BubDew_Est([[-500], [-500]], -500, [-500], "dew", errorMsgsOn, dataSet, moleComp, pBara);
-            if (initialTempK !== 0) {
-                T_Dew = initialTempK + 273.15; //'Index 0 = Bubble Point and Index 1 = Dew Point
+            initialTempC = calculate_T_BubDew_Est([[-500], [-500]], -500, [-500], "dew", errorMsgsOn, dataSet, moleComp, pBara);
+            if (initialTempC !== 0) {
+                T_Dew = initialTempC + 273.15; //'Index 0 = Bubble Point and Index 1 = Dew Point
             }
             else {
                 T_Dew = 0;
@@ -3341,7 +3341,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
         }
         outputArray[0] = T_New - 273.15;
         if (guess === 0) {
-            outputArray[1] = initialTempK - 273.15;
+            outputArray[1] = initialTempC;
         }
         else {
             outputArray[1] = guess;
