@@ -3846,6 +3846,71 @@ export function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinari
 }
 /******************************************************************************* */
   /**
+ * Calculates compressibility given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+ *
+ * @customfunction
+ */
+export function Volume(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0?, kijT?, decomposition?, errMsgsOn?) {
+    // @customfunction
+    try {
+        const fcnName: string = "PhaseZ";
+        let myErrorMsg: string = "";
+        let binaries: (number)[][] = [];
+        let inputDataArray: (any)[] = []; //[[T, P, phase, binariesUsed, errorMsgsOn],[dataSet],[moleComp],[kij0],[kijT],[deComp], [alphaArray], [aiArray]]
+        let z: number = 0;
+
+        inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
+                                    
+        let dataSet =  inputDataArray[idx.datasetArray];
+
+        if (typeof (dataSet[0]) === "string") {
+            myErrorMsg = dataSet[0].toString();
+            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+        }
+
+        if(dataSet[0][idx.globalErrmsg] !== ""){
+            myErrorMsg = dataSet[0].toString();
+            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+        }
+
+        const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
+        const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
+        const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
+        const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
+        const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
+        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
+        const alpha_aiArray = inputDataArray[idx.alphaArray];
+        const aiArray = inputDataArray[idx.aiArray];
+        const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
+        const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
+        const decompArray: (number)[][] = inputDataArray[idx.decompArray];
+
+        if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
+            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+        }
+
+        if(binariesUsed){
+            if(inputDataArray[idx.valuesArray][idx.validBinaries]) {
+                binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
+            
+                if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
+                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                }
+            }
+            z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
+        }else{
+            z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed);
+        }
+        return z*gasLawR*tempK/pBara;
+    } 
+      
+    catch(myErrorHandler) {
+        return  myErrorHandler.message;
+    }
+}
+
+/******************************************************************************* */
+  /**
  * Calculates enthalpy (kj/kg-mole) given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
  *
  * @customfunction

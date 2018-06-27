@@ -1,4 +1,4 @@
-import {PhaseZ, PhasePhi, DewT, BubbleT, FlashTP, Enthalpy, Entropy, vaporCv, Derivatives, SpeedOfSound, JT_Coef, phaseCp, calculate_T_BubDew_Est} from "./eosCode"
+import {PhaseZ, PhasePhi, DewT, BubbleT, FlashTP, Enthalpy, Entropy, vaporCv, Derivatives, SpeedOfSound, JT_Coef, phaseCp, calculate_T_BubDew_Est, Volume} from "./eosCode"
 try{
     /* This code is used to teest the custom functions found in eosCode.ts (eosCode.js).*/
 
@@ -98,8 +98,8 @@ try{
     const inputMoles = [20,20,20,15,0,12.93,46.16,0.04,34.15,1.21,2.91,0,0,509.32,0,12.91,21.52,5.74,2.87, 495, 1500, 0];
     //const inputMoles = [0.09, 0.17, 2.25, 5.64, 0.00, 0.00, 0.01, 0.00, 0.26, 0.01, 0.04, 0.00, 0.00, 0.12, 0.00, 0.01, 0.03, 0.02, 0.01, 165.03, 0.00, 0.00];
     //const inputMoles = [0.08, 0.16, 2.17, 5.48, 0.00, 0.00, 0.01, 0.00, 0.25, 0.01, 0.04, 0.00, 0.00, 0.12, 0.00, 0.01, 0.03, 0.02, 0.01, 158.73, 0.00, 0.00]
-    //let newVar: number = 0
-    let newVar: (number)[] = []
+    let newVar: number = 0
+    //let newVar: (number)[] = []
     //let est_T = calculate_T_BubDew_Est(dewBubDataSet, inputMoles, pBara, "bub", false,[[-500],[-500]],[-500],-500)
     //let newVar: (number)[] = [25*Math.pow(10, -5), 500, 25.0001*Math.pow(10, -5)]
     //console.log(inRange(newVar[0],newVar[1],newVar[2],))
@@ -107,7 +107,7 @@ try{
     //console.log(newVar)
     //let myDerivatives: (number)[][] = []
     //newVar = PhaseZ(dataRange, tempC, pBara, inputMoles,  Phase, UseBinaries, 0, 0, Decomp, myErrorMsg)
-    newVar = FlashTP(dataRange,80, pBara, inputMoles, false, 0,0,Decomp)
+    newVar = Volume(dataRange,150, pBara, inputMoles, Phase, false, 0,0,Decomp)
     console.log(newVar)
 
 }catch(myErrorHandler){
