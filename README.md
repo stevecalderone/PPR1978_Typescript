@@ -26,8 +26,8 @@ SOFTWARE.
 
 This code (eosCode.js) was developed in VSCode and needs to be modified for use in Google Sheets. To use this code in Google Sheets preform a find and replace in eosCode.js to delete the following lines or sections of code:
 
-1
-Delete all instances of 'exports.* = *;'
+1 - 
+In eosCode.js delete all instances of 'exports.* = *;'
 for example:
 'exports.phaseCp = phaseCp;'
 
@@ -38,7 +38,7 @@ Delete the following code located at the top of eosCode.js
 'var Math = require("mathjs");'
 
 3
-Two instances of 'findCubicRoots_js_1.'
+In eosCode.js delete two instances of 'findCubicRoots_js_1.'
 
 Change
 Z = findCubicRoots_js_1.getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b, (-a * b + Math.pow(b, 2) + Math.pow(b, 3)), phase);
@@ -50,12 +50,15 @@ Z = findCubicRoots_js_1.getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b,
 to
 Z = getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b, (-a * b + Math.pow(b, 2) + Math.pow(b, 3)), phase);
 
-Within Google Sheets script this revised eosCode.js code can be then pasted into the code.gs tab or a new tab.
+4 - In findCubicRoots.js delete:
+Object.defineProperty(exports, "__esModule", { value: true });
+//import { errorSub } from "./errorCode";
 
-The gsheetsCode.js was developed in Google sheets and does not require any revisions. Within Google Sheets script area gsheetsCode.js must be copied into code.gs or a new tab.
+Within Google Sheets script copy then paste this revised code (eosCode.js & findCubicRoots.js) into the code.gs tab or a new tab or tabs.
 
-Save code.gs or the new tab and begin calculations.
+The gsheetsCode.js was developed in Google sheets and does not require any revisions. Paste the gsheetsCode.js code into code.gs or a new tab.
 
+Save code.gs or the new tab(s) and begin calculations.
 
 References
 
