@@ -29,7 +29,7 @@ Some PPR1978 examples are included.
 
 To use this sheet make a copy (File -> Make a copy...). The sheet can then be edited.
 
-To use this VSCode developed code in Google Sheets following these steps:
+To use this VSCode developed code in Google Sheets follow these steps:
 
 This code (eosCode.js) was developed in VSCode and needs to be modified for use in Google Sheets. To use this code in Google Sheets preform a find and replace in eosCode.js to delete the following lines or sections of code:
 
