@@ -22,7 +22,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '*********************************************************************************************
+This code is implemented and shared in a read only Google Sheet here:
+https://docs.google.com/spreadsheets/d/1HAIj2jcMhk3-gon62P7JgCQ3EdnSpwoLPlI1hyzopug/edit?usp=sharing
 
+Some PPR1978 examples are included.
+
+To use this sheet make a copy (File -> Make a copy...). The sheet can then be edited.
+
+To use this VSCode developed code in Google Sheets following these steps:
 
 This code (eosCode.js) was developed in VSCode and needs to be modified for use in Google Sheets. To use this code in Google Sheets preform a find and replace in eosCode.js to delete the following lines or sections of code:
 
