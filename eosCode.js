@@ -2005,8 +2005,8 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             return [[], [myErrorMsg]];
         }
         currIndex = inputArrayNames.indexOf("binariesUsed");
-        if (binariesUsed !== true && binariesUsed !== false) {
-            if (arraySizes[currIndex][0 /* arrayTest */] === true && arraySizes[currIndex][1 /* valueORlength1 */] === 1) {
+        if (binariesUsed !== true && binariesUsed !== false && binariesUsed !== 1 && binariesUsed !== 0) {
+            if (arraySizes[currIndex][0 /* arrayTest */] === true && arraySizes[currIndex][1 /* valueORlength1 */] === false) {
                 binariesUsed = inputArray[currIndex][0];
             }
             else if (typeof (arraySizes[currIndex][2 /* Dim2TestORlength2 */]) === "number") {
@@ -2037,7 +2037,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         }
         ;
         currIndex = inputArrayNames.indexOf("errorMsgsOn");
-        if (errorMsgsOn !== true && errorMsgsOn !== false) {
+        if (errorMsgsOn !== true && errorMsgsOn !== false && errorMsgsOn !== 1 && errorMsgsOn !== 0) {
             if (arraySizes[currIndex][0 /* arrayTest */] === true && arraySizes[currIndex][1 /* valueORlength1 */] === 1) {
                 errorMsgsOn = inputArray[currIndex][0];
             }
@@ -2185,7 +2185,12 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         else {
             pBara = pressure;
         }
+        currIndex = inputArrayNames.indexOf("kij0");
         if (binariesUsed) {
+            if (arraySizes[currIndex][0] === false && arraySizes[currIndex][2] === false && dataSet[0][idx.predictive] === false) {
+                myErrorMsg = "The supplied useBinaries parameter is true but no kij0 range is provided. ";
+                return [[], [myErrorMsg]];
+            }
             kij0_kijT_deComp_Array = validateBinariyArrays(dataSet, kij0, kijT, decomposition);
             if (kij0_kijT_deComp_Array[0]) {
                 outputArray.push([tempK, pBara, phase, binariesUsed, errorMsgsOn, kij0_kijT_deComp_Array[0], guessedTempK]);

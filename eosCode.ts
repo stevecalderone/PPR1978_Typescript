@@ -2181,8 +2181,8 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         }
 
         currIndex = inputArrayNames.indexOf("binariesUsed");
-        if(binariesUsed !== true && binariesUsed !== false){
-            if(arraySizes[currIndex][index.arrayTest] === true && arraySizes[currIndex][index.valueORlength1] === 1){
+        if(binariesUsed !== true && binariesUsed !== false && binariesUsed !== 1 && binariesUsed !== 0){
+            if(arraySizes[currIndex][index.arrayTest] === true && arraySizes[currIndex][index.valueORlength1] === false){
                 binariesUsed = inputArray[currIndex][0];
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                myErrorMsg =  `The supplied parameter 'binariesUsed' (${binariesUsed}) and must be an expression  or a single cell reference to an expression that evaluates to true or false.`;
@@ -2207,7 +2207,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         };
         
         currIndex = inputArrayNames.indexOf("errorMsgsOn");
-        if(errorMsgsOn !== true && errorMsgsOn !== false){
+        if(errorMsgsOn !== true && errorMsgsOn !== false && errorMsgsOn !== 1 && errorMsgsOn !== 0){
             if(arraySizes[currIndex][index.arrayTest] === true && arraySizes[currIndex][index.valueORlength1] === 1) {
                 errorMsgsOn = inputArray[currIndex][0];
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
@@ -2339,8 +2339,12 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         }else{
             pBara = pressure
         }
-
+        currIndex = inputArrayNames.indexOf("kij0");
         if(binariesUsed){
+            if(arraySizes[currIndex][0]===false && arraySizes[currIndex][2]===false && dataSet[0][idx.predictive]===false){
+                myErrorMsg = `The supplied useBinaries parameter is true but no kij0 range is provided. `;
+                return [[],[myErrorMsg]];
+            }
             kij0_kijT_deComp_Array = validateBinariyArrays(dataSet, kij0, kijT, decomposition);
             if(kij0_kijT_deComp_Array[0]){
                 outputArray.push([tempK, pBara, phase, binariesUsed, errorMsgsOn, kij0_kijT_deComp_Array[0], guessedTempK]);
