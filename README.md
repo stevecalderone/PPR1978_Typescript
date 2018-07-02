@@ -67,6 +67,8 @@ The gsheetsCode.js was developed in Google sheets and does not require any revis
 
 Save code.gs or the new tab(s) and begin calculations.
 
+The app.js file is to simulate the Google Sheet Script enviroment for testing and debugging.
+
 References
 
 1
