@@ -2,6 +2,8 @@
 import { getCubicRoot } from "./findCubicRoots.js";
 import * as Math from "mathjs";
 
+/* This code was developed in VSCode and can be found here : https://github.com/stevecalderone/PPR1978_Typescript */
+
 enum idx{
     mw = 0,
     tc,

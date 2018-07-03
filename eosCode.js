@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var findCubicRoots_js_1 = require("./findCubicRoots.js");
 var Math = require("mathjs");
+/* This code was developed in VSCode and can be found here : https://github.com/stevecalderone/PPR1978_Typescript */
 var idx;
 (function (idx) {
     idx[idx["mw"] = 0] = "mw";
