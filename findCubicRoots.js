@@ -3,11 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 function getCubicRoot(a3, a2, a1, A0, phase) {
     // @customfunction
     /* This code was developed in VSCode and can be found here : https://github.com/stevecalderone/PPR1978_Typescript */
+    /*'This work is adapted from work created by Tomas Co, Michigan Technological Univiersity
+    Reference 6
+    ' Computes the minimum real root of the cubic equation
+    ' a3 x**3 + a2 x**2 + a1 x + a0 = 0 */
     try {
-        /*'This work is adapted from work created by Tomas Co, Michigan Technological Univiersity
-        Reference 6
-        ' Computes the minimum real root of the cubic equation
-        ' a3 x**3 + a2 x**2 + a1 x + a0 = 0 */
         var a = 0;
         var b = 0;
         var c = 0;

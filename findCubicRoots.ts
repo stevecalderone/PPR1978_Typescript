@@ -1,13 +1,12 @@
 export function getCubicRoot(a3: number, a2: number, a1: number, A0: number, phase: string) {
 // @customfunction
 /* This code was developed in VSCode and can be found here : https://github.com/stevecalderone/PPR1978_Typescript */
-    try {
+/*'This work is adapted from work created by Tomas Co, Michigan Technological Univiersity
+Reference 6
+' Computes the minimum real root of the cubic equation
+' a3 x**3 + a2 x**2 + a1 x + a0 = 0 */
 
-        /*'This work is adapted from work created by Tomas Co, Michigan Technological Univiersity
-        Reference 6
-        ' Computes the minimum real root of the cubic equation
-        ' a3 x**3 + a2 x**2 + a1 x + a0 = 0 */
-        
+    try {
         let a: number = 0
         let b: number = 0
         let c: number = 0
