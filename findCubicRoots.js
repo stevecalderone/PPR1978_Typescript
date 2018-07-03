@@ -5,6 +5,7 @@ function getCubicRoot(a3, a2, a1, A0, phase) {
     // @customfunction
     try {
         /*'This work is adapted from work created by Tomas Co, Michigan Technological Univiersity
+        Reference 6
         ' Computes the minimum real root of the cubic equation
         ' a3 x**3 + a2 x**2 + a1 x + a0 = 0 */
         var a = 0;
