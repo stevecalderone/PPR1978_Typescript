@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-//import { errorSub } from "./errorCode.js";
 var findCubicRoots_js_1 = require("./findCubicRoots.js");
 var Math = require("mathjs");
 var idx;

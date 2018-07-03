@@ -1,6 +1,7 @@
 //import { errorSub } from "./errorCode";
 export function getCubicRoot(a3: number, a2: number, a1: number, A0: number, phase: string) {
 // @customfunction
+/* This code was developed in VSCode and can be found here : https://github.com/stevecalderone/PPR1978_Typescript */
     try {
 
         /*'This work is adapted from work created by Tomas Co, Michigan Technological Univiersity

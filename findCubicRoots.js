@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 //import { errorSub } from "./errorCode";
 function getCubicRoot(a3, a2, a1, A0, phase) {
     // @customfunction
+    /* This code was developed in VSCode and can be found here : https://github.com/stevecalderone/PPR1978_Typescript */
     try {
         /*'This work is adapted from work created by Tomas Co, Michigan Technological Univiersity
         Reference 6
