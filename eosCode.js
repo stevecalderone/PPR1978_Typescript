@@ -1223,7 +1223,7 @@ function validateMoles(dataSet, moles, arraySize) {
                     inputMoles[i] = moles[i];
                 }
             }
-            if (inputMoles[0] <= 0) {
+            if (inputMoles[0] < 0) {
                 myErrorMsg = "Mole amount is less than or equal to zero.";
                 throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
             }
@@ -2385,6 +2385,7 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
         var dataSetErrMsgsOn = false;
         var VaporFractionFound = false;
         var EquilibriumFound = false;
+        var localBinariesUseds = false;
         var inputDataArray = [];
         inputDataArray = validateData(dataRange, temperature, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
         var dataSet = inputDataArray[idx.datasetArray];
@@ -2407,6 +2408,7 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
+        localBinariesUseds = binariesUsed;
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
             throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
         }
@@ -2457,7 +2459,8 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                 if (Psi_New < Math.pow(10, -8) && Psi_New >= 0) {
                     if (UsingDewOrBubbleFunction = false) {
                         UsingDewOrBubbleFunction = true;
-                        DewBubKi = BubbleT(dataRange, pBara, moles, binariesUsed, kij0, kijT, decomposition, false, -500, true); //'<= Get Ki near Bubble point temperature ) { try again.
+                        DewBubKi = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true); //'<= Get Ki near Bubble point temperature ) { try again.
+                        dataSet[0][idx.binariesUsed] = localBinariesUseds;
                         if (tempC <= DewBubKi[0] || DewBubKi[0] === -273.15) { //'DewBubKi[0] = bubble temperature, DewBubKi(1)...DewBubKi(n) are Ki's
                             StreamCondition = "At Or Below Bubble Point";
                             if (DewBubKi[0] = -273.15) {
@@ -2486,7 +2489,8 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                 if (1 - Psi_New < Math.pow(10, -8) && Psi_New <= 1) {
                     if (UsingDewOrBubbleFunction = false) {
                         UsingDewOrBubbleFunction = true;
-                        DewBubKi = DewT(dataRange, pBara, moles, binariesUsed, kij0, kijT, decomposition, false, -500, true); //'<= Get Ki near Dew point temperature ) { try again.
+                        DewBubKi = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true); //'<= Get Ki near Dew point temperature ) { try again.
+                        dataSet[0][idx.binariesUsed] = localBinariesUseds;
                         if (tempC >= DewBubKi[0] || DewBubKi[0] === -273.15) { //'DewBubKi[0] = dew temperature, DewBubKi(1)...DewBubKi(n) are Ki's
                             StreamCondition = "At or Above Dew Point";
                             if (DewBubKi[0] = -273.15) {
@@ -2545,8 +2549,10 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                 Phi_Vap = calculate_Phi(dataSet, "vapor", yi_Array, tempK, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Vap[dataSet[0][idx.iSpecies] + 1] === -500) {
                     if (UsingDewOrBubbleFunction = false) {
-                        dewTemp = DewT(dataRange, pBara, moles, binariesUsed, kij0, kijT, decomposition, false, -500, true);
-                        bubTemp = BubbleT(dataRange, pBara, moles, binariesUsed, kij0, kijT, decomposition, false, -500, true);
+                        dewTemp = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
+                        dataSet[0][idx.binariesUsed] = localBinariesUseds;
+                        bubTemp = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
+                        dataSet[0][idx.binariesUsed] = localBinariesUseds;
                         if (dewTemp[0] !== -273.15) {
                             if (tempC >= dewTemp[0]) {
                                 StreamCondition = "At or Above Dew Point";
@@ -2568,8 +2574,10 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                 Phi_Liq = calculate_Phi(dataSet, "liquid", xi_Array, tempK, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Liq[dataSet[0][idx.iSpecies] + 1] === -500) {
                     if (UsingDewOrBubbleFunction = false) {
-                        dewTemp = DewT(dataRange, pBara, moles, binariesUsed, kij0, kijT, decomposition, false, -500, true);
-                        bubTemp = BubbleT(dataRange, pBara, moles, binariesUsed, kij0, kijT, decomposition, false, -500, true);
+                        dewTemp = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
+                        dataSet[0][idx.binariesUsed] = localBinariesUseds;
+                        bubTemp = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
+                        dataSet[0][idx.binariesUsed] = localBinariesUseds;
                         if (dewTemp[0] !== -273.15) {
                             if (tempC >= dewTemp[0]) {
                                 StreamCondition = "At or Above Dew Point";
@@ -4651,7 +4659,7 @@ function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBinaries, k
     // @customfunction
     try {
         var myErrorMsg = "";
-        var fcnName = "PhaseZ";
+        var fcnName = "PhasePhi";
         var binaries = [];
         var inputDataArray = [];
         var phi = [];
@@ -4703,4 +4711,30 @@ function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBinaries, k
 }
 exports.PhasePhi = PhasePhi;
 /***************************************************************/
+function calculate_ki(omega) {
+    try {
+        if (Number(omega) === NaN) {
+            return "Parameter must be a number of a cell referece to a number representing the acentric factor.";
+        }
+        if (omega < 0.491) {
+            return (0.37464 + 1.54226 * omega - 0.26992 * Math.pow(omega, 2));
+        }
+        else {
+            return (0.379642 + 1.487503 * omega - 0.164423 * Math.pow(omega, 2) + 0.016666 * Math.pow(omega, 3)); //<= m or k for PR1978
+        }
+    }
+    catch (myErrorHandler) {
+        return myErrorHandler.message;
+    }
+}
+exports.calculate_ki = calculate_ki;
+function calculate_bi(tc, pc) {
+    try {
+        return 0.0778 * gasLawR * tc / pc;
+    }
+    catch (myErrorHandler) {
+        return myErrorHandler.message;
+    }
+}
+exports.calculate_bi = calculate_bi;
 //# sourceMappingURL=eosCode.js.map

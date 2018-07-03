@@ -1,4 +1,4 @@
-import {PhaseZ, PhasePhi, DewT, BubbleT, FlashTP, Enthalpy, Entropy, vaporCv, Derivatives, SpeedOfSound, JT_Coef, phaseCp, calculate_T_BubDew_Est, Volume} from "./eosCode"
+import {PhaseZ, PhasePhi, DewT, BubbleT, FlashTP, Enthalpy, Entropy, vaporCv, Derivatives, SpeedOfSound, JT_Coef, phaseCp, calculate_T_BubDew_Est, Volume, calculate_bi, calculate_ki} from "./eosCode"
 try{
     /* This code is used to teest the custom functions found in eosCode.ts (eosCode.js).*/
 
@@ -86,14 +86,17 @@ try{
     //const inputPress: number = 5;
     //const inputPhase: string = "Liq222uid";
 
-    const tempC: any = 50; //[204.1138903] 
+    const tempC: any = 150; //[204.1138903] 
     //const tempC: any = 50
     let pBara: any = [27.57902908] //12;
     let Phase: any = ["vaPor"];
     let ErrorMsgOn: any = [true]
     const fcnName: string = "appFunction"
-    const UseBinaries: any = [false] //"true"
+    const UseBinaries: any = [true] //"true"
     const inputMoles = [2207.57,2817.28,1101.64,15,0,12.93,46.16,0.04,34.15,1.21,2.91,0,0,509.32,0,12.91,21.52,5.74,2.87, 495, 0, 0];
+    let tc: any = 33.2
+    let pc: any = 12.9696
+    let omega: any = -0.22
     //const inputMoles = [0.1,0.9]
     //const inputMoles = [20,20,20,15,0,12.93,46.16,0.04,34.15,1.21,2.91,0,0,509.32,0,12.91,21.52,5.74,2.87, 495, 1500, 0];
     //const inputMoles = [0.09, 0.17, 2.25, 5.64, 0.00, 0.00, 0.01, 0.00, 0.26, 0.01, 0.04, 0.00, 0.00, 0.12, 0.00, 0.01, 0.03, 0.02, 0.01, 165.03, 0.00, 0.00];
@@ -106,8 +109,11 @@ try{
     //newVar = vaporCv(dataRange, tempC, pBara, inputMoles, UseBinaries, 0, 0, Decomp, ErrorMsgOn)
     //console.log(newVar)
     //let myDerivatives: (number)[][] = []
-    newVar = PhaseZ(dataRange, tempC, pBara, inputMoles,  Phase, 1, 0, 0, Decomp, 1)
+    //newVar = PhaseZ(dataRange, tempC, pBara, inputMoles,  Phase, 1, 0, 0, Decomp, 1)
+    newVar = FlashTP(dataRange, tempC, pBara, inputMoles, 1, 0, 0, Decomp, 1)
     //newVar = Enthalpy(dataRange, tempC, pBara, inputMoles, Phase,1, 0, 0, Decomp,1)
+    //newVar = calculate_ki(omega)
+    //calculate_bi(tc, pc)
     console.log(newVar)
 
 }catch(myErrorHandler){
