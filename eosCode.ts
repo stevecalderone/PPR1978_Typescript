@@ -33,12 +33,12 @@ enum idx{
     predictive,
     finalIndex,
     lastCpIndex = NIST_H6,
-    iMoles = 0,                     //'<= Used in the validateMoles function
-    iMoleFraction,                      //'<= Used in the validateMoles function
-    tempK = 0,                   //'<= These indexes are for the seleceCpDataRange, Enthalpy and Entropy functions. this stores NIST-MNT index for tempK
-    Vap298,          //'<= These indexes are for the seleceCpDataRange, Enthalpy and Entropy functions. This stores NIST-MNT index for Vapor at 298K
-    NBPVap,         //'<= These indexes are for the seleceCpDataRange, Enthalpy and Entropy functions. This stores NIST-MNT for index vapor at normal boiling point
-    NBPLiq,         //'<= These indexes are for the seleceCpDataRange, Enthalpy and Entropy functions. This stores NIST-MNT for index liquid at normal boiling point
+    iMoles = 0,                 //'<= Used in the validateMoles function
+    iMoleFraction,              //'<= Used in the validateMoles function
+    tempK = 0,                  //'<= These indexes are for the seleceCpDataRange, Enthalpy and Entropy functions. this stores NIST-MNT index for tempK
+    Vap298,                     //'<= These indexes are for the seleceCpDataRange, Enthalpy and Entropy functions. This stores NIST-MNT index for Vapor at 298K
+    NBPVap,                     //'<= These indexes are for the seleceCpDataRange, Enthalpy and Entropy functions. This stores NIST-MNT for index vapor at normal boiling point
+    NBPLiq,                     //'<= These indexes are for the seleceCpDataRange, Enthalpy and Entropy functions. This stores NIST-MNT for index liquid at normal boiling point
     dadT_constV = 0,
     dPdv_constT,
     dPdT_constV,
@@ -59,7 +59,7 @@ enum idx{
     errsOn,
     validBinaries,
     guessT,
-    valuesArray = 0,   // these idexes are used in the validateData() function
+    valuesArray = 0,            // these idexes are used in the validateData() function
     datasetArray,
     moleCompArray,
     kij0Array,
@@ -69,16 +69,16 @@ enum idx{
     aiArray
 };
 
-const gasLawR: number = 0.000083144621;
-const currentNumberOfGroups = 31;
-
+const gasLawR: number = 0.000083144621;     //  m3-bar/K-mol
+const currentNumberOfGroups = 31;  /*"Groups","CH3","CH2","CH","C","CH4","C2H6","CHaro","Caro","C, aro-fused rings","CH2, cyclic","CH/C, cyclic","CO2","N2","H2S","SH","H2O","C2H4","CH2/CH, alkenic","C, alkenic","CH/C, cycloalkenic","H2","CO","He","Ar","SO2","O2","NO","COS","NH3","NO2/N2O4","N2O"],*/
+                                    /*"Groups","(GROUP 1)","(GROUP 2)","(GROUP 3)","(GROUP 4)","(GROUP 5)","(GROUP 6)","(GROUP 7)","(GROUP 8)","(GROUP 9)","(GROUP 10)","(GROUP 11)","(GROUP 12)","(GROUP 13)","(GROUP 14)","(GROUP 15)","(GROUP 16)","(GROUP 17)","(GROUP 18)","(GROUP 19)","(GROUP 20)","(GROUP 21)","(GROUP 22)","(GROUP 23)","(GROUP 24)","(GROUP 25)","(GROUP 26)","(GROUP 27)","(GROUP 28)","(GROUP 29)","(GROUP 30)","(GROUP 31)"*/
 /***********************************************************************************************/
 function create_alphaiArray(dataSet, tempK: number): number[] {
     // @customfunction
     try {
             
         /*'***************************************************************************
-        'The function is called directly of indirectly by all PR1978 functions
+        'The function is called by all PR1978 functions
         'Calculates an array of values. If the dataSet range contains 'Twu alpha' in cell (1,1) then
         'the Twu volume translation method is used otherwise it calculates normally
         '***************************************************************************/
@@ -137,7 +137,7 @@ function create_aiArray(dataSet, alpha_aiArray: (number)[] ): (number)[] {
     try {
     
         /*'***************************************************************************
-        'The function is called directly of indirectly by all PR1978 functions
+        'The function is called by all PR1978 functions
         'Calculates an array of values
         '***************************************************************************/
 
@@ -180,8 +180,6 @@ function create_aijArray(dataSet, binariesUsed: boolean, aiArray: (number)[], bi
         let myErrorMsg: string;
 
         const fcnName: string = "create_aijArray";
-
-        //outputArray = initial2D_Array(dataSet[0][idx.iSpecies], dataSet[0][idx.iSpecies])
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
             outputArray.push([])
@@ -231,7 +229,7 @@ function create_xi_aijArray(dataSet, aij_Array: (number)[][], molarComp: (number
 
     }
     catch(myErrorHandler){
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
         return [-500]
 
     }
@@ -242,7 +240,7 @@ function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array:
     try {
         /***************************************************************************
         'This function is called by the Enthalpy, Entropy and Derivatives function
-        'This function calculates the PR1978 EOS da/dT function
+        'This function calculates the PR1978 EOS da/dT
         '***************************************************************************/
 
         let dadt_Array: (number)[][] = [];
@@ -250,8 +248,6 @@ function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array:
         let dadT: number = 0;
 
         const fcnName: string = "calculate_dadt";
-
-        //dadt_Array = initial2D_Array(dataSet[0][idx.iSpecies], dataSet[0][idx.iSpecies])
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
             dadt_Array.push([]);
@@ -286,7 +282,7 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
        try{
 
         /***************************************************************************
-        'This function calculates the liquid, ideal gas or PR1978 EOS Cv.
+        'This function calculates the liquid, ideal gas or PR1978 EOS real gas Cv.
         '***************************************************************************/
 
         let passedTempK: number = 0;
@@ -309,7 +305,7 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
         let binaries: (number)[][] = [];
         let datasetErrMsgsOn: boolean = false;
 
-        let inputDataArray: (any)[] = []; //[[T, P, phase, binariesUsed, errorMsgsOn],[dataSet],[moleComp],[kij0],[kijT],[deComp], [alphaArray], [aiArray]]
+        let inputDataArray: (any)[] = [];
 
         let z: number = 0;
 
@@ -479,7 +475,7 @@ function calculate_sum_a(dataSet, aij_Array: (number)[][], molarComp:(number)[])
             
         /*'***************************************************************************
         'The function is called by all of the PR1978 functions
-        'Calculates sum(ai) (see reference 1) from PR1978 EOS for all vapor
+        'Calculates sum(ai) (see reference 1) from PR1978 EOS
         '****************************************************************************/
 
         let sum_a: number = 0;
@@ -508,7 +504,7 @@ function calculate_sum_b(dataSet, molarComp: (number)[]): number {
         
         /*'***************************************************************************
         'The function is called by all of the PR1978 functions
-        'Calculates sum(bi) (see reference 1) from PR1978 EOS for all vapor
+        'Calculates sum(bi) (see reference 1) from PR1978 EOS
         '***************************************************************************/
 
         let sum_b: number = 0;
@@ -537,7 +533,7 @@ function calculate_A(dataSet, sum_a: number, tempK: number, pbara: number): numb
     
         /*'***************************************************************************
         'The function is called by all of the PR1978 functions
-        'Calculates A (see reference 1) from PR1978 EOS for all vapor
+        'Calculates A (see reference 1) from PR1978 EOS
         '***************************************************************************/
 
         let myErrorMsg: string = "";
@@ -560,8 +556,7 @@ function calculate_B(dataSet, sum_b: number, tempK:number, pbara: number): numbe
     
         /*'***************************************************************************
         'The function is called by the 'CreateDataset' function
-        'Calculates B (see reference 1) from PR1978 EOS for all vapor species and stores
-        'the result in the dataSet
+        'Calculates B (see reference 1) from PR1978 EOS
         '***************************************************************************/
 
         let myErrorMsg: string ="";
@@ -683,6 +678,7 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
 /****************************************************************************************/
 function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (number)[][], passed_aiArray: (number)[], deComp: (number)[][]): (number)[][] {
     // @customfunction
+
     try {
         let myErrorMsg: string = "";
         let errorSum: number = 0;
@@ -1102,8 +1098,7 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
         'of a known format for all functions that utilise a dataSet in this module. If the CpDataRequired is True
         'and if the Phase passed is liquid then both vapor and liquid species
         'will be assembled into the return array otherwise the return array will only contain
-        'vapor species. Old versions of this program supported HHV and LHV calculations. That support has been dropped.
-        'Backward compatibilty has been added for workbooks utilizing older versions of the PData worksheet.
+        'vapor species.
         '***************************************************************************
         */                                                                       
         let inputArray: (any)[][] = [];
@@ -1144,8 +1139,8 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
         }
 
         for(let i: number = 0; i < inputArray.length; i++) {
-            if(inputArray[i][0].toLowerCase() === "liquid") {                          //'<= look for the key work "Liquid" or "liquid" to detect liquid species in dataSet
-                if(Math.abs(Math.floor((2-inputArray.length / i))) < 10**-15)  {              //'<= make sure liquid dey word is in correct loaction to confirm correct structure of dataSet
+            if(inputArray[i][0].toLowerCase() === "liquid") {                           //'<= look for the key work "Liquid" or "liquid" to detect liquid species in dataSet
+                if(Math.abs(Math.floor((2-inputArray.length / i))) < 10**-15)  {        //'<= make sure liquid dey word is in correct loaction to confirm correct structure of dataSet
                     liquidSpeciesFound = true;
                     liquidIndex = i - 1;
                 }else {
@@ -1168,7 +1163,7 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
             }
         }
         if(phase.toLowerCase() === "vapor" || cpDataRequired === false) {
-            if(liquidSpeciesFound === false) {                                                        //<= Need all species present in dataSet in case that no liquid species exist
+            if(liquidSpeciesFound === false) {                                                   //<= Need all species present in dataSet in case that no liquid species exist
                 for(let i=0; i<dataRange.length-1; i++ ) {
                     outputArray.push([]);
                 }                    
@@ -1220,25 +1215,25 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
             }
         }
         
-        if(inputArray[0][0].toString().toLowerCase().indexOf("twu alpha")  !== -1) {               //'<=vbTextCompare eliminates the need to check the string for capital letters or needing to use lcase fcn
-            outputArray[0][idx.alphaType] = true;                                        //'<= 1 forces create_alphaiArray() function to use the Twu Alpha method
+        if(inputArray[0][0].toString().toLowerCase().indexOf("twu alpha")  !== -1) {                //'<=vbTextCompare eliminates the need to check the string for capital letters or needing to use lcase fcn
+            outputArray[0][idx.alphaType] = true;                                                   //'<= 1 forces create_alphaiArray() function to use the Twu Alpha method
         }else {
-            outputArray[0][idx.alphaType] = false;                                              //'<= 0 the allows create_alphaiArray() function to calculate normally
+            outputArray[0][idx.alphaType] = false;                                                  //'<= 0 the allows create_alphaiArray() function to calculate normally
         }
 
-        if(inputArray[0][0].toString().toLowerCase().indexOf("predictive") !== -1) {               //'<=vbTextCompare eliminates the need to check the string for capital letters or needing to use lcase fcn
-            outputArray[0][idx.predictive] = true;                                              //'<= 1 forces create_alphaiArray() function to use the Twu Alpha method
+        if(inputArray[0][0].toString().toLowerCase().indexOf("predictive") !== -1) {                //'<=vbTextCompare eliminates the need to check the string for capital letters or needing to use lcase fcn
+            outputArray[0][idx.predictive] = true;                                                  //'<= 1 forces create_alphaiArray() function to use the Twu Alpha method
         }else {
-            outputArray[0][idx.predictive] = false;                                              //'<= 0 the allows create_alphaiArray() function to calculate normally
+            outputArray[0][idx.predictive] = false;                                                 //'<= 0 the allows create_alphaiArray() function to calculate normally
         }
 
-        if(inputArray[0][0].toString().toLowerCase().indexOf("error messages on") !== -1) {       //'<=global dataSet level error messages flag on
+        if(inputArray[0][0].toString().toLowerCase().indexOf("error messages on") !== -1) {         //'<=global dataSet level error messages flag on
             outputArray[0][idx.errMsgsOn] = true;
         }else {
-            outputArray[0][idx.errMsgsOn] = false;                                              //'<=global dataSet level error messages flag off
+            outputArray[0][idx.errMsgsOn] = false;                                                  //'<=global dataSet level error messages flag off
         }
 
-        outputArray[0][idx.liquidIndex] = liquidIndex;                               //'<=store this data for use outside of this procedure
+        outputArray[0][idx.liquidIndex] = liquidIndex;                                              //'<=store this data for use outside of this procedure
 
         if(liquidSpeciesFound) {
             outputArray[0][idx.iSpecies] = liquidIndex;
@@ -1266,7 +1261,7 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
         // @customfunction
     /*'***************************************************************************
     'This function checks for user input errors and returns
-    'a two dimersional array of mole amounts and mole composition
+    'a one dimersional array of mole composition
     '***************************************************************************/
 
     try {
@@ -1563,7 +1558,7 @@ function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: numb
         }
 
         Phi[dataSet[0][idx.iSpecies]] = Z;                // '<= Add z to bottom of array because in can! : 
-        Phi[dataSet[0][idx.iSpecies] + 1] = 0;                     // '<= Error flag - 0 = no error, -500 = error*/
+        Phi[dataSet[0][idx.iSpecies] + 1] = 0;            // '<= Error flag - 0 = no error, -500 = error*/
 
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function   
         return Phi;
@@ -1587,7 +1582,7 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
         'This function returns the required index values for TMN. For vapor calculation only two comparisons are required - tempK and 298 K.
         'For liquids four comparisons are required - tempK, 298 K, T boil liquid, and T boil for vapor
         'If heat capacity data is not found the a -500 flag is raised and zero indexes and passed to the calling funciton
-        'If max temp heat capacity data found is below tempk the a -400 flag is raised and the highest available heat capacity data is passed to the calling function
+        'If max temp heat capacity data found is below tempk the a -400 flag is raised and the highest available heat capacity data is passed to the calling function causing loss of accuracy for that species
         '***************************************************************************/
 
         let T298_Found: boolean = false;
@@ -1602,12 +1597,12 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
         let g_Liq: number = 0;
 
         if(Phase === "liquid"){
-            CpRangeIndexes = initial2D_Array(dataSet[0][idx.iSpecies], 5)    ;                  //'<= This is the result array used to store the indexes of the Cp equation with valid NIST-TMN and NIST-TMX values for input parameter TempK
+            CpRangeIndexes = initial2D_Array(dataSet[0][idx.iSpecies], 5)    ;             //'<= This is the result array used to store the indexes of the Cp equation with valid NIST-TMN and NIST-TMX values for input parameter TempK
         }else{                                                                             //'<= Index 4 stores an error flag. If a required temperature does not fall within the available Cp data temperture range then the species will be ingored.
-            CpRangeIndexes = initial2D_Array(dataSet[0][idx.iSpecies], 3);                       //'<= Index 2 stores an error flag. If a required temperature does not fall within the available Cp data temperture range then the species will be ingored.
+            CpRangeIndexes = initial2D_Array(dataSet[0][idx.iSpecies], 3);                 //'<= Index 2 stores an error flag. If a required temperature does not fall within the available Cp data temperture range then the species will be ingored.
         }
 
-        for(let i: number = 0; i < dataSet.length; i++){                                        // '<= Create and initialize an array to hold the index of the highest valid NIST-TMXn for each species
+        for(let i: number = 0; i < dataSet.length; i++){                                   // '<= Create and initialize an array to hold the index of the highest valid NIST-TMXn for each species
                 LastTMX_Indexes.push(0);
         }
 
@@ -1615,7 +1610,7 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
         for(let i: number = 0; i <= dataSet.length; i++){
             k = idx.NIST_TMX6
             for(let j: number = idx.NIST_TMX1; j <= idx.NIST_TMX6; j +=10){
-                if(LastTMX_Indexes[i] === 0){                                            //'<= Find highest valid NIST-TMXn for each species and store it in LastTMX_Indexes(]
+                if(LastTMX_Indexes[i] === 0){                                              //'<= Find highest valid NIST-TMXn for each species and store it in LastTMX_Indexes(]
                     if(Number(dataSet[i][k]) === NaN){
                         LastTMX_Indexes[i] = 0;
                     }else if(dataSet[i][k] > 0){
@@ -1633,26 +1628,26 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
                 TK_Found = false;
                 for(let j: number = idx.NIST_TMX1; j <= LastTMX_Indexes[i]; j += 10){
                     if(TK_Found === false){
-                        if(tempK < dataSet[i][ idx.NIST_TMN1] || tempK > dataSet[i][ LastTMX_Indexes[i]]){       //'<= Test if parameter TempK is between NIST-MN1 and the highest available max NIST temperature
+                        if(tempK < dataSet[i][ idx.NIST_TMN1] || tempK > dataSet[i][ LastTMX_Indexes[i]]){              //'<= Test if parameter TempK is between NIST-MN1 and the highest available max NIST temperature
                             if(LastTMX_Indexes[i] !== 0 && tempK > dataSet[i][idx.NIST_TMN1]){
-                                            CpRangeIndexes[i][2] = -400;                                              // '<= Error flag: Species does not have valide Cp data - this species will be ignored
+                                            CpRangeIndexes[i][2] = -400;                                                // '<= Error flag: Species does not have valide Cp data - this species will be ignored
                                             CpRangeIndexes[i][idx.tempK] = LastTMX_Indexes[i] + 1;
                                             TK_Found = true;
                             }else{
-                                CpRangeIndexes[i][2] = -500;                                                           //'<= Error flag: Species does not have valide Cp data - this species will be ignored
+                                CpRangeIndexes[i][2] = -500;                                                            //'<= Error flag: Species does not have valide Cp data - this species will be ignored
                                 TK_Found = true;
                             }
-                        }else if(dataSet[i][idx.NIST_TMN1] <= tempK && tempK <= dataSet[i][j]){                // '<= Test if parameter TempK is between NIST-MN1 and the next lower available max NIST temperature
+                        }else if(dataSet[i][idx.NIST_TMN1] <= tempK && tempK <= dataSet[i][j]){                         // '<= Test if parameter TempK is between NIST-MN1 and the next lower available max NIST temperature
                             CpRangeIndexes[i][idx.tempK] = j + 1;
                             TK_Found = true;
                         }
                     }
                     
                     if(T298_Found === false){
-                        if(298.15 < dataSet[i][idx.NIST_TMN1] || 298.15 > dataSet[i][LastTMX_Indexes[i]]){     //'<= Test if 298 k is between NIST-MN1 and the first highest max NIST temperature
-                            CpRangeIndexes[i][2] = -500;                                                               //'<= Error flag: Species does not have valide Cp data - this species will be ignored
+                        if(298.15 < dataSet[i][idx.NIST_TMN1] || 298.15 > dataSet[i][LastTMX_Indexes[i]]){              //'<= Test if 298 k is between NIST-MN1 and the first highest max NIST temperature
+                            CpRangeIndexes[i][2] = -500;                                                                //'<= Error flag: Species does not have valide Cp data - this species will be ignored
                             T298_Found = true;
-                        }else if(dataSet[i][idx.NIST_TMN1] <= 298.15 && 298.15 <= dataSet[i][j]){              // '<= Test if parameter TempK is between NIST-MN1 and the next lower available max NIST temperature
+                        }else if(dataSet[i][idx.NIST_TMN1] <= 298.15 && 298.15 <= dataSet[i][j]){                       // '<= Test if parameter TempK is between NIST-MN1 and the next lower available max NIST temperature
                             CpRangeIndexes[i][idx.Vap298] = j + 1;
                             T298_Found = true;
                         }
@@ -1669,27 +1664,27 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
                 myErrorMsg = "First liquid species in wrong position of dataSet.";
                 throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
             }
-            g_Liq = ((dataSet.length) / 2) - 1;                                                                // '<= The g_Liq iterator is for(the liquid species
-            for(let i_Vap: number = 0; i_Vap <= ((dataSet.length) / 2) - 1; i_Vap++){                                                         //'<= The i_Vap iterator is for(the vapor species
+            g_Liq = ((dataSet.length) / 2) - 1;                                                                             // '<= The g_Liq iterator is for(the liquid species
+            for(let i_Vap: number = 0; i_Vap <= ((dataSet.length) / 2) - 1; i_Vap++){                                       //'<= The i_Vap iterator is for(the vapor species
                 T298_Found = false;
                 TK_Found = false;
                 TVNBP_Found = false;
                 TLNBP_Found = false;
                 g_Liq = g_Liq + 1;
-                if(dataSet[g_Liq][idx.cpData] !== "No Data" && dataSet[g_Liq][idx.cpData] !== "Not Found!"){                                                            //'<= Ingoring liquid species present at low concentrations
+                if(dataSet[g_Liq][idx.cpData] !== "No Data" && dataSet[g_Liq][idx.cpData] !== "Not Found!"){                //'<= Ingoring liquid species present at low concentrations
                     if(LastTMX_Indexes[g_Liq] !== 0){
                         for(let j: number = idx.NIST_TMX1; j <= LastTMX_Indexes[g_Liq]; j += 10){
                             if(TK_Found === false){
                                 if(tempK < dataSet[g_Liq][idx.NIST_TMN1] || tempK > dataSet[g_Liq][LastTMX_Indexes[g_Liq]] || LastTMX_Indexes[g_Liq] === 0){                     // '<= Test if parameter TempK is between NIST-MN1 and the highest available max NIST temperature for(liquid species [g_Liq - iterator)
                                     if(LastTMX_Indexes[g_Liq] !== 0 && tempK > dataSet[g_Liq][idx.NIST_TMN1]){
-                                        CpRangeIndexes[i_Vap][4] = -400;                                                               //  '<= Error flag: Species does not have valide Cp data - this species will be ignored
+                                        CpRangeIndexes[i_Vap][4] = -400;                                                        //  '<= Error flag: Species does not have valide Cp data - this species will be ignored
                                         CpRangeIndexes[i_Vap][idx.tempK] = LastTMX_Indexes[g_Liq] + 1;
                                         TK_Found = true;
                                     }else{
                                         CpRangeIndexes[i_Vap][4] = -500;
                                         TK_Found = true;
                                     }
-                                }else if(dataSet[g_Liq][idx.NIST_TMN1] <= tempK && tempK <= dataSet[g_Liq][j]){                //'<= Test if parameter TempK is between NIST-MN1 and the next available max NIST temperature for(liquid species (g_Liq - iterator)
+                                }else if(dataSet[g_Liq][idx.NIST_TMN1] <= tempK && tempK <= dataSet[g_Liq][j]){                 //'<= Test if parameter TempK is between NIST-MN1 and the next available max NIST temperature for(liquid species (g_Liq - iterator)
                                     CpRangeIndexes[i_Vap][idx.tempK] = j + 1;
                                     TK_Found = true;
                                 }
@@ -1743,12 +1738,12 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
 
        /* 'range of TMN, TMX and Polynomual Coefficients index i ranges from 1 to 8 to match the Shomate equation coefficients A through H
         'Data for species can be added to the PData worksheet. NIST data is organized as follows:
-        'Cp� = A + B * T + C * T2 + D * t3 + E / T2
-        'H� - H�298.15= A*t + B*t2/2 + C*t3/3 + D*t4/4 - E/t + F - H
-        'S� = A * Ln(T) + B * T + C * T2 / 2 + D * t3 / 3 - E / (2 * T2) + g
+        'Cp = A + B * T + C * T2 + D * t3 + E / T2
+        'H - H298.15= A*t + B*t2/2 + C*t3/3 + D*t4/4 - E/t + F - H
+        'S = A * Ln(T) + B * T + C * T2 / 2 + D * t3 / 3 - E / (2 * T2) + g
         'Cp = heat capacity (J/mol*K)
-        'H� = standard enthalpy (kJ/mol)
-        'S� = standard entropy (J/mol*K)
+        'H = standard enthalpy (kJ/mol)
+        'S = standard entropy (J/mol*K)
         'T = temperature(K) / 1000
         'uses TemK/1000 and calculates .
         'if NIST data is entered into the PData worksheet the column labeled '(CPDATA)' must contain 'NIST' to divide TempK by 1000*/
@@ -1773,7 +1768,7 @@ function calculate_Wilson_K(dataSet, tempK: number, pBara: number): (number)[] {
 
 
         ' This function uses the Wilson equation to estimate the Ki values given temperature in degrees C
-        'and the pressure in bara. It returns a vertical one dimensional array.*/
+        'and the pressure in bara. It returns a one dimensional array.*/
 
         let outputArray: (number)[] = [];
         let myErrorMsg: string = "";
@@ -1911,7 +1906,7 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
                 
                 Ki[i] = ( Math.pow(dataSet[i][idx.pc], (((1 / T_Bub_Est - 1 / dataSet[i][idx.tb]) / ((1 / dataSet[i][idx.tc]) - (1 / dataSet[i][idx.tb]))))) / pBara);
 
-                if(Ki[i] === Infinity) {                                   //'dividing a number by a very small number
+                if(Ki[i] === Infinity) {                                   
                     myErrorMsg = "Overflow error. Tried to divided a number by a very small number in Ki estimate calc found in LSU/FAM Dew & Bubble T paper.";
                     throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
                 }
@@ -2030,21 +2025,6 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
     }catch(myErrorHandler) {
         return myErrorHandler.message
 
-        /*let T_Bub_Est: number = 0;
-        for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
-            T_Bub_Est = T_Bub_Est + moleComp[i] * dataSet[i][idx.tc];
-        }
-        
-        let T_Dew_Est: number = T_Bub_Est * 0.7;
-
-
-        if(dewOrBub === "dew"){
-            return T_Dew_Est;
-        }else if(dewOrBub === "bub"){
-            return T_Bub_Est;
-        }else{
-            return -500
-        }*/
     }
 }
 /************************************************************************** */
@@ -2064,6 +2044,8 @@ function inRange(low: number, high: number, x: number): boolean{
 /************************************************************************** */
 function size(ar){
     // @customfunction
+    /* This funciton is used to determine if the user input a hard number or a cell reference as a custom funciton parameter. If a cell reference is passed it reports
+       the number of dimensions.*/
     let row_count = ar.length;
     let row_sizes: (any)[] = [];
         for(let i: number = 0; i < row_count; i++){
@@ -2103,7 +2085,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         let tempK: number = 0;
         let pBara: number = 0;
         let phase: string = "";
-        let outputArray: (any)[] = []; // [[t, p , phase],[dataSet],[moleComp],[kij0],[kijT],[deComp]]
+        let outputArray: (any)[] = [];
         let sumTest: number = 0;
         let returnWarnings: boolean = false;
         let kij0_kijT_deComp_Array: (number)[][] = [];
@@ -2400,7 +2382,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
 }
 /*****************************************************************************/
   /**
- * Calculates vapor phase derivatives and other parameters of the PPR1978 EPS given T (C), P (pbara), mole amounts (kg-moles)  and a dataSet.
+ * Calculates vapor phase derivatives and other parameters of the PPR1978 EPS given T (C), P (pbara), mole amounts and a dataSet.
  *
  * @customfunction
  */
@@ -2431,7 +2413,7 @@ export function Derivatives(dataRange, temperature, pressure, moles, useBinaries
         let binaries: (number)[][] = [];
         let datasetErrMsgsOn: boolean = false;
 
-        let inputDataArray: (any)[] = []; //[[T, P, phase, binariesUsed, errorMsgsOn],[dataSet],[moleComp],[kij0],[kijT],[deComp], [alphaArray], [aiArray]]
+        let inputDataArray: (any)[] = []; 
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
                                    
@@ -2575,7 +2557,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
         let VaporFractionFound: boolean = false;
         let EquilibriumFound: boolean = false;
 
-        let inputDataArray: (any)[] = []; //[[T, P, phase, binariesUsed, errorMsgsOn],[dataSet],[moleComp],[kij0],[kijT],[deComp], [alphaArray], [aiArray]]
+        let inputDataArray: (any)[] = [];
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
 
@@ -2666,7 +2648,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                     if(UsingDewOrBubbleFunction = false ) {
                         UsingDewOrBubbleFunction = true;
                         DewBubKi = BubbleT(dataRange, pBara, moles, binariesUsed, kij0, kijT, decomposition,  false, -500, true);               //'<= Get Ki near Bubble point temperature ) { try again.
-                    if(tempC <= DewBubKi[0] || DewBubKi[0] === -273.15 ) {                                                                                      //'DewBubKi[0] = bubble temperature, DewBubKi(1)...DewBubKi(n) are Ki's
+                    if(tempC <= DewBubKi[0] || DewBubKi[0] === -273.15 ) {                                                                      //'DewBubKi[0] = bubble temperature, DewBubKi(1)...DewBubKi(n) are Ki's
                         StreamCondition = "At Or Below Bubble Point";
                         if(DewBubKi[0] = -273.15 ) {
                             myErrorMsg = "FlashTP bubble point test failed. Vapor fraction does not appear to exist.";
@@ -2679,7 +2661,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                             if(moleComp[i] > Math.pow(10, -35) ) {
                                 Ki[i] = moleComp[i] / DewBubKi[i + 2];
                             }else {
-                                Ki[i] = Math.pow(10, 35) ;                                            // '<= This prevent overflow errors.
+                                Ki[i] = Math.pow(10, 35) ;                                                  // '<= This prevent overflow errors.
                             }
                         }
                     }
@@ -2694,7 +2676,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                     if(UsingDewOrBubbleFunction = false ) {
                         UsingDewOrBubbleFunction = true;
                         DewBubKi = DewT(dataRange, pBara, moles, binariesUsed, kij0, kijT, decomposition, false,  -500, true);  //'<= Get Ki near Dew point temperature ) { try again.
-                    if(tempC >= DewBubKi[0] || DewBubKi[0] === -273.15 ) {                           //'DewBubKi[0] = dew temperature, DewBubKi(1)...DewBubKi(n) are Ki's
+                    if(tempC >= DewBubKi[0] || DewBubKi[0] === -273.15 ) {                                  //'DewBubKi[0] = dew temperature, DewBubKi(1)...DewBubKi(n) are Ki's
                         StreamCondition = "At or Above Dew Point";
                         if(DewBubKi[0] = -273.15 ) {
                             myErrorMsg = "FlashTP dew point test failed. Liquid phase does not appear to exist.";
@@ -2703,11 +2685,11 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                         EquilibriumFound = true;
                     }
                     if(StreamCondition = "" ) {
-                        for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {                          //'<Flash with Wilson Ki initialization failed to converge so retry with Ki's from Dew or Bubble point calculation.
+                        for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {                         //'<Flash with Wilson Ki initialization failed to converge so retry with Ki's from Dew or Bubble point calculation.
                             if(moleComp[i] > Math.pow(10, -35) ) {
                                 Ki[i] = moleComp[i] / DewBubKi[i + 2];
                             }else {
-                                Ki[i] = Math.pow(10, 35);                                             //'<= This prevent overflow errors
+                                Ki[i] = Math.pow(10, 35);                                                   //'<= This prevent overflow errors
                             }
                         }
                     }
@@ -2741,27 +2723,10 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                 if(moleComp[i] > 0 ) {
 
 
-                    xi_Array[i] = moleComp[i] / (Psi_New * Ki[i] + 1 - Psi_New)  ;                        //'<= if(xi or yi calculate to below zero ) { need to set xi or yi to zero
+                    xi_Array[i] = moleComp[i] / (Psi_New * Ki[i] + 1 - Psi_New)  ;              //'<= if(xi or yi calculate to below zero ) { need to set xi or yi to zero
 
-                    /*if(Err.Number = 6 ) {                                                              //' ) { renormalize the other to accept all of the component in the non-zero phase                                                                                               /' need to add this code
-                        xi_Array[i] = 0                                                                 //'<=This prevents overflow error if(number in denomenator is very small
-                        Err.Clear
-                    }else {
-                    if(Err.Number <> 0 ) {
-                        throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
-                    }
-                    }*/
 
                     yi_Array[i] = moleComp[i] * Ki[i] / (Psi_New * Ki[i] + 1 - Psi_New);
-
-                    /*if(Err.Number = 6 ) {
-                    yi_Array[i] = 0
-                    Err.Clear
-                    }else {
-                    if(Err.Number <> 0 ) {
-                        throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
-                    }
-                    }*/
 
                     SUMx = SUMx + xi_Array[i];
                     SUMy = SUMy + yi_Array[i];
@@ -3318,8 +3283,6 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
             myErrorMsg = "Dew temperature equilibrium test failed. Returned dew temperature may be inacurate";
         }
 
-         //'<= Used for warning messages
-
         outputArray[0] = T_New - 273.15;
 
         if(guess === -500) {
@@ -3607,8 +3570,6 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
 
         }  // loop
 
-    
-
     alpha_aiArray = create_alphaiArray(dataSet, (T_Hi + T_Low)/2);
     aiArray = create_aiArray(dataSet, alpha_aiArray);
 
@@ -3707,7 +3668,6 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
                 if(xi_Old[i] !== 0) {
                     ConvergenceSum = ConvergenceSum + Math.abs((xi_Dew[i] / xi_Old[i]) - 1);
-                    //console.log(`Convergence Sum: ${ConvergenceSum}`)
                 }
             }
 
@@ -3786,7 +3746,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
 }
 /******************************************************************************* */
   /**
- * Calculates compressibility given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+ * Calculates compressibility given T (C), P (pbara), mole amounts, phase (vapor or liquid) and a dataSet.
  *
  * @customfunction
  */
@@ -3796,7 +3756,7 @@ export function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinari
         const fcnName: string = "PhaseZ";
         let myErrorMsg: string = "";
         let binaries: (number)[][] = [];
-        let inputDataArray: (any)[] = []; //[[T, P, phase, binariesUsed, errorMsgsOn],[dataSet],[moleComp],[kij0],[kijT],[deComp], [alphaArray], [aiArray]]
+        let inputDataArray: (any)[] = [];
         let z: number = 0;
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
@@ -3860,7 +3820,7 @@ export function Volume(dataRange, temperature, pressure, moles, Phase, useBinari
         const fcnName: string = "PhaseZ";
         let myErrorMsg: string = "";
         let binaries: (number)[][] = [];
-        let inputDataArray: (any)[] = []; //[[T, P, phase, binariesUsed, errorMsgsOn],[dataSet],[moleComp],[kij0],[kijT],[deComp], [alphaArray], [aiArray]]
+        let inputDataArray: (any)[] = [];
         let z: number = 0;
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
@@ -4020,7 +3980,7 @@ export function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, us
 }
 /******************************************************************************* */
   /**
- * Calculates entropy (j/mol/K) given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+ * Calculates entropy (j/mol/K) given T (C), P (pbara), mole amounts, phase (vapor or liquid) and a dataSet.
  *
  * @customfunction
  */
@@ -4348,7 +4308,7 @@ export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, k
         let sum_b: number = 0;
         let derivitiveArray: (number)[] = [];
 
-        let inputDataArray: (any)[] = []; //[[T, P, phase, binariesUsed, errorMsgsOn],[dataSet],[moleComp],[kij0],[kijT],[deComp], [alphaArray], [aiArray]]
+        let inputDataArray: (any)[] = [];
 
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
@@ -4450,7 +4410,7 @@ function calculate_LiquidEntropy(dataSet, moleComp: (number)[], tempK: number, c
         let tempValue: number = 0;
 
         tempValue = 0;
-                    //&& dataSet[g + dataSet[0][idx.iSpecies] + 1][idx.cpData] !== "No Data" && dataSet[g + dataSet[0][idx.iSpecies] + 1][idx.cpData] !== "Not Found!"
+
         for(let g: number = 0; g < dataSet[0][idx.iSpecies]; g++) {
             if(cpRanges[g][cpRanges[0].length - 1] !== -500 ){
                         
@@ -4543,7 +4503,7 @@ function calculate_LiquidEntropy(dataSet, moleComp: (number)[], tempK: number, c
 
         dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorMsg}`;
             
-        return tempValue; //' <= Convert from kJ/g-mole to kJ/kg-mole
+        return tempValue;
 
 
         
@@ -4587,7 +4547,7 @@ export function vaporCv(dataRange, temperature, pressure, moles, useBinaries?, k
         let binaries: (number)[][] = [];
         let datasetErrMsgsOn: boolean = false;
 
-        let inputDataArray: (any)[] = []; //[[T, P, phase, binariesUsed, errorMsgsOn],[dataSet],[moleComp],[kij0],[kijT],[deComp], [alphaArray], [aiArray]]
+        let inputDataArray: (any)[] = [];
 
         let z: number = 0;
 
@@ -4675,7 +4635,7 @@ export function vaporCv(dataRange, temperature, pressure, moles, useBinaries?, k
 }
 /******************************************************************************* */
   /**
- * Calculates the speed of sound  (m/s) of a gas given T (C), P (pbara), mole amounts and a dataSet.
+ * Calculates the speed of sound  (m/s) of a gas given T (C), P (pbara), mole amounts
  *
  * @customfunction
  */
@@ -4820,10 +4780,10 @@ function calculate_d2adT2(dataSet,  tempK: number, moleComp: (number)[], aiArray
     try{
 
         /***************************************************************************
-        'The function is called directly of indirectly by vaporCv, PhaseCp, Derivatives, SpeedOfSound and JTCoef
+        'The function is called by vaporCv, PhaseCp, Derivatives, SpeedOfSound and JTCoef
         'Calculates an array of values
         '***************************************************************************/
-            // Start here on Wednesday
+
         let d2adT2Array: (number)[][] = [];
         let fcnName: string = "calculate_d2adT2";
         let myErrorMsg: string = "";
@@ -4894,7 +4854,7 @@ function calculate_Cp_IGorLiquid(dataSet, moleComp: (number)[], tempK: number, c
                 if(dataSet[i + m][idx.cpData] === "NIST"){                //'<= This means we have "NIST" type(i.e. Shomate equations & t = t/1000) formatted data.
                     Denominator = 1000;
                     J_to_kJ = 1;
-                }else{                                                    //'<= Here we can test for other types of data in the future - not used for now
+                }else{                                                    //'<= Here we can test for other types of Cp data in the future - not used for now
                     Denominator = 1;
                     J_to_kJ = 1;
                 }
@@ -5080,8 +5040,8 @@ function calculate_S_Departure(dataSet, tempK: number, pbara: number,  moleComp:
     // @customfunction
     try{
         /***************************************************************************
-        'This function is called by the Enthalpy function
-        'This function calculates the PR1978 EOS enthalpy departure function
+        'This function is called by the Entropy function
+        'This function calculates the PR1978 EOS entropy departure function
         '***************************************************************************/
 
         let a: number = 0;
