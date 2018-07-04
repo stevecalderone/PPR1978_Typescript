@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var eosCode_1 = require("./eosCode");
 try {
     /* This code is used to teest the custom functions found in eosCode.ts (eosCode.js).*/
-    var dewBubDataSet = [["Vapor, Error messages On, predictive", "(MW)", "(TC, K)", "(PC, bara)", "(OMEGA)", "(ZC)", "k(i)", "b(i)", "(TB, K)", "(Hvap, kJ/kg-mole)", "(Hf298, kJ/g-mole)", "(S298, J/g-mole/K)", "(Gf298, kJ/g-mole)", "(CPData)", "(NIST-TMN1)", "(NIST-TMX1)", "(NIST-A1)", "(NIST-B1)", "(NIST-C1)", "(NIST-D1)", "(NIST-E1)", "(NIST-F1)", "(NIST-G1)", "(NIST-H1)", "(NIST-TMN2)", "(NIST-TMX2)", "(NIST-A2)", "(NIST-B2)", "(NIST-C2)", "(NIST-D2)", "(NIST-E2)", "(NIST-F2)", "(NIST-G2)", "(NIST-H2)", "(NIST-TMN3)", "(NIST-TMX3)", "(NIST-A3)", "(NIST-B3)", "(NIST-C3)", "(NIST-D3)", "(NIST-E3)", "(NIST-F3)", "(NIST-G3)", "(NIST-H3)", "(NIST-TMN4)", "(NIST-TMX4)", "(NIST-A4)", "(NIST-B4)", "(NIST-C4)", "(NIST-D4)", "(NIST-E4)", "(NIST-F4)", "(NIST-G4)", "(NIST-H4)", "(NIST-TMN5)", "(NIST-TMX5)", "(NIST-A5)", "(NIST-B5)", "(NIST-C5)", "(NIST-D5)", "(NIST-E5)", "(NIST-F5)", "(NIST-G5)", "(NIST-H5)", "(NIST-TMN6)", "(NIST-TMX6)", "(NIST-A6)", "(NIST-B6)", "(NIST-C6)", "(NIST-D6)", "(NIST-E6)", "(NIST-F6)", "(NIST-G6)", "(NIST-H6)"],
+    var dewBubDataSet = [["Vapor, Error messages On", "(MW)", "(TC, K)", "(PC, bara)", "(OMEGA)", "(ZC)", "k(i)", "b(i)", "(TB, K)", "(Hvap, kJ/kg-mole)", "(Hf298, kJ/g-mole)", "(S298, J/g-mole/K)", "(Gf298, kJ/g-mole)", "(CPData)", "(NIST-TMN1)", "(NIST-TMX1)", "(NIST-A1)", "(NIST-B1)", "(NIST-C1)", "(NIST-D1)", "(NIST-E1)", "(NIST-F1)", "(NIST-G1)", "(NIST-H1)", "(NIST-TMN2)", "(NIST-TMX2)", "(NIST-A2)", "(NIST-B2)", "(NIST-C2)", "(NIST-D2)", "(NIST-E2)", "(NIST-F2)", "(NIST-G2)", "(NIST-H2)", "(NIST-TMN3)", "(NIST-TMX3)", "(NIST-A3)", "(NIST-B3)", "(NIST-C3)", "(NIST-D3)", "(NIST-E3)", "(NIST-F3)", "(NIST-G3)", "(NIST-H3)", "(NIST-TMN4)", "(NIST-TMX4)", "(NIST-A4)", "(NIST-B4)", "(NIST-C4)", "(NIST-D4)", "(NIST-E4)", "(NIST-F4)", "(NIST-G4)", "(NIST-H4)", "(NIST-TMN5)", "(NIST-TMX5)", "(NIST-A5)", "(NIST-B5)", "(NIST-C5)", "(NIST-D5)", "(NIST-E5)", "(NIST-F5)", "(NIST-G5)", "(NIST-H5)", "(NIST-TMN6)", "(NIST-TMX6)", "(NIST-A6)", "(NIST-B6)", "(NIST-C6)", "(NIST-D6)", "(NIST-E6)", "(NIST-F6)", "(NIST-G6)", "(NIST-H6)"],
         ["C2H6(g)", 30.0694, 305.32, 48.7200865036264, 0.099493, 0.285, 0.525412174685334, 0.0000405378730197125, 184.5, 14706.76, -84.68416, 229.5, -32.92808, "NIST", 100, 500, 41.54955232, -83.34130553, 543.2552021, -461.2258257, -0.024867482, -20779.83721, 21.73171532, 0, 500, 1500, 5.115892174, 185.661947, -81.40412739, 13.511799, -0.336354192, -20777.25907, -80.34509134, 0, 1500, 2300, 116.7535757, 41.67536742, -10.62625199, 0.93721316, -28.39504878, -20865.14689, 18.65562634, 0, 2300, 3000, 200.8140426, -22.38877708, 7.338511413, -0.802646327, -84.34981975, -20974.05145, 50.23918917, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         ["C7H16(g)", 100.2029, 540.2, 27.4000520601943, 0.349469, 0.263, 0.880647113097087, 0.000127531347023652, 371.6, 31697.984, -187.77792, 328.5, 7.99144, "NIST", 200, 300, -55.87518748, 753.0636594, 0, -797.2749544, 1.57162621, 16735.52162, -277.2845727, 0, 500, 1000, 39.95718809, 587.3215361, -297.2009308, 55.03193433, -3.526976565, 16697.19206, -134.8046528, 0, 1000, 1500, 5438.918669, -8372.498411, 5224.029064, -1140.499555, -768.3952272, 13471.74518, 6080.476668, 0, 1500, 3000, 0, 0, 0, 0, 0, 17156.9139, 491.7459905, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]];
     var dataRange = [
@@ -82,31 +82,32 @@ try {
     //const inputTemp: number = -350;
     //const inputPress: number = 5;
     //const inputPhase: string = "Liq222uid";
-    var tempC = 150; //[204.1138903] 
+    var tempC = 90; //[204.1138903] 
     //const tempC: any = 50
     var pBara = [27.57902908]; //12;
-    var Phase = ["vaPor"];
+    var Phase = ["vapor"];
     var ErrorMsgOn = [true];
     var fcnName = "appFunction";
-    var UseBinaries = [true]; //"true"
-    var inputMoles = [2207.57, 2817.28, 1101.64, 15, 0, 12.93, 46.16, 0.04, 34.15, 1.21, 2.91, 0, 0, 509.32, 0, 12.91, 21.52, 5.74, 2.87, 495, 0, 0];
+    var UseBinaries = [false]; //"true"
+    //const inputMoles = [2207.57,2817.28,1101.64,15,0,12.93,46.16,0.04,34.15,1.21,2.91,0,0,509.32,0,12.91,21.52,5.74,2.87, 495, 0, 0];
     var tc = 33.2;
     var pc = 12.9696;
     var omega = -0.22;
     //const inputMoles = [0.1,0.9]
-    //const inputMoles = [20,20,20,15,0,12.93,46.16,0.04,34.15,1.21,2.91,0,0,509.32,0,12.91,21.52,5.74,2.87, 495, 1500, 0];
+    var inputMoles = [20, 20, 20, 15, 0, 12.93, 46.16, 0.04, 34.15, 1.21, 2.91, 0, 0, 509.32, 0, 12.91, 21.52, 5.74, 2.87, 495, 1500, 0];
     //const inputMoles = [0.09, 0.17, 2.25, 5.64, 0.00, 0.00, 0.01, 0.00, 0.26, 0.01, 0.04, 0.00, 0.00, 0.12, 0.00, 0.01, 0.03, 0.02, 0.01, 165.03, 0.00, 0.00];
     //const inputMoles = [0.08, 0.16, 2.17, 5.48, 0.00, 0.00, 0.01, 0.00, 0.25, 0.01, 0.04, 0.00, 0.00, 0.12, 0.00, 0.01, 0.03, 0.02, 0.01, 158.73, 0.00, 0.00]
-    var newVar = 0;
-    //let newVar: (number)[] = []
+    //let newVar: number = 0
+    var newVar = [];
     //let est_T = calculate_T_BubDew_Est(dewBubDataSet, inputMoles, pBara, "bub", false,[[-500],[-500]],[-500],-500)
     //let newVar: (number)[] = [25*Math.pow(10, -5), 500, 25.0001*Math.pow(10, -5)]
     //console.log(inRange(newVar[0],newVar[1],newVar[2],))
-    //newVar = vaporCv(dataRange, tempC, pBara, inputMoles, UseBinaries, 0, 0, Decomp, ErrorMsgOn)
+    //newVar = phaseCp(dewBubDataSet, tempC, pBara, [.5,.5], Phase, UseBinaries, 0, 0, 0, ErrorMsgOn)
     //console.log(newVar)
     //let myDerivatives: (number)[][] = []
     //newVar = PhaseZ(dataRange, tempC, pBara, inputMoles,  Phase, 1, 0, 0, Decomp, 1)
     newVar = eosCode_1.FlashTP(dataRange, tempC, pBara, inputMoles, 1, 0, 0, Decomp, 1);
+    //newVar = returnPredictiveBinaries(dataRange, tempC, inputMoles, Decomp, 0)
     //newVar = Enthalpy(dataRange, tempC, pBara, inputMoles, Phase,1, 0, 0, Decomp,1)
     //newVar = calculate_ki(omega)
     //calculate_bi(tc, pc)

@@ -131,6 +131,7 @@ var currentNumberOfGroups = 31; /*"Groups","CH3","CH2","CH","C","CH4","C2H6","CH
 /***********************************************************************************************/
 function create_alphaiArray(dataSet, tempK) {
     // @customfunction
+    var fcnName = "create_alphaiArray";
     try {
         /*'***************************************************************************
         'The function is called by all PR1978 functions
@@ -139,7 +140,6 @@ function create_alphaiArray(dataSet, tempK) {
         '***************************************************************************/
         var outputArray = [];
         var myErrorMsg = "";
-        var fcnName = "create_alphaiArray";
         if (dataSet[0][idx.alphaType] === false) { //'<= alphaType is a variable created in the validateDataset function. Set in the (0,0) index of the dataSet
             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                 if (dataSet[i][idx.tc] !== 0) {
@@ -147,7 +147,7 @@ function create_alphaiArray(dataSet, tempK) {
                 }
                 else {
                     myErrorMsg = "The critical temperature of species " + i + " is zero.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
             }
         }
@@ -177,20 +177,19 @@ function create_alphaiArray(dataSet, tempK) {
         return outputArray;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return [-500];
     }
 }
 /****************************************************************************************************/
 function create_aiArray(dataSet, alpha_aiArray) {
+    var fcnName = "create_aiArray";
     try {
         /*'***************************************************************************
         'The function is called by all PR1978 functions
         'Calculates an array of values
         '***************************************************************************/
         var outputArray = [];
-        var fcnName = "create_aiArray";
         var myErrorMsg = "";
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             outputArray.push(0);
@@ -201,20 +200,20 @@ function create_aiArray(dataSet, alpha_aiArray) {
             }
             else {
                 myErrorMsg = "The critical pressure of species " + i + " is less than or equal to zero";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function      
         return outputArray;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return [-500];
     }
 }
 /**************************************************************************************************/
 function create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK) {
+    var fcnName = "create_aijArray";
     // @customfunction
     try {
         /*'***************************************************************************
@@ -223,7 +222,6 @@ function create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK) {
         '***************************************************************************/
         var outputArray = [];
         var myErrorMsg = void 0;
-        var fcnName = "create_aijArray";
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             outputArray.push([]);
             for (var j = 0; j < dataSet[0][idx.iSpecies]; j++) {
@@ -239,13 +237,13 @@ function create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK) {
         return outputArray;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return [[-500, -500], [-500, -500]];
     }
 }
 /********************************************************************************************************************* */
 function create_xi_aijArray(dataSet, aij_Array, molarComp) {
+    var fcnName = "create_xi_aijArray";
     // @customfunction
     try {
         /*'***************************************************************************
@@ -254,7 +252,6 @@ function create_xi_aijArray(dataSet, aij_Array, molarComp) {
         '***************************************************************************/
         var xj_aijArray = [];
         var Aij = [];
-        var fcnName = "create_xi_aijArray";
         var myErrorMsg = "";
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             Aij.push([]);
@@ -268,12 +265,13 @@ function create_xi_aijArray(dataSet, aij_Array, molarComp) {
         return xj_aijArray;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return [-500];
     }
 }
 /*************************************************************************************************** */
 function calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray) {
+    var fcnName = "calculate_dadt";
     // @customfunction
     try {
         /***************************************************************************
@@ -283,14 +281,13 @@ function calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray) {
         var dadt_Array = [];
         var myErrorMsg = "";
         var dadT = 0;
-        var fcnName = "calculate_dadt";
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             dadt_Array.push([]);
             for (var j = 0; j < dataSet[0][idx.iSpecies]; j++) {
                 dadt_Array[i][j] = -(moleComp[i] * moleComp[j] * aij_Array[i][j] / (2 * Math.pow(tempK, 0.5))) * ((dataSet[j][idx.ki] / (Math.pow(alpha_aiArray[j] * dataSet[j][idx.tc], 0.5))) + dataSet[i][idx.ki] / Math.pow(alpha_aiArray[i] * dataSet[i][idx.tc], 0.5));
                 if (dadt_Array[i][j] === Infinity) {
                     myErrorMsg = "(alpha_aiArray(i or j) * dataSet(i or j, iColumns.tc)) ^ 0.5 = 0. Divide by zero error.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 dadT = dadT + dadt_Array[i][j];
             }
@@ -299,8 +296,7 @@ function calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray) {
         return dadT;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return -500;
     }
 }
@@ -316,44 +312,35 @@ function phaseCp(dataRange, temperature, pressure, moles, inputPhase, useBinarie
         /***************************************************************************
         'This function calculates the liquid, ideal gas or PR1978 EOS real gas Cv.
         '***************************************************************************/
-        var passedTempK = 0;
-        var CvIG = 0;
         var CpIG = 0;
         var CvResidual = 0;
         var CpResidual = 0;
         var d2adT2 = 0;
-        var sum_b = 0;
         var myErrorMsg = "";
-        var fcnName = "vaporCv";
-        var Phase = "vapor";
-        var aij_Array = [];
         var derivatives = [];
         var CpRanges = [];
         var d2aidT2Array = [];
         var daidTArray = [];
         var outputArray = [];
-        var outputArrayWithLables = [];
         var binaries = [];
-        var datasetErrMsgsOn = false;
         var inputDataArray = [];
-        var z = 0;
+        var fcnName = "phaseCp";
         inputDataArray = validateData(dataRange, temperature, pressure, moles, inputPhase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, true);
-        var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+        var errorTest = inputDataArray[0][0];
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
+        var dataSet = inputDataArray[idx.datasetArray];
         if (dataSet[0][idx.globalErrmsg] !== "") {
             myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
@@ -371,13 +358,13 @@ function phaseCp(dataRange, temperature, pressure, moles, inputPhase, useBinarie
             }
             else {
                 if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
                 if (binariesUsed) {
                     if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                         binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                         if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                         }
                     }
                     binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
@@ -385,17 +372,16 @@ function phaseCp(dataRange, temperature, pressure, moles, inputPhase, useBinarie
                 derivatives = calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesUsed, aiArray, binaries);
                 if (derivatives[0] !== 987654321.12345) {
                     CpRanges = selectCpDataRanges(dataSet, tempK, phase);
-                    CvIG = CpIG - gasLawR * 100000;
                     d2aidT2Array = create_d2aidT2Array(dataSet, tempK);
                     daidTArray = create_daidTArray(dataSet, aiArray, tempK);
                     d2adT2 = calculate_d2adT2(dataSet, tempK, moleComp, aiArray, daidTArray, d2aidT2Array, binariesUsed, binaries);
                     if ((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5))) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5))) <= 0) {
                         myErrorMsg = "The natural log term in the Cv residual equation retun an error. Check phase.";
-                        throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                        throw new Error(fcnName + ": " + myErrorMsg);
                     }
                     if (derivatives[idx.sumb] <= 0) {
                         myErrorMsg = "The term sum_b is less than or equal to zero. Check phase.";
-                        throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                        throw new Error(fcnName + ": " + myErrorMsg);
                     }
                     CvResidual = 100000 * tempK * d2adT2 * Math.log((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5))) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5)))) / (derivatives[idx.sumb] * Math.pow(8, 0.5));
                     CpResidual = CvResidual + (tempK * (derivatives[idx.dPdT_constV]) * derivatives[idx.dVdT_constP] - gasLawR) * 100000;
@@ -405,7 +391,7 @@ function phaseCp(dataRange, temperature, pressure, moles, inputPhase, useBinarie
                 }
                 else {
                     myErrorMsg = "Calculate_Derivatives returned an error.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
             }
         }
@@ -421,15 +407,14 @@ function phaseCp(dataRange, temperature, pressure, moles, inputPhase, useBinarie
 exports.phaseCp = phaseCp;
 /****************************************************************** */
 function create_d2aidT2Array(dataSet, tempK) {
+    var fcnName = "create_d2aidT2Array";
     // @customfunction
     try {
         /*'***************************************************************************
         'The function is called directly of indirectly by vaporCv, PhaseCp, Derivatives, SpeedOfSound and JTCoef
         'Calculates an array of values
         '***************************************************************************/
-        var aiArray = [];
         var outputArray = [];
-        var fcnName = "create_d2aidT2Array";
         var myErrorMsg = "";
         var tempValue = 0;
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -442,13 +427,13 @@ function create_d2aidT2Array(dataSet, tempK) {
         return outputArray;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return [-500];
     }
 }
 /******************************************************************************************/
 function create_daidTArray(dataSet, aiArray, tempK) {
+    var fcnName = "create_daidTArray";
     // @customfunction
     try {
         /***************************************************************************
@@ -456,7 +441,6 @@ function create_daidTArray(dataSet, aiArray, tempK) {
         'Calculates an array of values
         '***************************************************************************/
         var outputArray = [];
-        var fcnName = "create_daidTArray";
         var myErrorMsg = "";
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             outputArray.push(-dataSet[i][idx.ki] * aiArray[i] / ((1 + dataSet[i][idx.ki] * (1 - Math.pow(tempK / dataSet[i][idx.tc], 0.5))) * Math.pow(tempK * dataSet[i][idx.tc], 0.5)));
@@ -465,12 +449,13 @@ function create_daidTArray(dataSet, aiArray, tempK) {
         return outputArray;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = "" + myErrorHandler;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return [-500];
     }
 }
 /*********************************************************************************************************************/
 function calculate_sum_a(dataSet, aij_Array, molarComp) {
+    var fcnName = "calculate_sum_a";
     // @customfunction
     try {
         /*'***************************************************************************
@@ -478,7 +463,6 @@ function calculate_sum_a(dataSet, aij_Array, molarComp) {
         'Calculates sum(ai) (see reference 1) from PR1978 EOS
         '****************************************************************************/
         var sum_a = 0;
-        var fcnName = "calculate_sum_a";
         var myErrorMsg = "";
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             for (var j = 0; j < dataSet[0][idx.iSpecies]; j++) {
@@ -489,13 +473,13 @@ function calculate_sum_a(dataSet, aij_Array, molarComp) {
         return sum_a;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return -500;
     }
 }
 /**************************************************************************/
 function calculate_sum_b(dataSet, molarComp) {
+    var fcnName = "calculate_sum_b";
     // @customfunction
     try {
         /*'***************************************************************************
@@ -504,7 +488,6 @@ function calculate_sum_b(dataSet, molarComp) {
         '***************************************************************************/
         var sum_b = 0;
         var myErrorMsg = "";
-        var fcnName = "calculate_sum_b";
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             sum_b = sum_b + dataSet[i][idx.bi] * molarComp[i];
         }
@@ -512,13 +495,13 @@ function calculate_sum_b(dataSet, molarComp) {
         return sum_b;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return -500;
     }
 }
 /**************************************************************************************/
 function calculate_A(dataSet, sum_a, tempK, pbara) {
+    var fcnName = "calculate_A";
     // @customfunction
     try {
         /*'***************************************************************************
@@ -526,18 +509,17 @@ function calculate_A(dataSet, sum_a, tempK, pbara) {
         'Calculates A (see reference 1) from PR1978 EOS
         '***************************************************************************/
         var myErrorMsg = "";
-        var fcnName = "calculate_A";
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function      
         return sum_a * pbara / Math.pow((gasLawR * tempK), 2);
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return -500;
     }
 }
 /*******************************************************************************/
 function calculate_B(dataSet, sum_b, tempK, pbara) {
+    var fcnName = "calculate_B";
     // @customfunction
     try {
         /*'***************************************************************************
@@ -545,13 +527,11 @@ function calculate_B(dataSet, sum_b, tempK, pbara) {
         'Calculates B (see reference 1) from PR1978 EOS
         '***************************************************************************/
         var myErrorMsg = "";
-        var fcnName = "calculate_B";
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function      
         return sum_b * pbara / (gasLawR * tempK);
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return -500;
     }
 }
@@ -564,19 +544,18 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition) {
         var testSum = 0;
         var decompTest = 0;
         var decompArray = [];
-        var validData = false;
         if (dataSet[0][idx.predictive] === true && !decomposition && decomposition[0][0] !== -500) {
-            dataSet[0][idx.globalErrmsg] = "Predictive and binariesUsed parameters equal true but no decomposition is provided.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            dataSet[0][idx.globalErrmsg] = fcnName + ": Predictive and binariesUsed parameters equal true but no decomposition is provided.";
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         else {
             if (decomposition.length !== dataSet[0][idx.iSpecies] + 1) {
-                dataSet[0][idx.globalErrmsg] = "The supplied decomposition row count must equal the number of species plus one for the header row. Correct decomposition.";
+                dataSet[0][idx.globalErrmsg] = fcnName + ": The supplied decomposition row count must equal the number of species plus one for the header row. Correct decomposition.";
             }
             else {
                 for (var i = 1; i < decomposition.length; i++) {
                     if (decomposition[i].length !== currentNumberOfGroups + 1) {
-                        dataSet[0][idx.globalErrmsg] = "The column count for species " + i + " does not equal equal 32 (31 groups plus 1 for the species name). Correct decomposition.";
+                        dataSet[0][idx.globalErrmsg] = fcnName + ": The column count for species " + i + " does not equal equal 32 (31 groups plus 1 for the species name). Correct decomposition.";
                         return [false];
                     }
                 }
@@ -597,7 +576,7 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition) {
                         decompTest = decompTest + 1;
                     }
                     else {
-                        dataSet[0][idx.globalErrmsg] = "The decomposition for species " + i + " does not equal either zero or 1. Correct decomposition.";
+                        dataSet[0][idx.globalErrmsg] = fcnName + ": The decomposition for species " + i + " does not equal either zero or 1. Correct decomposition.";
                         return [false];
                     }
                     testSum = 0;
@@ -606,12 +585,12 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition) {
         }
         if (dataSet[0][idx.predictive] === false) {
             if (dataSet[0][idx.binariesUsed] && !kij0) {
-                dataSet[0][idx.globalErrmsg] = "The parameter binariesUsed equals true but no binaries are provided.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                dataSet[0][idx.globalErrmsg] = fcnName + ": The parameter binariesUsed equals true but no binaries are provided.";
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             else {
                 if (kij0.length !== dataSet[0][idx.iSpecies] && kij0[0].length !== dataSet[0][idx.iSpecies]) {
-                    dataSet[0][idx.globalErrmsg] = "kij0 binaries must be an array of size equal to the number of species by the number of species.";
+                    dataSet[0][idx.globalErrmsg] = fcnName + ": kij0 binaries must be an array of size equal to the number of species by the number of species.";
                     return [false];
                 }
                 testSum = 0;
@@ -622,18 +601,18 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition) {
                         }
                     }
                     if (testSum !== 0) {
-                        dataSet[0][idx.globalErrmsg] = "kij0 binaries are not symetrical. The condition Kij0(i,j) = Kij0(j,i) must be true.";
+                        dataSet[0][idx.globalErrmsg] = fcnName + ": kij0 binaries are not symetrical. The condition Kij0(i,j) = Kij0(j,i) must be true.";
                         return [false];
                     }
                 }
             }
             if (dataSet[0][idx.predictive] === false && !kijT && kij0.length !== dataSet[0][idx.iSpecies] + 1 && kij0[0].length !== dataSet[0][idx.iSpecies] + 1) {
-                dataSet[0][idx.globalErrmsg] = "The parameter binariesUsed equals true but no binaries are provided.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                dataSet[0][idx.globalErrmsg] = fcnName + ": The parameter binariesUsed equals true but no binaries are provided.";
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             else {
                 if (kijT.length !== dataSet[0][idx.iSpecies] && kijT[0].length !== dataSet[0][idx.iSpecies]) {
-                    dataSet[0][idx.globalErrmsg] = "kijT binaries must be an array of size equal to the number of species by the number of species.";
+                    dataSet[0][idx.globalErrmsg] = fcnName + ": kijT binaries must be an array of size equal to the number of species by the number of species.";
                     return [false];
                 }
                 testSum = 0;
@@ -643,7 +622,7 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition) {
                     }
                 }
                 if (testSum !== 0) {
-                    dataSet[0][idx.globalErrmsg] = "Warning: kijT binaries are imbalanced. The condition KijT(i,j) = KijT(j,i) must be true.";
+                    dataSet[0][idx.globalErrmsg] = fcnName + ": Warning: kijT binaries are imbalanced. The condition KijT(i,j) = KijT(j,i) must be true.";
                     return [false];
                 }
             }
@@ -652,7 +631,6 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition) {
     }
     catch (myErrorHandler) {
         dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
         return [false];
     }
 }
@@ -662,7 +640,6 @@ function calculate_binaries(dataSet, tempK, kij0, kijT, passed_aiArray, deComp) 
     try {
         var myErrorMsg = "";
         var errorSum = 0;
-        var kij0_Array = void 0;
         var fcnName = "calculate_binaries";
         var passedTempK = 0;
         var alpha_iArray = [];
@@ -680,8 +657,8 @@ function calculate_binaries(dataSet, tempK, kij0, kijT, passed_aiArray, deComp) 
                 }
             }
             if (errorSum !== 0) {
-                myErrorMsg = "kij0 binaries are imbalanced. The condition Kij0(i,j) = Kij0(j,i) and kij0(i,i) = 0 must be true.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                myErrorMsg = fcnName + ": kij0 binaries are imbalanced. The condition Kij0(i,j) = Kij0(j,i) and kij0(i,i) = 0 must be true.";
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             if (kijT) {
                 errorSum = 0;
@@ -691,8 +668,8 @@ function calculate_binaries(dataSet, tempK, kij0, kijT, passed_aiArray, deComp) 
                     }
                 }
                 if (errorSum !== 0) {
-                    myErrorMsg = "kijT binaries are imbalanced. The condition KijT(i,j) = KijT(j,i) must be true.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    myErrorMsg = fcnName + ": kijT binaries are imbalanced. The condition KijT(i,j) = KijT(j,i) must be true.";
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
             }
             if (kij0.length - 1 === dataSet[0][idx.iSpecies] && kij0[0].length - 1 === dataSet[0][idx.iSpecies]) {
@@ -709,12 +686,12 @@ function calculate_binaries(dataSet, tempK, kij0, kijT, passed_aiArray, deComp) 
                 }
             }
             else {
-                myErrorMsg = "Binary array must be a two dimensional array with each dimension equal to the number of species.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                myErrorMsg = fcnName + ": Binary array must be a two dimensional array with each dimension equal to the number of species.";
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         if (dataSet[0][idx.predictive] && !deComp) {
-            dataSet[0][idx.globalErrmsg] = "binariesUsed equals true but no decomposition is provided.";
+            dataSet[0][idx.globalErrmsg] = fcnName + ": binariesUsed equals true but no decomposition is provided.";
             binaries = [[-500], [-500]];
         }
         else {
@@ -733,24 +710,21 @@ function calculate_binaries(dataSet, tempK, kij0, kijT, passed_aiArray, deComp) 
     }
     catch (myErrorHandler) {
         dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
         return [[-500], [-500]];
     }
 }
 /******************************************************************** */
 function createPredictiveBinaries(dataSet, deComp, tempK, aiArray) {
+    var fcnName = "createPredictiveBinaries";
     // @customfunction
     try {
         var array_1to17 = [];
         var array_18to31 = [];
-        var array_28to31 = [];
         var grpInteractionParamA = [];
         var grpInteractionParamB = [];
-        var tempArray = [];
         var DoubleSum = [];
         var binaries = [];
         var myErrorMsg = "";
-        var fcnName = "createPredictiveBinaries";
         var currentNumberOfGroups_1 = 31; // as of 2017, includes O2, SO2 and NO groups
         grpInteractionParamA = initial2D_Array(currentNumberOfGroups_1, currentNumberOfGroups_1);
         grpInteractionParamB = initial2D_Array(currentNumberOfGroups_1, currentNumberOfGroups_1);
@@ -758,7 +732,7 @@ function createPredictiveBinaries(dataSet, deComp, tempK, aiArray) {
         binaries = initial2D_Array(dataSet[0][idx.iSpecies], dataSet[0][idx.iSpecies]);
         if (deComp.length !== dataSet[0][idx.iSpecies] || deComp[1].length !== currentNumberOfGroups_1) {
             myErrorMsg = "The supplied decomposition range row count must equal the number of species and the column count must equal 31 groups plus 1 for the species column.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         array_1to17 = [
             [0, 65.54, 214.9, 431.6, 28.48, 3.775, 98.83, 103.6, 624.9, 43.58, 293.4, 144.8, 38.09, 159.6, 789.6, 3557, 7.892, 48.73, 102.6, 47.01, 174, 91.24, 416.3, 11.27, 322.2, 86.1, 0, 0, 0, 0, 0],
@@ -881,8 +855,7 @@ function createPredictiveBinaries(dataSet, deComp, tempK, aiArray) {
         return binaries;
     }
     catch (myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
         return [[-500], [-500]];
     }
 }
@@ -917,13 +890,13 @@ function calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesU
         alpha_aiArray = create_alphaiArray(dataSet, tempK);
         if (alpha_aiArray[0] === -500) {
             myErrorMsg = "create_alphaiArray returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         if (passed_aiArray[0] === -500) {
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if (aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         else {
@@ -933,37 +906,37 @@ function calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesU
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if (aij_Array[0][0] === -500) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
         if (sum_a === 0) {
             myErrorMsg = "calculate_sum_a returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         sum_b = calculate_sum_b(dataSet, moleComp);
         if (sum_b === 0) {
             myErrorMsg = "calculate_sum_b returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         a = calculate_A(dataSet, sum_a, tempK, pBara);
         if (a === 0) {
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         b = calculate_B(dataSet, sum_b, tempK, pBara);
         if (b === 0) {
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         Z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
         if (Z === -500) {
             myErrorMsg = "calculate_EOS_Root returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         vol = Z * gasLawR * tempK / pBara;
         if (Math.abs(vol - b) < Math.pow(10, -35)) {
             myErrorMsg = "The term 'volume - b' is too close to zero. Check phase.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         dadT_V = calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray);
         if ((vol * (vol + sum_b) + sum_b * (vol - sum_b)) !== 0) {
@@ -972,7 +945,7 @@ function calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesU
         else {
             dPdv_T = 0;
             myErrorMsg = "The term '(vol * (vol + sum_b) + sum_b * (vol - sum_b))' equals zero. dPdv_T cannot be calculated. The phase must be vapor.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         if ((vol * (vol + sum_b) + sum_b * (vol - sum_b)) !== 0 && (vol - sum_b) !== 0) {
             dPdT_V = ((gasLawR / (vol - sum_b)) - (dadT_V / (vol * (vol + sum_b) + sum_b * (vol - sum_b))));
@@ -980,7 +953,7 @@ function calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesU
         else {
             dPdT_V = 0;
             myErrorMsg = "The term '(vol * (vol + sum_b) + sum_b * (vol - sum_b))' or '(vol - sum_b)' equal zero. dPdT_V cannot be calculated. The phase must be vapor.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         dadT_P = pBara * (dadT_V - ((2 * sum_a) / tempK)) / (Math.pow(gasLawR, 2) * Math.pow(tempK, 2));
         dBdT_P = -sum_b * pBara / (gasLawR * Math.pow(tempK, 2));
@@ -990,7 +963,7 @@ function calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesU
         else {
             dZdT_P = 0;
             myErrorMsg = "The term '(3 * z ** 2 + 2 * (B - 1) * z + (A - 2 * B - 3 * B ** 2))' equals zero. dZdT_P cannot be calculated. Check phase.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         dVdT_P = (gasLawR / pBara) * (tempK * (dZdT_P) + Z);
         outputArray[idx.dadT_constV] = dadT_V;
@@ -1010,7 +983,6 @@ function calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesU
     }
     catch (myErrorHandler) {
         dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
         var outputArray = [-500]; //'<= Error flag
         return outputArray;
     }
@@ -1037,7 +1009,6 @@ function validateDataSet(dataRange, phase, cpDataRequired, binariesUsed, errorMs
         var fcnName = "validateDataSet";
         var liquidSpeciesFound = false;
         var liquidIndex = 0;
-        var validHeaders = false;
         inputArray = dataRange.slice(0);
         //First row of dataSet should have these labels after addition of S298 and Gf298. Using them for error checking.
         columnHeaders = ["(MW)", "(TC, K)", "(PC, bara)", "(OMEGA)", "(ZC)", "k(i)", "b(i)", "(TB, K)", "(Hvap, kJ/kg-mole)", "(Hf298, kJ/g-mole)", "(S298, J/g-mole/K)",
@@ -1050,17 +1021,15 @@ function validateDataSet(dataRange, phase, cpDataRequired, binariesUsed, errorMs
         for (var i = 1; i < inputArray.length; i++) {
             if (inputArray[i].length - 1 !== columnHeaders.length) {
                 myErrorMsg = "The input dataSet must be a range containing " + (columnHeaders.length + 1) + " columns. Species number " + i + " contains " + dataRange[i].length + " columns.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         for (var i = 0; i < columnHeaders.length; i++) {
             if (columnHeaders[i] === inputArray[0][i + 1]) {
-                validHeaders = true;
             }
             else {
-                validHeaders = false;
                 myErrorMsg = "DataSet headers are incorrect: " + columnHeaders[i] + " NOT EQUAL TO " + inputArray[0][i + 1];
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         for (var i = 0; i < inputArray.length; i++) {
@@ -1071,7 +1040,7 @@ function validateDataSet(dataRange, phase, cpDataRequired, binariesUsed, errorMs
                 }
                 else {
                     myErrorMsg = "Liquid species found in wrong position of dataSet.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
             }
         }
@@ -1085,7 +1054,7 @@ function validateDataSet(dataRange, phase, cpDataRequired, binariesUsed, errorMs
             }
             else {
                 myErrorMsg = "Phase is liquid but liquid keyword in dataSet not found."; //<=Need liquid and vapor species. If not present need to bail.
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         if (phase.toLowerCase() === "vapor" || cpDataRequired === false) {
@@ -1113,7 +1082,7 @@ function validateDataSet(dataRange, phase, cpDataRequired, binariesUsed, errorMs
         if (phase.toLowerCase() === "liquid" && cpDataRequired === true) {
             if (liquidSpeciesFound === false) {
                 myErrorMsg = "Provided phase is liquid but liquid keyword in first column of dataSet not found."; //<=Need liquid and vapor species. If not present need to bail.
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         var m = 0;
@@ -1175,7 +1144,7 @@ function validateDataSet(dataRange, phase, cpDataRequired, binariesUsed, errorMs
         return outputArray;
     }
     catch (myErrorHandler) {
-        return [[myErrorHandler, -500], [-500, -500]];
+        return [[myErrorHandler.message], [0]];
     } // catch end
 }
 /*******************************************************************************/
@@ -1187,7 +1156,6 @@ function validateMoles(dataSet, moles, arraySize) {
     '***************************************************************************/
     try {
         var totalMoles = void 0;
-        var inputArrayBaseOne = [];
         var inputMoles = [];
         var inputFractions = [];
         var outputArray = [];
@@ -1196,7 +1164,7 @@ function validateMoles(dataSet, moles, arraySize) {
         var fcnName = "validateMoles";
         if (arraySize[2] !== false && arraySize[2] !== 1) {
             myErrorMsg = "The moles parameter must be either a range of values or the number 1 indicating a pure component dataSet containing a single component with or without a liquid phase.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         else {
             if (dataSet[0][idx.iSpecies] === 1) { //'<= For the case a single species dataSet allowing for mole composition = 1
@@ -1207,14 +1175,14 @@ function validateMoles(dataSet, moles, arraySize) {
         //'=================== Validate Moles and calculate mole fractions
         if (moles.length !== dataSet[0][idx.iSpecies]) {
             myErrorMsg = "Number of species does not equal the number of mole amounts!";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         else {
             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                 inputMoles.push(0);
                 if (typeof (moles[i]) === "string" || typeof (moles[i]) === "boolean") {
                     myErrorMsg = "Some mole amounts are not numbers.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 else if (moles[i] === "" || typeof (moles[i]) === null) {
                     inputMoles[i] = 0;
@@ -1225,7 +1193,7 @@ function validateMoles(dataSet, moles, arraySize) {
             }
             if (inputMoles[0] < 0) {
                 myErrorMsg = "Mole amount is less than or equal to zero.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             else {
                 if (inputMoles.length === 1 && inputMoles[0] === 1) {
@@ -1240,12 +1208,12 @@ function validateMoles(dataSet, moles, arraySize) {
                         }
                         else {
                             myErrorMsg = "Some moles amounts are not numeric!";
-                            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                            throw new Error(fcnName + ": " + myErrorMsg);
                         }
                     }
                     else {
                         "Some moles amounts are not numeric!";
-                        throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                        throw new Error(fcnName + ": " + myErrorMsg);
                     }
                 }
                 moleFractionSum = 0;
@@ -1257,11 +1225,11 @@ function validateMoles(dataSet, moles, arraySize) {
                 }
                 else {
                     myErrorMsg = "No moles amounts or all amounts are zero.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 if (moleFractionSum > 1.00000000001 || 0.99999999999 > moleFractionSum) {
                     myErrorMsg = "Mole fractions do not add up to one.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
             }
         }
@@ -1270,7 +1238,6 @@ function validateMoles(dataSet, moles, arraySize) {
     } // try end
     catch (myErrorHandler) {
         dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
-        ;
         return [-500];
     } // catch end
 }
@@ -1289,7 +1256,6 @@ function calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, 
         var Z = void 0;
         var alpha_aiArray = [];
         var aiArray = [];
-        var bi_Array = [];
         var aij_Array = [];
         var sum_a = void 0;
         var sum_b = void 0;
@@ -1299,12 +1265,12 @@ function calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, 
             alpha_aiArray = create_alphaiArray(dataSet, tempK);
             if (alpha_aiArray[0] === -500) {
                 myErrorMsg = "create_alphaiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if (aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         else {
@@ -1314,32 +1280,32 @@ function calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, 
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if (aij_Array[0][0] === -500) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
         if (sum_a === -500) {
             myErrorMsg = "calculate_sum_a returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         sum_b = calculate_sum_b(dataSet, moleComp);
         if (sum_b === -500) {
             myErrorMsg = "calculate_sum_b returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         a = calculate_A(dataSet, sum_a, tempK, pBara);
         if (a === -500) {
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         b = calculate_B(dataSet, sum_b, tempK, pBara);
         if (b === -500) {
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         Z = findCubicRoots_js_1.getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b, (-a * b + Math.pow(b, 2) + Math.pow(b, 3)), phase);
         if (Z === -500) {
             myErrorMsg = "calculate_EOS_Root returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function   
         return Z;
@@ -1358,10 +1324,8 @@ function calculate_Phi(dataSet, phase, moleComp, tempK, pBara, binariesUsed, pas
         'This function is called by all of the PR1978 functions
         'This function calculates the PR1978 EOS fugacity coefficients
         '***************************************************************************/
-        var errorTest = void 0;
         var alpha_aiArray = [];
         var aiArray = [];
-        var bi_Array = [];
         var aij_Array = [];
         var xi_aijArray = [];
         var Phi = [];
@@ -1374,12 +1338,12 @@ function calculate_Phi(dataSet, phase, moleComp, tempK, pBara, binariesUsed, pas
             alpha_aiArray = create_alphaiArray(dataSet, tempK);
             if (alpha_aiArray[0] === -500) {
                 myErrorMsg = "create_alphaiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if (aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         else {
@@ -1389,45 +1353,45 @@ function calculate_Phi(dataSet, phase, moleComp, tempK, pBara, binariesUsed, pas
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if (aij_Array[0][0] === -500) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         var sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
         var sum_b = calculate_sum_b(dataSet, moleComp);
         if (sum_b === 0) {
             myErrorMsg = "sum_b is zero and it will cause a divide by zero in the Phi() function.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         var a = calculate_A(dataSet, sum_a, tempK, pBara);
         var b = calculate_B(dataSet, sum_b, tempK, pBara);
         var Z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
         if (Z - b < 0) {
             myErrorMsg = "the term z - B is less than zero. Check supplied Phase.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         xi_aijArray = create_xi_aijArray(dataSet, aij_Array, moleComp);
         if ((Z + (Math.pow(2, 0.5) + 1) * b) / (Z - (Math.pow(2, 0.5) - 1) * b) < 0) {
             myErrorMsg = "Check supplied Phase. The term ((z + (2 ** 0.5 + 1) * B) / (z - (2 ** 0.5 - 1) * B)) is less than zero. This will cause and error in the ln() function of the Phi() expression.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         var logTerm = ((Z + (Math.pow(2, 0.5) + 1) * b) / (Z - (Math.pow(2, 0.5) - 1) * b));
         if (logTerm === 0 || logTerm < 0) {
             myErrorMsg = "The log term of the phi formula is less then or equal to zero. Check supplied Phase.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         if (logTerm === NaN || logTerm === undefined || logTerm === -Infinity) {
             myErrorMsg = "The Phi() function attemped to take the ln() of zero or a negative number. Check supplied Phase.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         logTerm = Math.log(logTerm);
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             var tempPhi = ((sum_a / (gasLawR * tempK * sum_b * 2 * Math.pow(2, 0.5))) * ((2 * xi_aijArray[i] / sum_a) - (dataSet[i][idx.bi] / sum_b)) * logTerm);
             if (Phi[i] === NaN || Phi[i] === undefined) {
                 myErrorMsg = "The Phi() function attemped to take the ln() of a negative number. Check supplied Phase.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             else if (Phi[i] === -Infinity) {
                 myErrorMsg = "sum_b or (z - (2 ** 0.5 - 1) * B) equal zero. Divide by zero error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             tempPhi = (dataSet[i][idx.bi] / sum_b) * (Z - 1) - Math.log(Z - b) - tempPhi;
             Phi[i] = Math.exp(tempPhi);
@@ -1531,7 +1495,7 @@ function selectCpDataRanges(dataSet, tempK, Phase) {
         if (Phase === "liquid") {
             if (dataSet[0][idx.liquidIndex] !== (dataSet.length) / 2) {
                 myErrorMsg = "First liquid species in wrong position of dataSet.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             g_Liq = ((dataSet.length) / 2) - 1; // '<= The g_Liq iterator is for(the liquid species
             for (var i_Vap = 0; i_Vap <= ((dataSet.length) / 2) - 1; i_Vap++) { //'<= The i_Vap iterator is for(the vapor species
@@ -1627,6 +1591,7 @@ function selectCpDataRanges(dataSet, tempK, Phase) {
 }
 /***************************************************************************** */
 function calculate_Wilson_K(dataSet, tempK, pBara) {
+    var fcnName = "calculate_Wilson_K";
     // @customfunction
     try {
         /***************************************************************************
@@ -1639,7 +1604,6 @@ function calculate_Wilson_K(dataSet, tempK, pBara) {
         'and the pressure in bara. It returns a one dimensional array.*/
         var outputArray = [];
         var myErrorMsg = "";
-        var fcnName = "calculate_Wilson_K";
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             outputArray.push(Math.exp((5.37 * (1 + dataSet[i][idx.omega])) * (1 - dataSet[i][idx.tc] / tempK)) / (pBara / dataSet[i][idx.pc]));
         }
@@ -1647,7 +1611,7 @@ function calculate_Wilson_K(dataSet, tempK, pBara) {
         return outputArray;
     }
     catch (myErrorHandler) {
-        return myErrorHandler.message;
+        dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorHandler.message;
     }
 }
 /************************************************************************** */
@@ -1669,7 +1633,6 @@ function calculate_T_BubDew_Est(dataRange, pressure, moles, dewOrBub, errMsgsOn,
         var T_Lo = 0;
         var T_Hi = 0;
         var T_New = 0;
-        var T_NBP = 0;
         var y_Sum_Lo = 0;
         var y_Sum_Hi = 0;
         var y_Sum = 0;
@@ -1677,25 +1640,15 @@ function calculate_T_BubDew_Est(dataRange, pressure, moles, dewOrBub, errMsgsOn,
         var x_Sum_Hi = 0;
         var x_Sum = 0;
         var Ki = [];
-        var outputArray = [];
         var T_Dew_Est = 0;
         var T_Bub_Est = 0;
         var Counter = 0;
-        var T_Bub_RoughEst_Temp = 0;
-        var T_Dew_RoughEst_Temp = 0;
         var BubTempFound = false;
         var DewTempFound = false;
         var myErrorMsg = "";
         var inputDataArray = [];
         var pBara = 0;
         var moleComp = [];
-        var binariesUsed = false;
-        var errorMsgsOn = false;
-        var alpha_aiArray = [];
-        var aiArray = [];
-        var kij0Array = [];
-        var kijTArray = [];
-        var decompArray = [];
         var dataSet = [];
         var fcnName = "calculate_T_BubDew_Est";
         if (typeof (dewOrBub) === "object" && dewOrBub.length !== "undefined") {
@@ -1726,22 +1679,19 @@ function calculate_T_BubDew_Est(dataRange, pressure, moles, dewOrBub, errMsgsOn,
             dataSet = inputDataArray[idx.datasetArray];
             if (typeof (dataSet[0]) === "string") {
                 myErrorMsg = dataSet[0].toString();
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             if (dataSet[0][idx.globalErrmsg] !== "") {
                 myErrorMsg = dataSet[0].toString();
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
             moleComp = inputDataArray[idx.moleCompArray];
-            binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-            errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
         }
         else {
             dataSet = passedDataSet.slice(0);
             pBara = passedPressure;
             moleComp = passedMoleComp.slice(0);
-            errorMsgsOn = false;
         }
         for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
             Ki.push(0);
@@ -1750,17 +1700,16 @@ function calculate_T_BubDew_Est(dataRange, pressure, moles, dewOrBub, errMsgsOn,
             T_Bub_Est = T_Bub_Est + moleComp[i] * dataSet[i][idx.tc];
         }
         T_Bub_Est = T_Bub_Est * 0.7;
-        T_Bub_RoughEst_Temp = T_Bub_Est;
         while (BubTempFound === false) {
             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                 if (T_Bub_Est === 0 && dataSet[i][idx.tb] >= 0 && dataSet[i][idx.tc] === 0 || pBara === 0 || (1 / dataSet[i][idx.tc] - 1 / dataSet[i][idx.tb]) === 0) {
                     myErrorMsg = "Species " + i + " error: The supplied pressure or critical temperature equals zero or there is a problem with the species boiling point.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 Ki[i] = (Math.pow(dataSet[i][idx.pc], (((1 / T_Bub_Est - 1 / dataSet[i][idx.tb]) / ((1 / dataSet[i][idx.tc]) - (1 / dataSet[i][idx.tb]))))) / pBara);
                 if (Ki[i] === Infinity) {
                     myErrorMsg = "Overflow error. Tried to divided a number by a very small number in Ki estimate calc found in LSU/FAM Dew & Bubble T paper.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
             }
             y_Sum = 0;
@@ -1793,12 +1742,11 @@ function calculate_T_BubDew_Est(dataRange, pressure, moles, dewOrBub, errMsgsOn,
             T_Bub_Est = T_New;
             if (Counter === 1000) {
                 myErrorMsg = "Counter is 100 iterations.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         } // loop
         Counter = 0;
         T_Dew_Est = 1.1 * T_Bub_Est;
-        T_Dew_RoughEst_Temp = T_Dew_Est;
         T_Lo = 0;
         T_Hi = 0;
         while (DewTempFound === false) {
@@ -1835,7 +1783,7 @@ function calculate_T_BubDew_Est(dataRange, pressure, moles, dewOrBub, errMsgsOn,
             T_Dew_Est = T_New;
             if (Counter === 1000) {
                 myErrorMsg = "More than 100 iterations!";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         } // loop
         dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorMsg;
@@ -1900,21 +1848,15 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
     // @customfunction
     try {
         var myErrorMsg = "";
-        var datasetErrMsgsOn = false;
         var fcnName = "validateData";
-        var decompArray = [];
-        var kij0Array = [];
-        var kijTArray = [];
         var alpha_aiArray = [];
         var aiArray = [];
         var dataSet = [];
         var moleComp = [];
-        var errorSum = 0;
         var tempK = 0;
         var pBara = 0;
         var phase = "";
         var outputArray = [];
-        var sumTest = 0;
         var returnWarnings = false;
         var kij0_kijT_deComp_Array = [];
         var arraySizes = [];
@@ -1922,7 +1864,6 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         var guessedTempK = 0;
         var tempC = 0;
         var guessedTempC = 0;
-        var inputArrayTest = [];
         var index = void 0;
         (function (index) {
             index[index["arrayTest"] = 0] = "arrayTest";
@@ -1972,7 +1913,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }
             else if (typeof (arraySizes[currIndex][2 /* Dim2TestORlength2 */]) === "number") {
                 if (Number(arraySizes[currIndex][2 /* Dim2TestORlength2 */] > 1)) {
-                    myErrorMsg = "The supplied phase and must be a string or a single cell reference to a string of 'vapor' or 'liquid'.";
+                    myErrorMsg = fcnName + ": The supplied phase and must be a string or a single cell reference to a string equal to 'vapor' or 'liquid'.";
                     return [[], [myErrorMsg]];
                 }
             }
@@ -1984,7 +1925,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             phase = inputArray[currIndex].toString().toLowerCase();
         }
         if (phase !== "liquid" && phase !== "vapor") {
-            myErrorMsg = "The supplied phase (" + phase + ") and must be a string or a single cell reference equal to vapor or liquid.";
+            myErrorMsg = fcnName + ": The supplied phase (" + phase + ") and must be a string or a single cell reference equal to vapor or liquid.";
             return [[], [myErrorMsg]];
         }
         currIndex = inputArrayNames.indexOf("binariesUsed");
@@ -1994,7 +1935,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }
             else if (typeof (arraySizes[currIndex][2 /* Dim2TestORlength2 */]) === "number") {
                 if (Number(arraySizes[currIndex][2 /* Dim2TestORlength2 */] > 1)) {
-                    myErrorMsg = "The supplied parameter 'binariesUsed' (" + binariesUsed + ") and must be an expression  or a single cell reference to an expression that evaluates to true or false.";
+                    myErrorMsg = fcnName + ": The supplied parameter 'binariesUsed' (" + binariesUsed + ") and must be an expression  or a single cell reference to an expression that evaluates to true or false.";
                     return [[], [myErrorMsg]];
                 }
             }
@@ -2015,7 +1956,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             binariesUsed = false;
         }
         else {
-            myErrorMsg = "The supplied parameter 'binariesUsed' (" + binariesUsed + ") and must be an expression  or a single cell reference to an expression that evaluates to true or false.";
+            myErrorMsg = fcnName + ": The supplied parameter 'binariesUsed' (" + binariesUsed + ") and must be an expression  or a single cell reference to an expression that evaluates to true or false.";
             return [[], [myErrorMsg]];
         }
         ;
@@ -2026,7 +1967,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }
             else if (typeof (arraySizes[currIndex][2 /* Dim2TestORlength2 */]) === "number") {
                 if (Number(arraySizes[currIndex][2 /* Dim2TestORlength2 */] > 1)) {
-                    myErrorMsg = "The supplied parameter 'errorMsgsOn' (" + errorMsgsOn + ") and must be an expression or a single cell reference to an expression that evaluates to true or false.";
+                    myErrorMsg = fcnName + ": The supplied parameter 'errorMsgsOn' (" + errorMsgsOn + ") and must be an expression or a single cell reference to an expression that evaluates to true or false.";
                     return [[], [myErrorMsg]];
                 }
             }
@@ -2047,7 +1988,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             errorMsgsOn = false;
         }
         else {
-            myErrorMsg = "The supplied parameter 'errorMsgsOn' (" + errorMsgsOn + ") and must be an expression or a single cell reference to an expression that evaluates to true or false.";
+            myErrorMsg = fcnName + ": The supplied parameter 'errorMsgsOn' (" + errorMsgsOn + ") and must be an expression or a single cell reference to an expression that evaluates to true or false.";
             return [[], [myErrorMsg]];
         }
         ;
@@ -2056,7 +1997,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             dataSet = validateDataSet(dataRange, phase, CpDataRequired, binariesUsed, errorMsgsOn);
         }
         else {
-            myErrorMsg = "The supplied dataSet range must contain " + idx.NIST_H6 + " columns. The first column contains the specie names. The top row contains the column header labels. The row count equals the number of species plus one for the header row for vapors. For liquids the row count equal twice the number of species plus two rows (one for the column headers and one for the liquid phase label).";
+            myErrorMsg = fcnName + ": The supplied dataSet range must contain " + idx.NIST_H6 + " columns. The first column contains the specie names. The top row contains the column header labels. The row count equals the number of species plus one for the header row for vapors. For liquids the row count equal twice the number of species plus two rows (one for the column headers and one for the liquid phase label).";
             return [[], [myErrorMsg]];
         }
         if (typeof (dataSet[0][0]) === "string") {
@@ -2064,6 +2005,10 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             return dataSet;
         }
         ;
+        if (phase === "liquid" && dataSet[0][idx.liquidsFound] === false) {
+            myErrorMsg = fcnName + ": The supplied phase is (liquid) but no liquids are found in the dataSet.";
+            return [[], [myErrorMsg]];
+        }
         currIndex = inputArrayNames.indexOf("moles");
         moleComp = (validateMoles(dataSet, moles, arraySizes[currIndex]));
         if (moleComp[0] === -500) {
@@ -2079,7 +2024,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }
             else if (typeof (arraySizes[currIndex][2 /* Dim2TestORlength2 */]) === "number") {
                 if (Number(arraySizes[currIndex][2 /* Dim2TestORlength2 */] > 1)) {
-                    myErrorMsg = "The supplied temperature (" + temperature + ") must be either a number or a reference to a single cell containing a number. ";
+                    myErrorMsg = fcnName + ": The supplied temperature (" + temperature + ") must be either a number or a reference to a single cell containing a number. ";
                     return [[], [myErrorMsg]];
                 }
                 else {
@@ -2096,7 +2041,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 tempK = tempC + 273.15;
             }
             else {
-                myErrorMsg = "The supplied temperature (" + tempC + ") must be either a number or a reference to a single cell containing a number. ";
+                myErrorMsg = fcnName + ": The supplied temperature (" + tempC + ") must be either a number or a reference to a single cell containing a number. ";
                 return [[], [myErrorMsg]];
             }
         }
@@ -2111,7 +2056,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }
             else if (typeof (arraySizes[currIndex][2 /* Dim2TestORlength2 */]) === "number") {
                 if (Number(arraySizes[currIndex][2 /* Dim2TestORlength2 */] > 1)) {
-                    myErrorMsg = "The supplied initialization temperature (" + guessedTemp + ") must be either a number or a reference to a single cell containing a number. ";
+                    myErrorMsg = fcnName + ": The supplied initialization temperature (" + guessedTemp + ") must be either a number or a reference to a single cell containing a number. ";
                     return [[], [myErrorMsg]];
                 }
             }
@@ -2128,7 +2073,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 guessedTempK = guessedTempC + 273.15;
             }
             else {
-                myErrorMsg = "The supplied initialization temperature (" + guessedTempC + ")must be either a number or a reference to a single cell containing a number. ";
+                myErrorMsg = fcnName + ": The supplied initialization temperature (" + guessedTempC + ")must be either a number or a reference to a single cell containing a number. ";
                 return [[], [myErrorMsg]];
             }
             ;
@@ -2144,7 +2089,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }
             else if (typeof (arraySizes[currIndex][2 /* Dim2TestORlength2 */]) === "number") {
                 if (Number(arraySizes[currIndex][2 /* Dim2TestORlength2 */] > 1)) {
-                    myErrorMsg = "The supplied pressure (" + pressure + ") must be either a number or a reference to a single cell containing a number. ";
+                    myErrorMsg = fcnName + ": The supplied pressure (" + pressure + ") must be either a number or a reference to a single cell containing a number. ";
                     return [[], [myErrorMsg]];
                 }
             }
@@ -2160,7 +2105,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 pBara = Number(pressure);
             }
             else {
-                myErrorMsg = "The supplied pressure (" + pressure + ") must be either a number or a reference to a single cell containing a number greater than zero. ";
+                myErrorMsg = fcnName + ": The supplied pressure (" + pressure + ") must be either a number or a reference to a single cell containing a number greater than zero. ";
                 return [[], [myErrorMsg]];
             }
             ;
@@ -2168,10 +2113,15 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         else {
             pBara = pressure;
         }
-        currIndex = inputArrayNames.indexOf("kij0");
         if (binariesUsed) {
+            currIndex = inputArrayNames.indexOf("kij0");
             if (arraySizes[currIndex][0] === false && arraySizes[currIndex][2] === false && dataSet[0][idx.predictive] === false) {
-                myErrorMsg = "The supplied useBinaries parameter is true but no kij0 range is provided. ";
+                myErrorMsg = fcnName + ": The supplied useBinaries parameter is true but no kij0 range is provided. ";
+                return [[], [myErrorMsg]];
+            }
+            currIndex = inputArrayNames.indexOf("decomposition");
+            if (arraySizes[currIndex][0] === false && arraySizes[currIndex][2] === false && dataSet[0][idx.predictive] === true) {
+                myErrorMsg = fcnName + ": The supplied useBinaries parameter is true and predictive mode is on but no decomposition is provided. ";
                 return [[], [myErrorMsg]];
             }
             kij0_kijT_deComp_Array = validateBinariyArrays(dataSet, kij0, kijT, decomposition);
@@ -2242,67 +2192,53 @@ function Derivatives(dataRange, temperature, pressure, moles, useBinaries, kij0,
         /***************************************************************************
         'This function calculates the calculates the derivatives of the PR1978 EOS.
         '***************************************************************************/
-        var kij0_Array = [];
-        var kijT_Array = [];
-        var passedTempK = 0;
         var myErrorMsg = "";
         var fcnName = "Derivatives";
         var Phase = "vapor";
-        var CvIG = 0;
-        var CpIG = 0;
-        var cpRanges = [];
-        var CvResidual = 0;
-        var CpResidual = 0;
-        var d2aidT2Array = [];
-        var d2adT2 = 0;
-        var daidTArray = [];
-        var sum_b = 0;
         var outputArray = [];
         var binaries = [];
-        var datasetErrMsgsOn = false;
         var inputDataArray = [];
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
-        var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+        var errorTest = inputDataArray[0][0];
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
+        var dataSet = inputDataArray[idx.datasetArray];
         if (dataSet[0][idx.globalErrmsg] !== "") {
             myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (binariesUsed) {
             if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                 if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
         }
         if (tempK === -500 || pBara === -500 || phase === "-500" || moleComp[0] === -500) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (dataSet[0][idx.binariesUsed] === true) {
             if (validateBinariyArrays(dataSet, kij0, kijT, decomposition)) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             }
             if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
         }
         outputArray = calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesUsed, aiArray, binaries);
@@ -2336,6 +2272,7 @@ function derivativesUnits() {
         return myErrorHandler.message;
     }
 }
+exports.derivativesUnits = derivativesUnits;
 /***************************************************************************** */
 /**
 * Calculates the flash result given T (C), P (pbara), mole amounts and a dataSet.
@@ -2343,7 +2280,6 @@ function derivativesUnits() {
 * @customfunction
 */
 function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    if (errMsgsOn === void 0) { errMsgsOn = false; }
     // @customfunction
     try {
         /***************************************************************************
@@ -2364,9 +2300,6 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
         var SUMx = 0;
         var SUMy = 0;
         var tempC = 0;
-        var passedTempK = 0;
-        var kij0_Array = [];
-        var kijT_Array = [];
         var xi_Array = [];
         var yi_Array = [];
         var Ki = [];
@@ -2382,41 +2315,34 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
         var StreamCondition = "";
         var myErrorMsg = "";
         var fcnName = "FlashTP";
-        var dataSetErrMsgsOn = false;
         var VaporFractionFound = false;
         var EquilibriumFound = false;
         var localBinariesUseds = false;
         var inputDataArray = [];
         inputDataArray = validateData(dataRange, temperature, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
+        var errorTest = inputDataArray[0][0];
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
-        var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         localBinariesUseds = binariesUsed;
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (binariesUsed) {
             if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                 if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
@@ -2457,19 +2383,19 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                     Psi_New = (Psi_Old + 1) / 2;
                 }
                 if (Psi_New < Math.pow(10, -8) && Psi_New >= 0) {
-                    if (UsingDewOrBubbleFunction = false) {
+                    if (UsingDewOrBubbleFunction === false) {
                         UsingDewOrBubbleFunction = true;
                         DewBubKi = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true); //'<= Get Ki near Bubble point temperature ) { try again.
                         dataSet[0][idx.binariesUsed] = localBinariesUseds;
                         if (tempC <= DewBubKi[0] || DewBubKi[0] === -273.15) { //'DewBubKi[0] = bubble temperature, DewBubKi(1)...DewBubKi(n) are Ki's
                             StreamCondition = "At Or Below Bubble Point";
-                            if (DewBubKi[0] = -273.15) {
+                            if (DewBubKi[0] === -273.15) {
                                 myErrorMsg = "FlashTP bubble point test failed. Vapor fraction does not appear to exist.";
                             }
                             VaporFractionFound = true;
                             EquilibriumFound = true;
                         }
-                        if (StreamCondition = "") {
+                        if (StreamCondition === "") {
                             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) { // '<Flash with Wilson Ki initialization failed to converge so retry with Ki's from Dew or Bubble point calculation.
                                 if (moleComp[i] > Math.pow(10, -35)) {
                                     Ki[i] = moleComp[i] / DewBubKi[i + 2];
@@ -2487,19 +2413,19 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                     }
                 }
                 if (1 - Psi_New < Math.pow(10, -8) && Psi_New <= 1) {
-                    if (UsingDewOrBubbleFunction = false) {
+                    if (UsingDewOrBubbleFunction === false) {
                         UsingDewOrBubbleFunction = true;
                         DewBubKi = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true); //'<= Get Ki near Dew point temperature ) { try again.
                         dataSet[0][idx.binariesUsed] = localBinariesUseds;
                         if (tempC >= DewBubKi[0] || DewBubKi[0] === -273.15) { //'DewBubKi[0] = dew temperature, DewBubKi(1)...DewBubKi(n) are Ki's
                             StreamCondition = "At or Above Dew Point";
-                            if (DewBubKi[0] = -273.15) {
+                            if (DewBubKi[0] === -273.15) {
                                 myErrorMsg = "FlashTP dew point test failed. Liquid phase does not appear to exist.";
                             }
                             VaporFractionFound = true;
                             EquilibriumFound = true;
                         }
-                        if (StreamCondition = "") {
+                        if (StreamCondition === "") {
                             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) { //'<Flash with Wilson Ki initialization failed to converge so retry with Ki's from Dew or Bubble point calculation.
                                 if (moleComp[i] > Math.pow(10, -35)) {
                                     Ki[i] = moleComp[i] / DewBubKi[i + 2];
@@ -2522,7 +2448,7 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                 Counter1 = Counter1 + 1;
                 if (Counter1 + 1 > CounterLimit1) {
                     myErrorMsg = "Flash failed to converge. Too many iterations in Psi calculation.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
             } //loop
             VaporFractionFound = false;
@@ -2548,7 +2474,7 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                 FugacityCheck = 0;
                 Phi_Vap = calculate_Phi(dataSet, "vapor", yi_Array, tempK, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Vap[dataSet[0][idx.iSpecies] + 1] === -500) {
-                    if (UsingDewOrBubbleFunction = false) {
+                    if (UsingDewOrBubbleFunction === false) {
                         dewTemp = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
                         dataSet[0][idx.binariesUsed] = localBinariesUseds;
                         bubTemp = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
@@ -2565,15 +2491,15 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                                 EquilibriumFound = true;
                             }
                         }
-                        if (StreamCondition = "") {
+                        if (StreamCondition === "") {
                             myErrorMsg = "Flash failed to converge. Error returned from calculate_Phi.";
-                            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                            throw new Error(fcnName + ": " + myErrorMsg);
                         }
                     }
                 }
                 Phi_Liq = calculate_Phi(dataSet, "liquid", xi_Array, tempK, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Liq[dataSet[0][idx.iSpecies] + 1] === -500) {
-                    if (UsingDewOrBubbleFunction = false) {
+                    if (UsingDewOrBubbleFunction === false) {
                         dewTemp = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
                         dataSet[0][idx.binariesUsed] = localBinariesUseds;
                         bubTemp = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
@@ -2595,9 +2521,9 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                             }
                         }
                     }
-                    if (StreamCondition = "") {
+                    if (StreamCondition === "") {
                         myErrorMsg = "Flash failed to converge. An error returned from calculate_Phi.";
-                        throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                        throw new Error(fcnName + ": " + myErrorMsg);
                     }
                 }
                 if (StreamCondition === "") {
@@ -2633,14 +2559,14 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
             Counter2 = Counter2 + 1;
             if (Counter2 + 1 > CounterLimit2) {
                 myErrorMsg = "Flash failed to converge. Too many iterations in main flash loop.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         } // loop
         if (StreamCondition === "") {
             if (myErrorMsg === "") {
                 myErrorMsg = "FlashTP failed to converge'";
             }
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         if (StreamCondition === "Vapor and liquid phases exist.") {
             outputArray[0] = Psi_New;
@@ -2657,7 +2583,7 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                 outputArray[i + 1] = 0;
             }
             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
-                outputArray[i + 2 + dataSet[0][idx.iSpecies]] = moleComp[i];
+                outputArray[i + 1 + dataSet[0][idx.iSpecies]] = moleComp[i];
             }
         }
         if (StreamCondition === "At or Above Dew Point") {
@@ -2666,7 +2592,7 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
                 outputArray[i + 1] = moleComp[i];
             }
             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
-                outputArray[i + 2 + dataSet[0][idx.iSpecies]] = 0;
+                outputArray[i + 1 + dataSet[0][idx.iSpecies]] = 0;
             }
         }
         return outputArray;
@@ -2689,9 +2615,6 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
         /***************************************************************************
         'This function calculates the PR1978 EOS bubble point.
         '***************************************************************************/
-        var UsingWilson = false;
-        var Iter1 = 0;
-        var Iter2 = 0;
         var HiLoTemp_Count = 0;
         var Upper_yi_Bub_Count = 0;
         var TBub_Count = 0;
@@ -2704,10 +2627,8 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
         var T_Low = 0;
         var T_Hi = 0;
         var T_New = 0;
-        var T_Bub_Est = 0;
         var yi_Initial_Sum = 0;
         var T_Bub = 0;
-        var LiquidFugacity = 0;
         var FugacityTest = 0;
         var Ki = [];
         var xi_Array = [];
@@ -2721,26 +2642,20 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
         var outputArray = [];
         var myErrorMsg = "";
         var fcnName = "BubbleT";
-        var datasetErrMsgsOn = false;
         var yiBub_Equals_yiOld = false;
         var HiAndLoTempsFound = false;
         var BubT_Found = false;
-        var passedTempK = 0;
         var binaries = [];
         var initialTempC = 0;
         var inputDataArray = [];
         inputDataArray = validateData(dataRange, -500, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, Guess, false);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
-        var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
         var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
         var guess = inputDataArray[idx.valuesArray][idx.guessT].valueOf();
@@ -2751,7 +2666,7 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (pBara === -500 || moleComp[0] === -500) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         Upper_yi_Bub_Count = 0;
         TBub_Count = 0;
@@ -2777,7 +2692,7 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
             else {
                 T_Bub = 0;
                 myErrorMsg = "Calculate_T_BubDew_Est calculation failed to provide bubble T estimate.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         yi_Initial_Sum = 0;
@@ -2793,7 +2708,7 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
             HiLoTemp_Count = HiLoTemp_Count + 1;
             if (HiLoTemp_Count > 2000) {
                 myErrorMsg = "HiLoTemp_Count > 2000.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                 yi_Bub[i] = moleComp[i] * Ki_Old[i];
@@ -2802,7 +2717,7 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
                 Upper_yi_Bub_Count = Upper_yi_Bub_Count + 1;
                 if (Upper_yi_Bub_Count > 2000) {
                     myErrorMsg = "Upper_yi_Bub_Count > " + Upper_yi_Bub_Count;
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                     yi_Old[i] = yi_Bub[i].valueOf();
@@ -2819,18 +2734,18 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
                 if (dataSet[0][idx.binariesUsed] === true) {
                     binaries = calculate_binaries(dataSet, T_Bub, kij0Array, kijTArray, aiArray, decompArray);
                     if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                        throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                        throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                     }
                 }
                 Phi_Liq = calculate_Phi(dataSet, "liquid", moleComp, T_Bub, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Liq[dataSet[0][idx.iSpecies] + 1] === -500) {
                     myErrorMsg = "Liquid phase Phi error in inner upper loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 Phi_Vap = calculate_Phi(dataSet, "vapor", yi_Bub, T_Bub, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Vap[dataSet[0][idx.iSpecies] + 1] === -500) {
                     myErrorMsg = "Vapor phase Phi error in inner upper loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                     if (Phi_Vap[i] > Math.pow(10, -35)) {
@@ -2887,14 +2802,14 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
         if (dataSet[0][idx.binariesUsed] === true) {
             binaries = calculate_binaries(dataSet, T_Bub, kij0Array, kijTArray, aiArray, decompArray);
             if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
         }
         while (BubT_Found === false) {
             TBub_Count = TBub_Count + 1;
             if (TBub_Count === 2000) {
                 myErrorMsg = "Warning - DewT_Count > 2000.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             T_New = (T_Hi + T_Low) / 2;
             yiBub_Equals_yiOld = false;
@@ -2902,7 +2817,7 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
                 Lower_yi_Bub_Count = Lower_yi_Bub_Count + 1;
                 if (Lower_yi_Bub_Count > 2000) {
                     myErrorMsg = "Warning - Lower_xi_Dew_Count  > 2000.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                     yi_Old[i] = yi_Bub[i].valueOf();
@@ -2919,16 +2834,16 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
                 Phi_Liq = calculate_Phi(dataSet, "liquid", moleComp, T_New, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Liq[dataSet[0][idx.iSpecies] + 1] === -500) {
                     myErrorMsg = "Liquid phase Phi error in inner lower loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 Phi_Vap = calculate_Phi(dataSet, "vapor", yi_Bub, T_New, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Vap[dataSet[0][idx.iSpecies] + 1] === -500) {
                     myErrorMsg = "Vapor phase Phi error in inner lower loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 if (Math.abs(Phi_Vap[dataSet[0][idx.iSpecies]] - Phi_Liq[dataSet[0][idx.iSpecies]]) < Math.pow(10, -5)) {
                     myErrorMsg = "Trival solution convergence in lower inner loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                     if (Phi_Vap[i] > Math.pow(10, -35)) {
@@ -3017,8 +2932,6 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
         /***************************************************************************
         'This function calculates the PR1978 EOS dew point.
         '***************************************************************************/
-        var Iter1 = 0;
-        var Iter2 = 0;
         var HiLoTemp_Count = 0;
         var Upper_xi_Dew_Count = 0;
         var DewT_Count = 0;
@@ -3034,9 +2947,6 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
         var initialTempC = 0;
         var xi_Initial_Sum = 0;
         var T_Dew = 0;
-        var T_Dew_C = 0;
-        var T_Bub = 0;
-        var tempC = 0;
         var VaporFugacity = 0;
         var LiquidFugacity = 0;
         var FugacityTest = 0;
@@ -3047,28 +2957,23 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
         var xi_Array = [];
         var yi_Array = [];
         var Ki = [];
-        var passedTempK = 0;
         var Phi_Vap = [];
         var Phi_Liq = [];
         var outputArray = [];
         var myErrorMsg = "";
         var fcnName = "DewT";
-        var datasetErrMsgsOn = false;
         var xiDew_Equals_xiOld = false;
         var HiAndLoTempsFound = false;
         var DewT_Found = false;
         var binaries = [];
         var inputDataArray = [];
         inputDataArray = validateData(dataRange, -500, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, Guess, false);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var guess = inputDataArray[idx.valuesArray][idx.guessT].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
@@ -3080,10 +2985,10 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (pBara === -500 || moleComp[0] === -500) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (!inputDataArray[idx.valuesArray][idx.validBinaries] && binariesUsed) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         Upper_xi_Dew_Count = 0;
         DewT_Count = 0;
@@ -3109,7 +3014,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
             else {
                 T_Dew = 0;
                 myErrorMsg = "Calculate_T_BubDew_Est calculation failed to provide bubble T estimate.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         xi_Initial_Sum = 0;
@@ -3125,7 +3030,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
             HiLoTemp_Count = HiLoTemp_Count + 1;
             if (HiLoTemp_Count > 2000) {
                 myErrorMsg = "Warning: HiLoTemp_Count  > 2000.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                 xi_Dew[i] = moleComp[i] / Ki_Old[i];
@@ -3134,7 +3039,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
                 Upper_xi_Dew_Count = Upper_xi_Dew_Count + 1;
                 if (Upper_xi_Dew_Count > 2000) {
                     myErrorMsg = "Upper_xi_Dew_Count > 1000";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 xi_Old = xi_Dew.slice(0);
                 xi_Sum = 0;
@@ -3152,18 +3057,18 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
                 if (dataSet[0][idx.binariesUsed] === true) {
                     binaries = calculate_binaries(dataSet, T_Dew, kij0Array, kijTArray, aiArray, decompArray);
                     if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                        throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                        throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                     }
                 }
                 Phi_Liq = calculate_Phi(dataSet, "liquid", xi_Dew, T_Dew, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Liq[dataSet[0][idx.iSpecies] + 2] === -500) {
                     myErrorMsg = "Liquid phase Phi error in inner upper loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 Phi_Vap = calculate_Phi(dataSet, "vapor", moleComp, T_Dew, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Vap[dataSet[0][idx.iSpecies] + 2] === -500) {
                     myErrorMsg = "Vapor phase Phi error in inner upper loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                     if (Phi_Vap[i] > Math.pow(10, -35)) {
@@ -3219,7 +3124,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
         if (dataSet[0][idx.binariesUsed] === true) {
             binaries = calculate_binaries(dataSet, (T_Hi + T_Low) / 2, kij0Array, kijTArray, aiArray, decompArray);
             if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
         }
         while (DewT_Found === false) {
@@ -3227,7 +3132,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
             //console.log(`DewT_Count = ${DewT_Count}`)
             if (DewT_Count === 2000) {
                 myErrorMsg = "Warning - DewT_Count > 2000.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             T_New = (T_Hi + T_Low) / 2;
             for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -3238,7 +3143,7 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
                 Lower_xi_Dew_Count = Lower_xi_Dew_Count + 1;
                 if (Lower_xi_Dew_Count > 2000) {
                     myErrorMsg = "Warning - Lower_xi_Dew_Count  > 2000.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 xi_Old = xi_Dew.slice(0);
                 xi_Sum = 0;
@@ -3253,16 +3158,16 @@ function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition
                 Phi_Liq = calculate_Phi(dataSet, "liquid", xi_Dew, T_New, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Liq[dataSet[0][idx.iSpecies] + 2] === -500) {
                     myErrorMsg = "Liquid phase Phi error in inner lower loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 Phi_Vap = calculate_Phi(dataSet, "vapor", moleComp, T_New, pBara, binariesUsed, aiArray, binaries);
                 if (Phi_Vap[dataSet[0][idx.iSpecies] + 2] === -500) {
                     myErrorMsg = "Vapor phase Phi error in inner lower loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 if (Math.abs(Phi_Vap[dataSet[0][idx.iSpecies]] - Phi_Liq[dataSet[0][idx.iSpecies]]) < Math.pow(10, -5)) {
                     myErrorMsg = "Trival solution convergence in lower inner loop.";
-                    throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                    throw new Error(fcnName + ": " + myErrorMsg);
                 }
                 for (var i = 0; i < dataSet[0][idx.iSpecies]; i++) {
                     if (Phi_Vap[i] > Math.pow(10, -35)) {
@@ -3361,34 +3266,29 @@ function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinaries, kij
         var inputDataArray = [];
         var z = 0;
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (binariesUsed) {
             if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                 if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
@@ -3418,34 +3318,29 @@ function Volume(dataRange, temperature, pressure, moles, Phase, useBinaries, kij
         var inputDataArray = [];
         var z = 0;
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (binariesUsed) {
             if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                 if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
@@ -3473,42 +3368,36 @@ function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, useBinari
         var myErrorMsg = "";
         var binaries = [];
         var inputDataArray = [];
-        var z = 0;
         var cpRanges = [];
         var departureH = 0;
         var tempValue = 0;
         var idealGasEnthalpy = 0;
         inputDataArray = validateData(dataRange, temperature, pressure, moles, inputPhase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, true);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (tempK === -500 || pBara === -500 || phase === "-500" || moleComp[0] === -500) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (dataSet[0][idx.binariesUsed] === true) {
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
         }
         cpRanges = selectCpDataRanges(dataSet, tempK, phase);
@@ -3523,7 +3412,7 @@ function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, useBinari
                 departureH = calculate_H_Departure(dataSet, tempK, pBara, moleComp, phase, binariesUsed, aiArray, binaries); //'<= vapor phase constant pressure (Cp) enthalpy change from ideal gas conditions (25 C @ 1 bara)
                 if (departureH === 987654321.123457) { //' Error flag returned from Calculate_H_Departure
                     myErrorMsg === "Enthalpy error: Departure function error: Divide by zero of log() of negative number. Check phase!";
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             else {
@@ -3532,7 +3421,7 @@ function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, useBinari
             idealGasEnthalpy = calculate_IdealGasEnthalpy(dataSet, moleComp, tempK, cpRanges);
             if (idealGasEnthalpy === 987654321.123457) {
                 myErrorMsg = "calculate_IdealGasEnthalpy returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
             tempValue = departureH + idealGasEnthalpy;
         }
@@ -3540,7 +3429,7 @@ function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, useBinari
             tempValue = calculate_LiquidEnthalpy(dataSet, moleComp, tempK, cpRanges);
             if (tempValue === 987654321.123457) {
                 myErrorMsg = "calculate_LiquidEnthalpy returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
         }
         return tempValue;
@@ -3563,21 +3452,17 @@ function Entropy(dataRange, temperature, pressure, moles, Phase, useBinaries, ki
         var myErrorMsg = "";
         var binaries = [];
         var inputDataArray = [];
-        var z = 0;
         var cpRanges = [];
         var departureS = 0;
         var tempValue = 0;
         var idealGasEntropy = 0;
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, true);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
@@ -3590,12 +3475,12 @@ function Entropy(dataRange, temperature, pressure, moles, Phase, useBinaries, ki
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (tempK === -500 || pBara === -500 || phase === "-500" || moleComp[0] === -500) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (dataSet[0][idx.binariesUsed] === true) {
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
         }
         cpRanges = selectCpDataRanges(dataSet, tempK, phase);
@@ -3610,7 +3495,7 @@ function Entropy(dataRange, temperature, pressure, moles, Phase, useBinaries, ki
                 departureS = calculate_S_Departure(dataSet, tempK, pBara, moleComp, phase, binariesUsed, binaries); //'<= vapor phase constant pressure (Cp) enthalpy change from ideal gas conditions (25 C @ 1 bara)
                 if (departureS === 987654321.123457) { //' Error flag returned from Calculate_H_Departure
                     myErrorMsg === "Enthalpy error: Departure function error: Divide by zero of log() of negative number. Check phase!";
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             else {
@@ -3619,7 +3504,7 @@ function Entropy(dataRange, temperature, pressure, moles, Phase, useBinaries, ki
             idealGasEntropy = calculate_IdealGasEntropy(dataSet, moleComp, tempK, cpRanges, pBara);
             if (idealGasEntropy === 987654321.123457) {
                 myErrorMsg = "calculate_IdealGasEnthalpy returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
             tempValue = departureS + idealGasEntropy;
         }
@@ -3627,7 +3512,7 @@ function Entropy(dataRange, temperature, pressure, moles, Phase, useBinaries, ki
             tempValue = calculate_LiquidEntropy(dataSet, moleComp, tempK, cpRanges);
             if (tempValue === 987654321.123457) {
                 myErrorMsg = "calculate_LiquidEnthalpy returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
         }
         return tempValue;
@@ -3669,11 +3554,11 @@ function calculate_IdealGasEnthalpy(dataSet, moleComp, tempK, cpRanges) {
                     J_to_kJ = 1000; //'HSC data is j/mol
                 }
                 CpEquation = 0;
-                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK]] * tempK / Denominator;
-                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 1] * (Math.pow((tempK / Denominator), 2)) / 2;
-                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 2] * (Math.pow((tempK / Denominator), 3)) / 3;
-                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 3] * (Math.pow((tempK / Denominator), 4)) / 4;
-                CpEquation = CpEquation - dataSet[i][cpRanges[i][idx.tempK] + 4] / (tempK / Denominator);
+                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK]] * local_Tempk / Denominator;
+                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 1] * (Math.pow((local_Tempk / Denominator), 2)) / 2;
+                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 2] * (Math.pow((local_Tempk / Denominator), 3)) / 3;
+                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 3] * (Math.pow((local_Tempk / Denominator), 4)) / 4;
+                CpEquation = CpEquation - dataSet[i][cpRanges[i][idx.tempK] + 4] / (local_Tempk / Denominator);
                 CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 5] - dataSet[i][cpRanges[i][idx.tempK] + 7];
                 tempNumber = tempNumber + moleComp[i] * CpEquation / J_to_kJ;
                 CpEquation = 0;
@@ -3710,7 +3595,6 @@ function calculate_LiquidEnthalpy(dataSet, moleComp, tempK, cpRanges) {
         /***************************************************************************
         'This function is called by the Enthalpy function.
         '***************************************************************************/
-        var LiquidCpDataRequired = false;
         var Denominator = 1;
         var J_to_kJ = 1;
         var cpEquation = 0;
@@ -3817,14 +3701,10 @@ function JT_Coef(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
         /***************************************************************************
         'This function calculates the Joule-Thompson coefficient for the PR1978 EOS.
         '***************************************************************************/
-        var passedTempK = 0;
         var myErrorMsg = "";
         var fcnName = "JT_Coef";
-        var Derivatives_1 = [];
-        var CvIG = 0;
         var CpIG = 0;
         var Cp = 0;
-        var Cv = 0;
         var cpRanges = [];
         var CvResidual = 0;
         var CpResidual = 0;
@@ -3832,60 +3712,52 @@ function JT_Coef(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
         var d2adT2 = 0;
         var daidTArray = [];
         var binaries = [];
-        var sum_b = 0;
         var derivitiveArray = [];
         var inputDataArray = [];
         inputDataArray = validateData(dataRange, temperature, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         ;
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (binariesUsed) {
             if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                 if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
         }
         derivitiveArray = calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesUsed, aiArray, binaries);
         cpRanges = selectCpDataRanges(dataSet, tempK, "vapor");
         CpIG = calculate_Cp_IGorLiquid(dataSet, moleComp, tempK, cpRanges, "vapor");
-        CvIG = CpIG - gasLawR * 100000;
         d2aidT2Array = create_d2aidT2Array(dataSet, tempK);
         daidTArray = create_daidTArray(dataSet, aiArray, tempK);
         d2adT2 = calculate_d2adT2(dataSet, tempK, moleComp, aiArray, daidTArray, d2aidT2Array, binariesUsed, binaries);
         if ((derivitiveArray[idx.Z] + derivitiveArray[idx.b] * (1 + Math.pow(2, 0.5))) / (derivitiveArray[idx.Z] + derivitiveArray[idx.b] * (1 - Math.pow(2, 0.5))) <= 0) {
             myErrorMsg = "The natural log term in the Cv residual equation retun an error. Check phase.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (derivitiveArray[idx.sumb] <= 0) {
             myErrorMsg = "The term sum_b is less than or equal to zero. Check phase.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         CvResidual = 100000 * tempK * d2adT2 * Math.log((derivitiveArray[idx.Z] + derivitiveArray[idx.b] * (1 + Math.pow(2, 0.5))) / (derivitiveArray[idx.Z] + derivitiveArray[idx.b] * (1 - Math.pow(2, 0.5)))) / (derivitiveArray[idx.sumb] * Math.pow(8, 0.5));
         CpResidual = CvResidual + (tempK * (derivitiveArray[idx.dPdT_constV]) * derivitiveArray[idx.dVdT_constP] - gasLawR) * 100000;
-        Cv = CvIG + CvResidual;
         Cp = CpIG + CpResidual;
         return (1 / Cp) * (tempK * derivitiveArray[idx.dVdT_constP] - derivitiveArray[idx.vol]) * 100000;
     }
@@ -4008,55 +3880,44 @@ function vaporCv(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
         /***************************************************************************
         'This function calculates the liquid, ideal gas or PR1978 EOS Cv.
         '***************************************************************************/
-        var passedTempK = 0;
         var CvIG = 0;
         var CpIG = 0;
         var CvResidual = 0;
         var d2adT2 = 0;
-        var sum_b = 0;
         var myErrorMsg = "";
         var fcnName = "vaporCv";
         var Phase = "vapor";
-        var aij_Array = [];
         var derivatives = [];
         var CpRanges = [];
         var d2aidT2Array = [];
         var daidTArray = [];
         var outputArray = [];
-        var outputArrayWithLables = [];
         var binaries = [];
-        var datasetErrMsgsOn = false;
         var inputDataArray = [];
-        var z = 0;
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, true);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (binariesUsed) {
             if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                 if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
@@ -4071,11 +3932,11 @@ function vaporCv(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
             d2adT2 = calculate_d2adT2(dataSet, tempK, moleComp, aiArray, daidTArray, d2aidT2Array, binariesUsed, binaries);
             if ((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5))) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5))) <= 0) {
                 myErrorMsg = "The natural log term in the Cv residual equation retun an error. Check phase.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             if (derivatives[idx.sumb] <= 0) {
                 myErrorMsg = "The term sum_b is less than or equal to zero. Check phase.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             CvResidual = 100000 * tempK * d2adT2 * Math.log((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5))) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5)))) / (derivatives[idx.sumb] * Math.pow(8, 0.5));
             outputArray[0] = CvIG + CvResidual;
@@ -4084,7 +3945,7 @@ function vaporCv(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
         }
         else {
             myErrorMsg = "Calculate_Derivatives returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         if (myErrorMsg = "") {
             myErrorMsg = dataSet[0][idx.globalErrmsg];
@@ -4108,7 +3969,6 @@ function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries, kij0
         /***************************************************************************
         'This function calculates the liquid, ideal gas or PR1978 EOS Cv.
         '***************************************************************************/
-        var passedTempK = 0;
         var CvIG = 0;
         var CpIG = 0;
         var CvResidual = 0;
@@ -4117,7 +3977,6 @@ function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries, kij0
         var Cp = 0;
         var Cv = 0;
         var d2adT2 = 0;
-        var sum_b = 0;
         var myErrorMsg = "";
         var fcnName = "SpeedOfSound";
         var Phase = "vapor";
@@ -4125,41 +3984,33 @@ function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries, kij0
         var CpRanges = [];
         var d2aidT2Array = [];
         var daidTArray = [];
-        var outputArray = [];
-        var outputArrayWithLables = [];
         var binaries = [];
         var inputDataArray = [];
-        var datasetErrMsgsOn = false;
         var tempValue = 0;
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (binariesUsed) {
             if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                 if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
@@ -4169,7 +4020,7 @@ function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries, kij0
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             }
             if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
             }
         }
         derivatives = calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesUsed, aiArray, binaries);
@@ -4182,11 +4033,11 @@ function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries, kij0
             d2adT2 = calculate_d2adT2(dataSet, tempK, moleComp, aiArray, daidTArray, d2aidT2Array, binariesUsed, binaries);
             if ((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5))) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5))) <= 0) {
                 myErrorMsg = "The natural log term in the Cv residual equation retun an error. Check phase.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             if (derivatives[idx.sumb] <= 0) {
                 myErrorMsg = "The term sum_b is less than or equal to zero. Check phase.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             CvResidual = 100000 * tempK * d2adT2 * Math.log((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5))) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5)))) / (derivatives[idx.sumb] * Math.pow(8, 0.5));
             CpResidual = CvResidual + (tempK * (derivatives[idx.dPdT_constV]) * derivatives[idx.dVdT_constP] - gasLawR) * 100000;
@@ -4201,7 +4052,7 @@ function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries, kij0
         }
         else {
             myErrorMsg = "Calculate_Derivatives returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         if (myErrorMsg = "") {
             myErrorMsg = dataSet[0][idx.globalErrmsg];
@@ -4331,29 +4182,25 @@ function calculate_H_Departure(dataSet, tempK, pbara, moleComp, phase, binariesU
         var Z = 0;
         var alpha_aiArray = [];
         var aiArray = [];
-        var bi_Array = [];
         var aij_Array = [];
         var sum_a = 0;
         var sum_b = 0;
-        var Phi = [];
         var dadT = 0;
         var departH = 0;
         var departH0 = 0;
-        var errorTest = 0;
         var myErrorMsg = "";
-        var dadt_Array = [];
         var fcnName = "calculate_H_Departure";
         myErrorMsg = "";
         if (passed_aiArray[0] === -500) {
             alpha_aiArray = create_alphaiArray(dataSet, tempK);
             if (alpha_aiArray[0] === -500) {
                 myErrorMsg = "create_alphaiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if (aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         else {
@@ -4363,65 +4210,65 @@ function calculate_H_Departure(dataSet, tempK, pbara, moleComp, phase, binariesU
         alpha_aiArray = create_alphaiArray(dataSet, tempK);
         if (alpha_aiArray[0] === -500) {
             myErrorMsg = "create_alphaiArray returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if (aij_Array[0][0] === -500) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
         if (sum_a === -500) {
             myErrorMsg = "calculate_sum_a returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         sum_b = calculate_sum_b(dataSet, moleComp);
         if (sum_b === -500) {
             myErrorMsg = "calculate_sum_b returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         a = calculate_A(dataSet, sum_a, tempK, pbara);
         if (a === -500) {
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         b = calculate_B(dataSet, sum_b, tempK, pbara);
         if (b === -500) {
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         Z = calculate_EOS_Root(dataSet, a, b, phase);
         if (Z === -500) {
             myErrorMsg = "calculate_EOS_Root returned an error when calculating z.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         ;
         a0 = calculate_A(dataSet, sum_a, tempK, 1);
         if (a0 === -500) {
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         b0 = calculate_B(dataSet, sum_b, tempK, 1);
         if (b0 === -500) {
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         Z0 = calculate_EOS_Root(dataSet, a0, b0, phase);
         if (Z0 === -500) {
             myErrorMsg = "calculate_EOS_Root returned an error when calculating z0.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         ;
         dadT = calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray);
         if ((Z + (Math.pow(2, 0.5) + 1) * b) <= 0 || (Z - (Math.pow(2, 0.5) - 1) * b) <= 0 || (2 * Math.pow(2, 0.5) * sum_b) <= 0) {
             myErrorMsg = "Check supplied Phase. The term (z + (2 ^ 0.5 + 1) * B) / (z - (2 ^ 0.5 - 1) * B) is less than or equal to zero and will cause an error in the ln() function of the Phi() expression.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         departH = 100000 * (gasLawR * tempK * (Z - 1) + (tempK * dadT - sum_a) / (2 * Math.pow(2, 0.5) * sum_b) * Math.log((Z + (Math.pow(2, 0.5) + 1) * b) / (Z - (Math.pow(2, 0.5) - 1) * b)));
         //'the 100,000 factor above converts from m3-bar/K-g-mole to kJ/kg-mole
         if ((Z0 + (Math.pow(2, 0.5) + 1) * b0) <= 0 || (Z0 - (Math.pow(2, 0.5) - 1) * b0) <= 0) {
             myErrorMsg = "Check supplied Phase. The term (z + (2 ^ 0.5 + 1) * B) / (z - (2 ^ 0.5 - 1) * B) is less than or equal to zero and will cause an error in the ln() function of the Phi() expression.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         departH0 = 100000 * (gasLawR * tempK * (Z0 - 1) + (tempK * dadT - sum_a) / (2 * Math.pow(2, 0.5) * sum_b) * Math.log((Z0 + (Math.pow(2, 0.5) + 1) * b0) / (Z0 - (Math.pow(2, 0.5) - 1) * b0)));
         //'the 100,000 factor above converts from m3-bar/K-g-mole to kJ/kg-mole
@@ -4451,29 +4298,25 @@ function calculate_S_Departure(dataSet, tempK, pbara, moleComp, phase, binariesU
         var Z = 0;
         var alpha_aiArray = [];
         var aiArray = [];
-        var bi_Array = [];
         var aij_Array = [];
         var sum_a = 0;
         var sum_b = 0;
-        var Phi = [];
         var dadT = 0;
         var departS = 0;
         var departS0 = 0;
-        var errorTest = 0;
         var myErrorMsg = "";
-        var dadt_Array = [];
         var fcnName = "calculate_S_Departure";
         myErrorMsg = "";
         if (passed_aiArray[0] === -500) {
             alpha_aiArray = create_alphaiArray(dataSet, tempK);
             if (alpha_aiArray[0] === -500) {
                 myErrorMsg = "create_alphaiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if (aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+                throw new Error(fcnName + ": " + myErrorMsg);
             }
         }
         else {
@@ -4483,64 +4326,64 @@ function calculate_S_Departure(dataSet, tempK, pbara, moleComp, phase, binariesU
         alpha_aiArray = create_alphaiArray(dataSet, tempK);
         if (alpha_aiArray[0] === -500) {
             myErrorMsg = "create_alphaiArray returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if (aij_Array[0][0] === -500) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
         if (sum_a === -500) {
             myErrorMsg = "calculate_sum_a returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         sum_b = calculate_sum_b(dataSet, moleComp);
         if (sum_b === -500) {
             myErrorMsg = "calculate_sum_b returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         a = calculate_A(dataSet, sum_a, tempK, pbara);
         if (a === -500) {
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         b = calculate_B(dataSet, sum_b, tempK, pbara);
         if (b === -500) {
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         Z = calculate_EOS_Root(dataSet, a, b, phase);
         if (Z === -500) {
             myErrorMsg = "calculate_EOS_Root returned an error when calculating Z.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         ;
         a0 = calculate_A(dataSet, sum_a, tempK, 1);
         if (a0 === -500) {
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         b0 = calculate_B(dataSet, sum_b, tempK, 1);
         if (b0 === -500) {
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         Z0 = calculate_EOS_Root(dataSet, a0, b0, phase);
         if (Z0 === -500) {
             myErrorMsg = "calculate_EOS_Root returned an error when calculating Z0.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         ;
         dadT = calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray);
         if ((2 * Math.pow(2, 0.5) * sum_b) <= 0 || (Z - (Math.pow(2, 0.5) - 1) * b) <= 0 || (Z + (Math.pow(2, 0.5) + 1) * b) / (Z - (Math.pow(2, 0.5) - 1) * b) <= 0) {
             myErrorMsg = "Check supplied Phase. The term (z + (2 ^ 0.5 + 1) * B) / (z - (2 ^ 0.5 - 1) * B) is less than or equal to zero and will cause an error in the ln() function of the Phi() expression.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         departS = 100000 * (gasLawR * Math.log(Z - b) + (dadT / (2 * Math.pow(2, 0.5) * sum_b)) * Math.log((Z + (Math.pow(2, 0.5) + 1) * b) / (Z - (Math.pow(2, 0.5) - 1) * b)));
         if ((2 * Math.pow(2, 0.5) * sum_b) <= 0 || (Z0 - (Math.pow(2, 0.5) - 1) * b0) <= 0 || (Z0 + (Math.pow(2, 0.5) + 1) * b0) / (Z0 - (Math.pow(2, 0.5) - 1) * b0) <= 0) {
             myErrorMsg = "Check supplied Phase. The term (z + (2 ^ 0.5 + 1) * B) / (z - (2 ^ 0.5 - 1) * B) is less than or equal to zero and will cause an error in the ln() function of the Phi() expression.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         departS0 = 100000 * (gasLawR * Math.log(Z0 - b0) + (dadT / (2 * Math.pow(2, 0.5) * sum_b)) * Math.log((Z0 + (Math.pow(2, 0.5) + 1) * b0) / (Z0 - (Math.pow(2, 0.5) - 1) * b0)));
         //'the 100,000 factor above converts from m3-bar/K-g-mole to kJ/kg-mole
@@ -4567,7 +4410,7 @@ function calculate_EOS_Root(dataSet, a, b, phase) {
         Z = findCubicRoots_js_1.getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2) - 2 * b, (-a * b + Math.pow(b, 2) + Math.pow(b, 3)), phase);
         if (Z === -500) {
             myErrorMsg = fcnName + " returned an errror. Check phase.";
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + myErrorMsg);
         }
         //dataset[0][idx.globalErrmsg] = `${fcnName}: ${myErrorMsg}`
         return Z;
@@ -4585,13 +4428,6 @@ function calculate_IdealGasEntropy(dataSet, moleComp, tempK, cpRanges, pBara) {
         'This function calculates the ideal gas entropy
         '***************************************************************************/
         var Denominator = 0;
-        var TMN1 = 0;
-        var TMX1 = 0;
-        var TMX2 = 0;
-        var TMX3 = 0;
-        var TMX4 = 0;
-        var TMX5 = 0;
-        var TMX6 = 0;
         var cpEquation = 0;
         var local_Tempk = 0;
         var myErrorMsg = "";
@@ -4636,8 +4472,8 @@ function calculate_IdealGasEntropy(dataSet, moleComp, tempK, cpRanges, pBara) {
         return tempValue;
         /*'    NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
-        '    H� = standard enthalpy (kJ/mol)
-        '    S� = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -4665,34 +4501,29 @@ function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBinaries, k
         var phi = [];
         var outputArray = [];
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
         var dataSet = inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
-        if (dataSet[0][idx.globalErrmsg] !== "") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error("Function name: " + fcnName + ", " + myErrorMsg);
-        }
         var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
         var pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
         var phase = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         var moleComp = inputDataArray[idx.moleCompArray];
         var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        var errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        var alpha_aiArray = inputDataArray[idx.alphaArray];
         var aiArray = inputDataArray[idx.aiArray];
         var kij0Array = inputDataArray[idx.kij0Array];
         var kijTArray = inputDataArray[idx.kijTArray];
         var decompArray = inputDataArray[idx.decompArray];
         if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
-            throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
         }
         if (binariesUsed) {
             if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                 if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
-                    throw new Error("Function name: " + fcnName + ", " + dataSet[0][idx.globalErrmsg]);
+                    throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
                 }
             }
             phi = calculate_Phi(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
@@ -4737,4 +4568,45 @@ function calculate_bi(tc, pc) {
     }
 }
 exports.calculate_bi = calculate_bi;
+/*************************************************************** */
+function returnPredictiveBinaries(dataRange, temperature, moles, decomposition, errMsgsOn) {
+    try {
+        /***************************************************************************
+        'This function calculates the calculates the return_kijTs of the Predictive PR1978 EOS.
+        '***************************************************************************/
+        var myErrorMsg = void 0;
+        var fcnName = void 0;
+        var inputDataArray = void 0;
+        var binaries = void 0;
+        fcnName = "returnBinaries";
+        inputDataArray = validateData(dataRange, temperature, -500, moles, "vapor", true, [[-500][-500]], [[-500][-500]], decomposition, errMsgsOn, -500, false);
+        var errorTest = inputDataArray[0][0]; // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest;
+            throw new Error(fcnName + ": " + myErrorMsg);
+        }
+        var dataSet = inputDataArray[idx.datasetArray];
+        dataSet[0][idx.predictive] = true;
+        var tempK = inputDataArray[idx.valuesArray][idx.T].valueOf();
+        var binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
+        var aiArray = inputDataArray[idx.aiArray];
+        var kij0Array = inputDataArray[idx.kij0Array];
+        var kijTArray = inputDataArray[idx.kijTArray];
+        var decompArray = inputDataArray[idx.decompArray];
+        if (binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]) {
+            throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
+        }
+        if (inputDataArray[idx.valuesArray][idx.validBinaries]) {
+            binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
+            if (binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true) {
+                throw new Error(fcnName + ": " + dataSet[0][idx.globalErrmsg]);
+            }
+        }
+        return binaries;
+    }
+    catch (myErrorHandler) {
+        return myErrorHandler.message;
+    }
+}
+exports.returnPredictiveBinaries = returnPredictiveBinaries;
 //# sourceMappingURL=eosCode.js.map

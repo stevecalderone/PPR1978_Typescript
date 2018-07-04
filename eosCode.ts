@@ -77,6 +77,7 @@ const currentNumberOfGroups = 31;  /*"Groups","CH3","CH2","CH","C","CH4","C2H6",
 /***********************************************************************************************/
 function create_alphaiArray(dataSet, tempK: number): number[] {
     // @customfunction
+    const fcnName: string = "create_alphaiArray";
     try {
             
         /*'***************************************************************************
@@ -87,7 +88,7 @@ function create_alphaiArray(dataSet, tempK: number): number[] {
 
         let outputArray: (number)[] = [];
         let myErrorMsg: string = "";
-        const fcnName: string = "create_alphaiArray";
+
 
         if(dataSet[0][idx.alphaType] === false) {                       //'<= alphaType is a variable created in the validateDataset function. Set in the (0,0) index of the dataSet
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -95,7 +96,7 @@ function create_alphaiArray(dataSet, tempK: number): number[] {
                     outputArray.push(Math.pow(1 + dataSet[i][idx.ki] * (1 - Math.pow(tempK / dataSet[i][idx.tc], 0.5)), 2));
                 }else {
                     myErrorMsg = `The critical temperature of species ${i} is zero.`;
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
             }
         }else {
@@ -129,13 +130,14 @@ function create_alphaiArray(dataSet, tempK: number): number[] {
         return outputArray;
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return [-500];
 
     }
 }
 /****************************************************************************************************/
 function create_aiArray(dataSet, alpha_aiArray: (number)[] ): (number)[] {
+    const fcnName: string = "create_aiArray";
     try {
     
         /*'***************************************************************************
@@ -144,7 +146,7 @@ function create_aiArray(dataSet, alpha_aiArray: (number)[] ): (number)[] {
         '***************************************************************************/
 
         let outputArray: (number)[] = [];
-        const fcnName: string = "create_aiArray";
+
         let myErrorMsg: string = "";
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -156,20 +158,21 @@ function create_aiArray(dataSet, alpha_aiArray: (number)[] ): (number)[] {
                 outputArray[i] = 0.457235529 * alpha_aiArray[i] * (gasLawR * dataSet[i][idx.tc])**2 / dataSet[i][idx.pc] ;
             }else {
                 myErrorMsg = `The critical pressure of species ${i} is less than or equal to zero`;
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function      
         return outputArray;
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return [-500];
 
     }
 }
 /**************************************************************************************************/
 function create_aijArray(dataSet, binariesUsed: boolean, aiArray: (number)[], binaries: (number)[][], tempK: number): (number)[][] {
+    const fcnName: string = "create_aijArray";
     // @customfunction
     
     try {
@@ -181,7 +184,7 @@ function create_aijArray(dataSet, binariesUsed: boolean, aiArray: (number)[], bi
         let outputArray: (number)[][] = [];
         let myErrorMsg: string;
 
-        const fcnName: string = "create_aijArray";
+
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
             outputArray.push([])
@@ -199,12 +202,13 @@ function create_aijArray(dataSet, binariesUsed: boolean, aiArray: (number)[], bi
         
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return [[-500,-500],[-500,-500]];
     }
 }
 /********************************************************************************************************************* */
 function create_xi_aijArray(dataSet, aij_Array: (number)[][], molarComp: (number)[]): (number)[] {
+    const fcnName: string = "create_xi_aijArray"
     // @customfunction
     try{
             
@@ -215,7 +219,7 @@ function create_xi_aijArray(dataSet, aij_Array: (number)[][], molarComp: (number
 
         let xj_aijArray: (number)[] = []
         let Aij: (number)[][] = []
-        const fcnName: string = "create_xi_aijArray"
+
         let myErrorMsg: string = ""
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -231,13 +235,14 @@ function create_xi_aijArray(dataSet, aij_Array: (number)[][], molarComp: (number
 
     }
     catch(myErrorHandler){
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return [-500]
 
     }
 }
 /*************************************************************************************************** */
 function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array: (number)[][], alpha_aiArray: (number)[]): number {
+    const fcnName: string = "calculate_dadt";
     // @customfunction
     try {
         /***************************************************************************
@@ -249,7 +254,7 @@ function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array:
         let myErrorMsg: string = "";
         let dadT: number = 0;
 
-        const fcnName: string = "calculate_dadt";
+
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
             dadt_Array.push([]);
@@ -259,7 +264,7 @@ function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array:
                         
                 if(dadt_Array[i][j] === Infinity){
                     myErrorMsg = "(alpha_aiArray(i or j) * dataSet(i or j, iColumns.tc)) ^ 0.5 = 0. Divide by zero error.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
             
                 dadT = dadT + dadt_Array[i][j];
@@ -269,7 +274,7 @@ function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array:
         return dadT;
 
     } catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return -500;
     }
 }
@@ -280,48 +285,44 @@ function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array:
  * @customfunction
  */
 export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): (number)[]{
+    
        // @customfunction
        try{
 
         /***************************************************************************
         'This function calculates the liquid, ideal gas or PR1978 EOS real gas Cv.
         '***************************************************************************/
-
-        let passedTempK: number = 0;
-        let CvIG: number = 0;
+        
         let CpIG: number = 0;
         let CvResidual: number = 0;
         let CpResidual: number = 0;
         let d2adT2: number = 0;
-        let sum_b: number = 0;
         let myErrorMsg: string = "";
-        let fcnName: string = "vaporCv";
-        let Phase: string = "vapor";
-        let aij_Array: (number)[][] = []
+
         let derivatives: (number)[] = [];
         let CpRanges: (number)[][] = [];
         let d2aidT2Array: (number)[] = [];
         let daidTArray: (number)[] = [];
         let outputArray: (number)[] = [];
-        let outputArrayWithLables: (any)[] = [];
         let binaries: (number)[][] = [];
-        let datasetErrMsgsOn: boolean = false;
 
         let inputDataArray: (any)[] = [];
-
-        let z: number = 0;
+        const fcnName: string = "phaseCp"
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, inputPhase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, true);
                                     
-        let dataSet =  inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString()
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+        
+        let errorTest: any = inputDataArray[0][0]
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
+
+        let dataSet =  inputDataArray[idx.datasetArray];
 
         if(dataSet[0][idx.globalErrmsg] !== ""){
             myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
@@ -329,8 +330,6 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
@@ -349,7 +348,7 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
                 outputArray.push(0)
             }else{
                 if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
         
                 if(binariesUsed){
@@ -358,7 +357,7 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
                         binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
                     
                         if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                         }
                     }
                     binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
@@ -371,19 +370,19 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
                 if(derivatives[0] !== 987654321.12345){
                     CpRanges = selectCpDataRanges(dataSet, tempK, phase);
                     
-                    CvIG = CpIG - gasLawR * 100000;
+                    
                     d2aidT2Array = create_d2aidT2Array(dataSet, tempK);
                     daidTArray = create_daidTArray(dataSet, aiArray, tempK);
                     d2adT2 = calculate_d2adT2(dataSet, tempK, moleComp, aiArray, daidTArray, d2aidT2Array, binariesUsed, binaries);
         
                     if((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5) )) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5) )) <= 0){
                         myErrorMsg = "The natural log term in the Cv residual equation retun an error. Check phase.";
-                        throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                        throw new Error(`${fcnName}: ${myErrorMsg}`);
                     }
         
                     if(derivatives[idx.sumb] <= 0){
                         myErrorMsg = "The term sum_b is less than or equal to zero. Check phase."
-                        throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                        throw new Error(`${fcnName}: ${myErrorMsg}`);
                     }
         
                     CvResidual = 100000 * tempK * d2adT2 * Math.log((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5))) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5) ))) / (derivatives[idx.sumb] * Math.pow(8, 0.5) );
@@ -395,7 +394,7 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
         
                 }else{
                     myErrorMsg = "Calculate_Derivatives returned an error.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
             }
         }
@@ -412,6 +411,7 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
 }
 /****************************************************************** */
 function create_d2aidT2Array(dataSet, tempK): (number)[] {
+    const fcnName: string = "create_d2aidT2Array";
     // @customfunction
 
     try{
@@ -421,9 +421,8 @@ function create_d2aidT2Array(dataSet, tempK): (number)[] {
         'Calculates an array of values
         '***************************************************************************/
 
-        let aiArray: (number)[] = [];
-        let outputArray: (number)[] = [];
-        const fcnName: string = "create_d2aidT2Array";
+
+        let outputArray: (number)[] = [];        
         let myErrorMsg: string = "";
         let tempValue: number = 0;
 
@@ -438,12 +437,13 @@ function create_d2aidT2Array(dataSet, tempK): (number)[] {
         return outputArray;
 
     } catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return [-500];
     }
 }
 /******************************************************************************************/
 function create_daidTArray(dataSet, aiArray: (number)[], tempK: number): (number)[] {
+    const fcnName: string = "create_daidTArray";
     // @customfunction
     try{
         /***************************************************************************
@@ -452,7 +452,7 @@ function create_daidTArray(dataSet, aiArray: (number)[], tempK: number): (number
         '***************************************************************************/
 
         let outputArray: (number)[] = [];
-        const fcnName: string = "create_daidTArray";
+
         let myErrorMsg: string = "";
         
         
@@ -464,13 +464,14 @@ function create_daidTArray(dataSet, aiArray: (number)[], tempK: number): (number
     
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] =`${myErrorHandler}`;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return [-500] ;  
     
     }
 }
 /*********************************************************************************************************************/
 function calculate_sum_a(dataSet, aij_Array: (number)[][], molarComp:(number)[]): number {
+    const fcnName: string = "calculate_sum_a";
     // @customfunction
     try {
 
@@ -482,7 +483,7 @@ function calculate_sum_a(dataSet, aij_Array: (number)[][], molarComp:(number)[])
 
         let sum_a: number = 0;
 
-        const fcnName: string = "calculate_sum_a";
+
         let myErrorMsg: string = "";
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -495,12 +496,13 @@ function calculate_sum_a(dataSet, aij_Array: (number)[][], molarComp:(number)[])
 
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return -500;
     }
 }
 /**************************************************************************/
 function calculate_sum_b(dataSet, molarComp: (number)[]): number {
+    const fcnName: string = "calculate_sum_b";
     // @customfunction
     try {            
         
@@ -512,7 +514,7 @@ function calculate_sum_b(dataSet, molarComp: (number)[]): number {
         let sum_b: number = 0;
         let myErrorMsg: string ="";
 
-        const fcnName: string = "calculate_sum_b";
+
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
             sum_b = sum_b + dataSet[i][idx.bi] * molarComp[i];
@@ -523,13 +525,14 @@ function calculate_sum_b(dataSet, molarComp: (number)[]): number {
 
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return -500;
     }
 
 }
 /**************************************************************************************/
 function calculate_A(dataSet, sum_a: number, tempK: number, pbara: number): number {
+    const fcnName: string = "calculate_A";
     // @customfunction
     try {
     
@@ -539,20 +542,21 @@ function calculate_A(dataSet, sum_a: number, tempK: number, pbara: number): numb
         '***************************************************************************/
 
         let myErrorMsg: string = "";
-        const fcnName: string = "calculate_A";
+
 
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function      
         return sum_a * pbara / Math.pow((gasLawR * tempK), 2);
 
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return -500;
     }
 
 }
 /*******************************************************************************/
 function calculate_B(dataSet, sum_b: number, tempK:number, pbara: number): number {
+    const fcnName: string = "calculate_B";
     // @customfunction
     try {
     
@@ -563,14 +567,14 @@ function calculate_B(dataSet, sum_b: number, tempK:number, pbara: number): numbe
 
         let myErrorMsg: string ="";
 
-        const fcnName: string = "calculate_B";
+
 
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function      
         return sum_b * pbara / (gasLawR * tempK);
 
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return -500;
     }
 }
@@ -583,18 +587,17 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
         let testSum: number = 0;
         let decompTest: number = 0;
         let decompArray: (number)[][] = [];
-        let validData: boolean = false;
 
         if(dataSet[0][idx.predictive] === true && !decomposition && decomposition[0][0] !== -500) {
-            dataSet[0][idx.globalErrmsg] =  "Predictive and binariesUsed parameters equal true but no decomposition is provided.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            dataSet[0][idx.globalErrmsg] =  `${fcnName}: Predictive and binariesUsed parameters equal true but no decomposition is provided.`;
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
             }else{
                 if(decomposition.length  !== dataSet[0][idx.iSpecies] + 1){
-                dataSet[0][idx.globalErrmsg] =  `The supplied decomposition row count must equal the number of species plus one for the header row. Correct decomposition.`;
+                dataSet[0][idx.globalErrmsg] =  `${fcnName}: The supplied decomposition row count must equal the number of species plus one for the header row. Correct decomposition.`;
                 }else{
                     for(let i: number = 1; i < decomposition.length; i++){
                             if(decomposition[i].length !==  currentNumberOfGroups + 1) {
-                                dataSet[0][idx.globalErrmsg] =  `The column count for species ${i} does not equal equal 32 (31 groups plus 1 for the species name). Correct decomposition.`;
+                                dataSet[0][idx.globalErrmsg] =  `${fcnName}: The column count for species ${i} does not equal equal 32 (31 groups plus 1 for the species name). Correct decomposition.`;
                                 return [false]
                         }
                     }
@@ -614,7 +617,7 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
                         }else if(testSum - 1 < Math.pow(10, -5)) {
                             decompTest = decompTest + 1;
                         }else{
-                            dataSet[0][idx.globalErrmsg] =  `The decomposition for species ${i} does not equal either zero or 1. Correct decomposition.`;
+                            dataSet[0][idx.globalErrmsg] =  `${fcnName}: The decomposition for species ${i} does not equal either zero or 1. Correct decomposition.`;
                             return [false];
                         }
                         testSum = 0;
@@ -624,11 +627,11 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
         
         if(dataSet[0][idx.predictive] === false){
             if(dataSet[0][idx.binariesUsed] && !kij0) {
-                    dataSet[0][idx.globalErrmsg] =  "The parameter binariesUsed equals true but no binaries are provided.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    dataSet[0][idx.globalErrmsg] =  `${fcnName}: The parameter binariesUsed equals true but no binaries are provided.`;
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
             }else{
                 if(kij0.length !== dataSet[0][idx.iSpecies] && kij0[0].length !== dataSet[0][idx.iSpecies]){
-                    dataSet[0][idx.globalErrmsg] =  "kij0 binaries must be an array of size equal to the number of species by the number of species.";
+                    dataSet[0][idx.globalErrmsg] =  `${fcnName}: kij0 binaries must be an array of size equal to the number of species by the number of species.`;
                     return [false];
                 }
             
@@ -640,19 +643,19 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
                         }
                     }
                     if(testSum !== 0) {
-                        dataSet[0][idx.globalErrmsg] =  "kij0 binaries are not symetrical. The condition Kij0(i,j) = Kij0(j,i) must be true.";
+                        dataSet[0][idx.globalErrmsg] =  `${fcnName}: kij0 binaries are not symetrical. The condition Kij0(i,j) = Kij0(j,i) must be true.`;
                         return [false];
                     }
                 }
             }   
         
             if(dataSet[0][idx.predictive] === false && !kijT && kij0.length !== dataSet[0][idx.iSpecies]  + 1 && kij0[0].length !== dataSet[0][idx.iSpecies] + 1 ) {
-                dataSet[0][idx.globalErrmsg] =  "The parameter binariesUsed equals true but no binaries are provided.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                dataSet[0][idx.globalErrmsg] =  `${fcnName}: The parameter binariesUsed equals true but no binaries are provided.`;
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }else{
 
                 if(kijT.length !== dataSet[0][idx.iSpecies] && kijT[0].length !== dataSet[0][idx.iSpecies]){
-                    dataSet[0][idx.globalErrmsg] =  "kijT binaries must be an array of size equal to the number of species by the number of species.";
+                    dataSet[0][idx.globalErrmsg] =  `${fcnName}: kijT binaries must be an array of size equal to the number of species by the number of species.`;
                     return [false];
                 }
             
@@ -663,7 +666,7 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
                         }
                     }
                     if(testSum !== 0) {
-                        dataSet[0][idx.globalErrmsg] =  "Warning: kijT binaries are imbalanced. The condition KijT(i,j) = KijT(j,i) must be true.";
+                        dataSet[0][idx.globalErrmsg] =  `${fcnName}: Warning: kijT binaries are imbalanced. The condition KijT(i,j) = KijT(j,i) must be true.`;
                         return [false];
                     }
             }
@@ -672,7 +675,7 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
         return [true, kij0, kijT, decompArray];
 
     } catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
         return  [false];
     }
 
@@ -684,7 +687,6 @@ function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (n
     try {
         let myErrorMsg: string = "";
         let errorSum: number = 0;
-        let kij0_Array: (number)[][];
         const fcnName: string = "calculate_binaries";
         let passedTempK: number = 0;
         let alpha_iArray: (number)[] = [];
@@ -703,8 +705,8 @@ function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (n
             }
             
             if(errorSum !== 0) {
-                myErrorMsg = "kij0 binaries are imbalanced. The condition Kij0(i,j) = Kij0(j,i) and kij0(i,i) = 0 must be true.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                myErrorMsg = `${fcnName}: kij0 binaries are imbalanced. The condition Kij0(i,j) = Kij0(j,i) and kij0(i,i) = 0 must be true.`;
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
             if(kijT){
                 errorSum = 0;
@@ -716,8 +718,8 @@ function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (n
                 }
                 
                 if(errorSum !== 0) {
-                    myErrorMsg = "kijT binaries are imbalanced. The condition KijT(i,j) = KijT(j,i) must be true.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    myErrorMsg = `${fcnName}: kijT binaries are imbalanced. The condition KijT(i,j) = KijT(j,i) must be true.`;
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
             }
 
@@ -733,13 +735,13 @@ function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (n
                     }
                 }
             }else {
-                myErrorMsg = "Binary array must be a two dimensional array with each dimension equal to the number of species.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                myErrorMsg = `${fcnName}: Binary array must be a two dimensional array with each dimension equal to the number of species.`;
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }
 
         if(dataSet[0][idx.predictive] && !deComp) {
-            dataSet[0][idx.globalErrmsg] = "binariesUsed equals true but no decomposition is provided.";
+            dataSet[0][idx.globalErrmsg] = `${fcnName}: binariesUsed equals true but no decomposition is provided.`;
             binaries = [[-500],[-500]];
         }else{
             passedTempK = tempK;
@@ -759,7 +761,7 @@ function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (n
     }
         
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
         return [[-500],[-500]];
 
     }
@@ -767,19 +769,18 @@ function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (n
 }
 /******************************************************************** */
 function createPredictiveBinaries(dataSet, deComp: (number)[][], tempK: number, aiArray: (number)[]): (number)[][] {
+    const fcnName: string = "createPredictiveBinaries";
     // @customfunction
     try{
 
         let array_1to17: (number)[][] = [];
         let array_18to31: (number)[][] = [];
-        let array_28to31: (number)[][] = [];
         let grpInteractionParamA: (number)[][] = [];
         let grpInteractionParamB: (number)[][] = [];
-        let tempArray: (number)[] = [];
         let DoubleSum: (number)[][] = [];
         let binaries: (number)[][] = [];
         let myErrorMsg: string = "";
-        const fcnName: string = "createPredictiveBinaries";
+
         let currentNumberOfGroups = 31;  // as of 2017, includes O2, SO2 and NO groups
 
 
@@ -790,7 +791,7 @@ function createPredictiveBinaries(dataSet, deComp: (number)[][], tempK: number, 
 
         if(deComp.length  !== dataSet[0][idx.iSpecies ]   || deComp[1].length !==  currentNumberOfGroups ) {
             myErrorMsg = "The supplied decomposition range row count must equal the number of species and the column count must equal 31 groups plus 1 for the species column.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
             
             array_1to17 = [
@@ -926,7 +927,7 @@ function createPredictiveBinaries(dataSet, deComp: (number)[][], tempK: number, 
     
     }
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
         return [[-500],[-500]];
         
     }
@@ -968,14 +969,14 @@ function calculate_Derivatives(dataSet, tempK: number, pBara: number, moleComp: 
         alpha_aiArray = create_alphaiArray(dataSet, tempK);
         if(alpha_aiArray[0] === -500) {
             myErrorMsg = "create_alphaiArray returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         if(passed_aiArray[0] === -500){
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if(aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }else{
 
@@ -985,49 +986,49 @@ function calculate_Derivatives(dataSet, tempK: number, pBara: number, moleComp: 
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if(aij_Array[0][0] === -500 ) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
 
         if(sum_a === 0) {
             myErrorMsg = "calculate_sum_a returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         sum_b = calculate_sum_b(dataSet, moleComp);
 
         if(sum_b === 0 ) {
             myErrorMsg = "calculate_sum_b returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         a = calculate_A(dataSet, sum_a, tempK, pBara);
 
         if(a === 0 ) {
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         b = calculate_B(dataSet, sum_b, tempK, pBara);
 
         if(b === 0 ) {
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         Z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
 
         if(Z === -500 ) {
             myErrorMsg = "calculate_EOS_Root returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         vol = Z * gasLawR * tempK / pBara;
 
         if(Math.abs(vol - b) < Math.pow(10, -35) ) {
             myErrorMsg = "The term 'volume - b' is too close to zero. Check phase.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
 
@@ -1039,7 +1040,7 @@ function calculate_Derivatives(dataSet, tempK: number, pBara: number, moleComp: 
         } else {
             dPdv_T = 0;
             myErrorMsg = "The term '(vol * (vol + sum_b) + sum_b * (vol - sum_b))' equals zero. dPdv_T cannot be calculated. The phase must be vapor.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         if((vol * (vol + sum_b) + sum_b * (vol - sum_b)) !== 0 && (vol - sum_b) !== 0 ) {
@@ -1047,7 +1048,7 @@ function calculate_Derivatives(dataSet, tempK: number, pBara: number, moleComp: 
         } else {
             dPdT_V = 0;
             myErrorMsg = "The term '(vol * (vol + sum_b) + sum_b * (vol - sum_b))' or '(vol - sum_b)' equal zero. dPdT_V cannot be calculated. The phase must be vapor.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
 
@@ -1061,7 +1062,7 @@ function calculate_Derivatives(dataSet, tempK: number, pBara: number, moleComp: 
         } else {
             dZdT_P = 0;
             myErrorMsg = "The term '(3 * z ** 2 + 2 * (B - 1) * z + (A - 2 * B - 3 * B ** 2))' equals zero. dZdT_P cannot be calculated. Check phase.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         dVdT_P = (gasLawR / pBara) * (tempK * (dZdT_P) + Z);
@@ -1084,7 +1085,7 @@ function calculate_Derivatives(dataSet, tempK: number, pBara: number, moleComp: 
         return outputArray;
 
     }catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
         let outputArray: (number)[] = [-500];     //'<= Error flag
         return outputArray;                                      
     }
@@ -1110,7 +1111,6 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
         const fcnName: String = "validateDataSet";
         let liquidSpeciesFound: Boolean = false;
         let liquidIndex: number = 0;
-        let validHeaders: boolean = false;
     
         inputArray = dataRange.slice(0);
 
@@ -1126,17 +1126,15 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
         for(let i: number = 1;  i < inputArray.length; i++){
             if(inputArray[i].length - 1 !== columnHeaders.length){
                 myErrorMsg = `The input dataSet must be a range containing ${columnHeaders.length + 1} columns. Species number ${i} contains ${dataRange[i].length} columns.`;
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }        
         }
 
         for(let i: number = 0; i < columnHeaders.length; i++) {
             if(columnHeaders[i] === inputArray[0][i + 1]) {
-                validHeaders = true;
             }else {
-                validHeaders = false;
                 myErrorMsg = `DataSet headers are incorrect: ${columnHeaders[i]} NOT EQUAL TO ${inputArray[0][i + 1]}`;
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }
 
@@ -1147,7 +1145,7 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
                     liquidIndex = i - 1;
                 }else {
                     myErrorMsg = "Liquid species found in wrong position of dataSet.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
             }
         }
@@ -1161,7 +1159,7 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
                 }        
             } else {
                 myErrorMsg = "Phase is liquid but liquid keyword in dataSet not found.";         //<=Need liquid and vapor species. If not present need to bail.
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }
         if(phase.toLowerCase() === "vapor" || cpDataRequired === false) {
@@ -1190,7 +1188,7 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
         if(phase.toLowerCase() === "liquid" && cpDataRequired === true) {
             if(liquidSpeciesFound === false) {
                 myErrorMsg = "Provided phase is liquid but liquid keyword in first column of dataSet not found.";         //<=Need liquid and vapor species. If not present need to bail.
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }
 
@@ -1254,7 +1252,7 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
         return outputArray;
 
         }catch(myErrorHandler) {
-            return [[myErrorHandler, -500],[-500, -500]];
+            return [[myErrorHandler.message],[0]];
 
         } // catch end
 }
@@ -1269,7 +1267,6 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
     try {
 
         let totalMoles: number
-        let inputArrayBaseOne = []
         let inputMoles: (number)[] = []
         let inputFractions: (number)[] = []
         let outputArray: (number)[] = [] 
@@ -1279,7 +1276,7 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
 
         if(arraySize[2] !== false && arraySize[2] !== 1) {
             myErrorMsg = "The moles parameter must be either a range of values or the number 1 indicating a pure component dataSet containing a single component with or without a liquid phase."
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
+            throw new Error(`${fcnName}: ${myErrorMsg}`)
         }else {
             if(dataSet[0][idx.iSpecies] === 1) {   //'<= For the case a single species dataSet allowing for mole composition = 1
                 outputArray.push(1)
@@ -1291,14 +1288,14 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
 
         if(moles.length !== dataSet[0][idx.iSpecies]) {
             myErrorMsg = "Number of species does not equal the number of mole amounts!"
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
+            throw new Error(`${fcnName}: ${myErrorMsg}`)
         }else{
 
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i ++){
                 inputMoles.push(0)
                 if(typeof(moles[i]) === "string" || typeof(moles[i]) === "boolean"){
                     myErrorMsg = "Some mole amounts are not numbers."
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
+                    throw new Error(`${fcnName}: ${myErrorMsg}`)
                 }else if(moles[i] === "" || typeof(moles[i]) === null){
                     inputMoles[i] = 0
                 }else{
@@ -1308,7 +1305,7 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
 
             if(inputMoles[0] < 0) {
                 myErrorMsg = "Mole amount is less than or equal to zero."
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
+                throw new Error(`${fcnName}: ${myErrorMsg}`)
             }else {
                 if(inputMoles.length === 1 && inputMoles[0] === 1) {
                     outputArray.push(1)
@@ -1323,11 +1320,11 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
                             totalMoles = totalMoles + Number(inputMoles[i])
                         } else {
                             myErrorMsg = "Some moles amounts are not numeric!"
-                            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
+                            throw new Error(`${fcnName}: ${myErrorMsg}`)
                         }
                     }else{
                         "Some moles amounts are not numeric!";
-                        throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                        throw new Error(`${fcnName}: ${myErrorMsg}`);
                     } 
                 }
                 moleFractionSum = 0
@@ -1338,12 +1335,12 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
                     }
                 }else {
                     myErrorMsg = "No moles amounts or all amounts are zero."
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
+                    throw new Error(`${fcnName}: ${myErrorMsg}`)
                 }
             
                 if(moleFractionSum > 1.00000000001 || 0.99999999999 > moleFractionSum) {
                     myErrorMsg = "Mole fractions do not add up to one."
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
+                    throw new Error(`${fcnName}: ${myErrorMsg}`)
                 }
             }
         }
@@ -1354,7 +1351,7 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
     } // try end
             
     catch(myErrorHandler) {
-        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;;
+        dataSet[0][idx.globalErrmsg] = myErrorHandler.message;
         return [-500]
     }  // catch end
 } 
@@ -1374,7 +1371,6 @@ function calculate_PhaseZ(dataSet, phase: string, moleComp: (number)[], tempK: n
 
         let alpha_aiArray: (number)[] = [];
         let aiArray: (number)[] = [];
-        let bi_Array: (number)[] = [];
         let aij_Array: (number)[][] = [];
 
         let sum_a: number;
@@ -1388,12 +1384,12 @@ function calculate_PhaseZ(dataSet, phase: string, moleComp: (number)[], tempK: n
             alpha_aiArray = create_alphaiArray(dataSet, tempK);
             if(alpha_aiArray[0] === -500) {
                 myErrorMsg = "create_alphaiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if(aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
         }else{
@@ -1403,42 +1399,42 @@ function calculate_PhaseZ(dataSet, phase: string, moleComp: (number)[], tempK: n
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if(aij_Array[0][0] === -500 ) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
 
         if(sum_a === -500) {
             myErrorMsg = "calculate_sum_a returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         sum_b = calculate_sum_b(dataSet, moleComp);
 
         if(sum_b === -500) {
             myErrorMsg = "calculate_sum_b returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         a = calculate_A(dataSet, sum_a, tempK, pBara);
 
         if(a === -500){
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         b = calculate_B(dataSet, sum_b, tempK, pBara);
 
         if(b === -500){
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
    
         Z = getCubicRoot(1, (b - 1), a - 3 * Math.pow(b, 2)  - 2 * b, (-a * b + Math.pow(b, 2)  + Math.pow(b, 3) ), phase);
 
         if(Z === -500) {
             myErrorMsg = "calculate_EOS_Root returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         dataSet[0][idx.globalErrmsg] = myErrorMsg; //Used to transfer warning messages to calling function   
@@ -1459,11 +1455,9 @@ function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: numb
         'This function is called by all of the PR1978 functions
         'This function calculates the PR1978 EOS fugacity coefficients
         '***************************************************************************/
-        let errorTest: number;
 
         let alpha_aiArray: (number)[] = [];
         let aiArray: (number)[] = [];
-        let bi_Array: (number)[] = [];
         let aij_Array: (number)[][] = [];
         let xi_aijArray: (number)[] = [];
 
@@ -1481,12 +1475,12 @@ function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: numb
             alpha_aiArray = create_alphaiArray(dataSet, tempK);
             if(alpha_aiArray[0] === -500) {
                 myErrorMsg = "create_alphaiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if(aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }else{
 
@@ -1496,7 +1490,7 @@ function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: numb
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if(aij_Array[0][0] === -500 ) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         const sum_a: number = calculate_sum_a(dataSet, aij_Array, moleComp);
@@ -1505,7 +1499,7 @@ function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: numb
 
         if(sum_b === 0) {
             myErrorMsg = "sum_b is zero and it will cause a divide by zero in the Phi() function.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         const a: number = calculate_A(dataSet, sum_a, tempK, pBara);
@@ -1516,26 +1510,26 @@ function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: numb
 
         if(Z - b < 0) {
             myErrorMsg = "the term z - B is less than zero. Check supplied Phase.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         xi_aijArray = create_xi_aijArray(dataSet, aij_Array, moleComp);
 
         if((Z + ( Math.pow(2, 0.5)  + 1) * b) / (Z - ( Math.pow(2, 0.5)  - 1) * b) < 0) {
             myErrorMsg = "Check supplied Phase. The term ((z + (2 ** 0.5 + 1) * B) / (z - (2 ** 0.5 - 1) * B)) is less than zero. This will cause and error in the ln() function of the Phi() expression.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         let logTerm: any = ((Z + ( Math.pow(2, 0.5)  + 1) * b) / (Z - ( Math.pow(2, 0.5)  - 1) * b));
 
         if(logTerm === 0 || logTerm < 0) {
             myErrorMsg = "The log term of the phi formula is less then or equal to zero. Check supplied Phase.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         if(logTerm === NaN || logTerm === undefined || logTerm === -Infinity) {
             myErrorMsg = "The Phi() function attemped to take the ln() of zero or a negative number. Check supplied Phase.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         logTerm = Math.log(logTerm);
@@ -1546,10 +1540,10 @@ function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: numb
             
             if(Phi[i] === NaN || Phi[i] === undefined) {
                 myErrorMsg = "The Phi() function attemped to take the ln() of a negative number. Check supplied Phase.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             } else if(Phi[i] === -Infinity) {
                 myErrorMsg = "sum_b or (z - (2 ** 0.5 - 1) * B) equal zero. Divide by zero error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         
             tempPhi = (dataSet[i][idx.bi] / sum_b) * (Z - 1) - Math.log(Z - b) - tempPhi;
@@ -1664,7 +1658,7 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
         if(Phase === "liquid"){
             if(dataSet[0][idx.liquidIndex] !== (dataSet.length) / 2){
                 myErrorMsg = "First liquid species in wrong position of dataSet.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
             g_Liq = ((dataSet.length) / 2) - 1;                                                                             // '<= The g_Liq iterator is for(the liquid species
             for(let i_Vap: number = 0; i_Vap <= ((dataSet.length) / 2) - 1; i_Vap++){                                       //'<= The i_Vap iterator is for(the vapor species
@@ -1761,6 +1755,7 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
 /***************************************************************************** */
 
 function calculate_Wilson_K(dataSet, tempK: number, pBara: number): (number)[] {
+    const fcnName: string = "calculate_Wilson_K";
     // @customfunction
     try {    
         /***************************************************************************
@@ -1774,7 +1769,7 @@ function calculate_Wilson_K(dataSet, tempK: number, pBara: number): (number)[] {
 
         let outputArray: (number)[] = [];
         let myErrorMsg: string = "";
-        const fcnName: string = "calculate_Wilson_K";
+
 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
             outputArray.push(Math.exp((5.37 * (1 + dataSet[i][idx.omega])) * (1 - dataSet[i][idx.tc] / tempK)) / (pBara / dataSet[i][idx.pc]));
@@ -1784,7 +1779,7 @@ function calculate_Wilson_K(dataSet, tempK: number, pBara: number): (number)[] {
         return outputArray;
 
     }catch(myErrorHandler) {
-        return  myErrorHandler.message;
+        dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorHandler.message}`;
 
     }
     
@@ -1808,7 +1803,6 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
         let T_Lo: number = 0;
         let T_Hi: number = 0;
         let T_New: number = 0;
-        let T_NBP: number = 0;
         let y_Sum_Lo: number = 0;
         let y_Sum_Hi: number = 0;
         let y_Sum: number = 0;
@@ -1816,25 +1810,15 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
         let x_Sum_Hi: number = 0;
         let x_Sum: number = 0;
         let Ki: (number)[] = [];
-        let outputArray: (number)[] = [];
         let T_Dew_Est: number = 0;
         let T_Bub_Est: number = 0;
         let Counter: number = 0;
-        let T_Bub_RoughEst_Temp: number = 0;
-        let T_Dew_RoughEst_Temp: number = 0;
         let BubTempFound: boolean = false;
         let DewTempFound: boolean = false;
         let myErrorMsg: string = "";
         let inputDataArray = []
         let pBara: number = 0
         let moleComp: (number)[] = []
-        let binariesUsed = false
-        let errorMsgsOn = false
-        let alpha_aiArray: (number)[] = []
-        let aiArray: (number)[] = []
-        let kij0Array: (number)[][] = []
-        let kijTArray: (number)[][] = []
-        let decompArray: (number)[][] = []
         let dataSet: (any)[][] = []
         let fcnName = "calculate_T_BubDew_Est"
 
@@ -1868,23 +1852,21 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
 
                 if (typeof (dataSet[0]) === "string") {
                     myErrorMsg = dataSet[0].toString();
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
                         
                 if(dataSet[0][idx.globalErrmsg] !== ""){
                     myErrorMsg = dataSet[0].toString();
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
                 pBara = inputDataArray[idx.valuesArray][idx.P].valueOf();
                 moleComp = inputDataArray[idx.moleCompArray];
-                binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-                errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
+
             }else{
                 dataSet = passedDataSet.slice(0)
                 pBara = passedPressure
                 moleComp = passedMoleComp.slice(0)
-                errorMsgsOn = false
             }
                 
         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -1896,21 +1878,20 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
         }
         
         T_Bub_Est = T_Bub_Est * 0.7;
-        T_Bub_RoughEst_Temp = T_Bub_Est;
         
         while(BubTempFound === false) {
             
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
                 if(T_Bub_Est === 0 && dataSet[i][idx.tb] >= 0 && dataSet[i][idx.tc] === 0 || pBara === 0 || (1 / dataSet[i][idx.tc] - 1 / dataSet[i][idx.tb]) === 0) {
                     myErrorMsg = `Species ${i} error: The supplied pressure or critical temperature equals zero or there is a problem with the species boiling point.`;
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
                 
                 Ki[i] = ( Math.pow(dataSet[i][idx.pc], (((1 / T_Bub_Est - 1 / dataSet[i][idx.tb]) / ((1 / dataSet[i][idx.tc]) - (1 / dataSet[i][idx.tb]))))) / pBara);
 
                 if(Ki[i] === Infinity) {                                   
                     myErrorMsg = "Overflow error. Tried to divided a number by a very small number in Ki estimate calc found in LSU/FAM Dew & Bubble T paper.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
             }
                 
@@ -1954,13 +1935,12 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
             
             if(Counter === 1000) {
                 myErrorMsg = "Counter is 100 iterations.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }  // loop
 
         Counter = 0;
         T_Dew_Est = 1.1 * T_Bub_Est;
-        T_Dew_RoughEst_Temp = T_Dew_Est;
         T_Lo = 0;
         T_Hi = 0;
                     
@@ -2009,7 +1989,7 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
             
             if(Counter === 1000) {
                 myErrorMsg = "More than 100 iterations!";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
                             
         } // loop
@@ -2074,21 +2054,15 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
     try {
         
         let myErrorMsg: string = "";
-        let datasetErrMsgsOn: boolean = false;
         const fcnName = "validateData";
-        let decompArray: (number)[][] = [];
-        let kij0Array: (number)[][] = [];
-        let kijTArray: (number)[][] = [];
         let alpha_aiArray: (number)[] =[];
         let aiArray: (number)[] = [];
         let dataSet: (any)[][] = [];
         let moleComp: (number)[] = [];
-        let errorSum: number = 0;
         let tempK: number = 0;
         let pBara: number = 0;
         let phase: string = "";
         let outputArray: (any)[] = [];
-        let sumTest: number = 0;
         let returnWarnings: boolean = false;
         let kij0_kijT_deComp_Array: (number)[][] = [];
         let arraySizes: (any)[][] = [];
@@ -2096,7 +2070,6 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         let guessedTempK: number = 0;
         let tempC: number = 0;
         let guessedTempC: number = 0;
-        let inputArrayTest: (any)[][] = [];
 
         const enum index {
             arrayTest,
@@ -2150,7 +2123,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 phase = inputArray[currIndex][0].toString().toLowerCase();
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                     if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){
-                    myErrorMsg =  "The supplied phase and must be a string or a single cell reference to a string of 'vapor' or 'liquid'.";
+                    myErrorMsg =  `${fcnName}: The supplied phase and must be a string or a single cell reference to a string equal to 'vapor' or 'liquid'.`;
                     return [[],[myErrorMsg]];
                 }
             }else{
@@ -2160,7 +2133,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             phase = inputArray[currIndex].toString().toLowerCase();
         }
         if(phase !== "liquid" && phase !== "vapor"){
-            myErrorMsg = `The supplied phase (${phase}) and must be a string or a single cell reference equal to vapor or liquid.`;
+            myErrorMsg = `${fcnName}: The supplied phase (${phase}) and must be a string or a single cell reference equal to vapor or liquid.`;
             return [[],[myErrorMsg]];
         }
 
@@ -2169,7 +2142,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             if(arraySizes[currIndex][index.arrayTest] === true && arraySizes[currIndex][index.valueORlength1] === false){
                 binariesUsed = inputArray[currIndex][0];
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
-                if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                myErrorMsg =  `The supplied parameter 'binariesUsed' (${binariesUsed}) and must be an expression  or a single cell reference to an expression that evaluates to true or false.`;
+                if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                myErrorMsg =  `${fcnName}: The supplied parameter 'binariesUsed' (${binariesUsed}) and must be an expression  or a single cell reference to an expression that evaluates to true or false.`;
                 return [[],[myErrorMsg]];
             }
             }else{
@@ -2186,7 +2159,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         }else if(arraySizes[currIndex][1] === ""){
             binariesUsed = false;
         }else{
-            myErrorMsg =  `The supplied parameter 'binariesUsed' (${binariesUsed}) and must be an expression  or a single cell reference to an expression that evaluates to true or false.`;
+            myErrorMsg =  `${fcnName}: The supplied parameter 'binariesUsed' (${binariesUsed}) and must be an expression  or a single cell reference to an expression that evaluates to true or false.`;
             return [[],[myErrorMsg]];
         };
         
@@ -2196,7 +2169,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 errorMsgsOn = inputArray[currIndex][0];
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                
-                    myErrorMsg =  `The supplied parameter 'errorMsgsOn' (${errorMsgsOn}) and must be an expression or a single cell reference to an expression that evaluates to true or false.`;
+                    myErrorMsg =  `${fcnName}: The supplied parameter 'errorMsgsOn' (${errorMsgsOn}) and must be an expression or a single cell reference to an expression that evaluates to true or false.`;
                 return [[],[myErrorMsg]];
             }
             }else{
@@ -2213,7 +2186,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         }else if(errorMsgsOn === ""){
         errorMsgsOn = false;
         }else{
-            myErrorMsg =  `The supplied parameter 'errorMsgsOn' (${errorMsgsOn}) and must be an expression or a single cell reference to an expression that evaluates to true or false.`;
+            myErrorMsg =  `${fcnName}: The supplied parameter 'errorMsgsOn' (${errorMsgsOn}) and must be an expression or a single cell reference to an expression that evaluates to true or false.`;
             return [[],[myErrorMsg]];
         };
 
@@ -2221,7 +2194,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         if(arraySizes[currIndex][index.arrayTest] === true && arraySizes[currIndex][index.Dim2TestORlength2] === idx.NIST_H6 + 2) {
             dataSet = validateDataSet(dataRange, phase, CpDataRequired, binariesUsed, errorMsgsOn);
         }else{
-            myErrorMsg = `The supplied dataSet range must contain ${idx.NIST_H6} columns. The first column contains the specie names. The top row contains the column header labels. The row count equals the number of species plus one for the header row for vapors. For liquids the row count equal twice the number of species plus two rows (one for the column headers and one for the liquid phase label).`;
+            myErrorMsg = `${fcnName}: The supplied dataSet range must contain ${idx.NIST_H6} columns. The first column contains the specie names. The top row contains the column header labels. The row count equals the number of species plus one for the header row for vapors. For liquids the row count equal twice the number of species plus two rows (one for the column headers and one for the liquid phase label).`;
             return [[],[myErrorMsg]];
         }
         
@@ -2229,6 +2202,11 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             myErrorMsg = dataSet[0][0];
             return dataSet;
         };
+
+        if(phase === "liquid" && dataSet[0][idx.liquidsFound] === false){
+            myErrorMsg = `${fcnName}: The supplied phase is (liquid) but no liquids are found in the dataSet.`;
+            return [[],[myErrorMsg]];
+        }
 
         currIndex = inputArrayNames.indexOf("moles");
         moleComp = (validateMoles(dataSet, moles, arraySizes[currIndex]));
@@ -2243,7 +2221,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 temperature = inputArray[currIndex][0];
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                
-                    myErrorMsg = `The supplied temperature (${temperature}) must be either a number or a reference to a single cell containing a number. `;
+                    myErrorMsg = `${fcnName}: The supplied temperature (${temperature}) must be either a number or a reference to a single cell containing a number. `;
                     return [[],[myErrorMsg]];                
             }else{
                 temperature = inputArray[currIndex][0];
@@ -2257,7 +2235,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             if(tempC > -273.15){
                 tempK = tempC + 273.15
             }else{
-                myErrorMsg = `The supplied temperature (${tempC}) must be either a number or a reference to a single cell containing a number. `;
+                myErrorMsg = `${fcnName}: The supplied temperature (${tempC}) must be either a number or a reference to a single cell containing a number. `;
                 return [[],[myErrorMsg]];
             }
         
@@ -2271,7 +2249,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 guessedTemp = inputArray[currIndex][0];
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                
-                    myErrorMsg = `The supplied initialization temperature (${guessedTemp}) must be either a number or a reference to a single cell containing a number. `;
+                    myErrorMsg = `${fcnName}: The supplied initialization temperature (${guessedTemp}) must be either a number or a reference to a single cell containing a number. `;
                     return [[],[myErrorMsg]];
                 }
                 
@@ -2288,7 +2266,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             if(guessedTempC > -273.15){
                 guessedTempK = guessedTempC + 273.15
             }else{
-                myErrorMsg = `The supplied initialization temperature (${guessedTempC})must be either a number or a reference to a single cell containing a number. `;
+                myErrorMsg = `${fcnName}: The supplied initialization temperature (${guessedTempC})must be either a number or a reference to a single cell containing a number. `;
                 return [[],[myErrorMsg]];
             };
         }else{
@@ -2301,7 +2279,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 pressure = inputArray[currIndex][0];
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                
-                    myErrorMsg = `The supplied pressure (${pressure}) must be either a number or a reference to a single cell containing a number. `;
+                    myErrorMsg = `${fcnName}: The supplied pressure (${pressure}) must be either a number or a reference to a single cell containing a number. `;
                     return [[],[myErrorMsg]];
                 }
                 
@@ -2317,16 +2295,22 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             if( Number(pressure) > 0){
                 pBara = Number(pressure);
             }else{
-                myErrorMsg = `The supplied pressure (${pressure}) must be either a number or a reference to a single cell containing a number greater than zero. `;
+                myErrorMsg = `${fcnName}: The supplied pressure (${pressure}) must be either a number or a reference to a single cell containing a number greater than zero. `;
                 return [[],[myErrorMsg]];
             };
         }else{
             pBara = pressure
         }
-        currIndex = inputArrayNames.indexOf("kij0");
+        
         if(binariesUsed){
+            currIndex = inputArrayNames.indexOf("kij0");
             if(arraySizes[currIndex][0]===false && arraySizes[currIndex][2]===false && dataSet[0][idx.predictive]===false){
-                myErrorMsg = `The supplied useBinaries parameter is true but no kij0 range is provided. `;
+                myErrorMsg = `${fcnName}: The supplied useBinaries parameter is true but no kij0 range is provided. `;
+                return [[],[myErrorMsg]];
+            }
+            currIndex = inputArrayNames.indexOf("decomposition");
+            if(arraySizes[currIndex][0]===false && arraySizes[currIndex][2]===false && dataSet[0][idx.predictive]===true){
+                myErrorMsg = `${fcnName}: The supplied useBinaries parameter is true and predictive mode is on but no decomposition is provided. `;
                 return [[],[myErrorMsg]];
             }
             kij0_kijT_deComp_Array = validateBinariyArrays(dataSet, kij0, kijT, decomposition);
@@ -2339,6 +2323,8 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         }else{
             outputArray.push([tempK, pBara, phase, binariesUsed, errorMsgsOn, false, guessedTempK]);
         }
+
+
 
         outputArray.push(dataSet);
         outputArray.push(moleComp);
@@ -2396,39 +2382,30 @@ export function Derivatives(dataRange, temperature, pressure, moles, useBinaries
         'This function calculates the calculates the derivatives of the PR1978 EOS.
         '***************************************************************************/
 
-        let kij0_Array: (number)[] = [];
-        let kijT_Array: (number)[] = [];
-        let passedTempK:  number = 0;
+
         let myErrorMsg:  string = "";
         const fcnName:  string = "Derivatives";
         let Phase:  string = "vapor";
-        let CvIG:  number = 0;
-        let CpIG:  number = 0;
-        let cpRanges: (number)[] = [];
-        let CvResidual:  number = 0;
-        let CpResidual:  number = 0;
-        let d2aidT2Array: (number)[] = [];
-        let d2adT2:  number = 0;
-        let daidTArray: (number)[] = [];
-        let sum_b:  number = 0;
         let outputArray: (number)[] = [];
         let binaries: (number)[][] = [];
-        let datasetErrMsgsOn: boolean = false;
+
 
         let inputDataArray: (any)[] = []; 
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
-                                   
+        
+        let errorTest: any = inputDataArray[0][0]
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
+
         let dataSet =  inputDataArray[idx.datasetArray];
 
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
 
         if(dataSet[0][idx.globalErrmsg] !== ""){
             myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
@@ -2436,15 +2413,13 @@ export function Derivatives(dataRange, temperature, pressure, moles, useBinaries
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(binariesUsed){
@@ -2453,14 +2428,14 @@ export function Derivatives(dataRange, temperature, pressure, moles, useBinaries
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             
                 if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
         }
 
         if(tempK === -500 || pBara === -500 || phase === "-500" || moleComp[0] === -500) {
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(dataSet[0][idx.binariesUsed] === true) {
@@ -2468,7 +2443,7 @@ export function Derivatives(dataRange, temperature, pressure, moles, useBinaries
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             }
             if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
         }
 
@@ -2482,7 +2457,7 @@ export function Derivatives(dataRange, temperature, pressure, moles, useBinaries
     }
 }
   /***************************************************************************** */
-  function derivativesUnits(): (string)[]{
+  export function derivativesUnits(): (string)[]{
       try{
 
         let outputArray: (string)[] = []
@@ -2513,7 +2488,7 @@ export function Derivatives(dataRange, temperature, pressure, moles, useBinaries
  *
  * @customfunction
  */
-export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, kij0?, kijT?, decomposition ?, errMsgsOn = false): (number)[] {
+export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): (number)[] {
       // @customfunction
       try {
         
@@ -2537,9 +2512,6 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
         let SUMx: number = 0;
         let SUMy: number = 0;
         let tempC: number = 0;
-        let passedTempK: number = 0;
-        let kij0_Array: (number)[] =[];
-        let kijT_Array: (number)[] =[];
         let xi_Array: (number)[] =[];
         let yi_Array: (number)[] =[];
         let Ki: (number)[] =[];
@@ -2555,7 +2527,6 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
         let StreamCondition: string = "";
         let myErrorMsg: string = "";
         const fcnName: string = "FlashTP";
-        let dataSetErrMsgsOn: boolean = false;
         let VaporFractionFound: boolean = false;
         let EquilibriumFound: boolean = false;
         let localBinariesUseds: boolean = false
@@ -2564,24 +2535,18 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
 
-        let dataSet =  inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+        let errorTest: any = inputDataArray[0][0]
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
+        let dataSet =  inputDataArray[idx.datasetArray];
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
-        const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
@@ -2589,7 +2554,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
         localBinariesUseds = binariesUsed
 
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(binariesUsed){
@@ -2597,7 +2562,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             
                 if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
@@ -2649,19 +2614,19 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                 }
 
                 if(Psi_New < Math.pow(10, -8) && Psi_New >= 0 ) {
-                    if(UsingDewOrBubbleFunction = false ) {
+                    if(UsingDewOrBubbleFunction === false ) {
                         UsingDewOrBubbleFunction = true;
                         DewBubKi = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition,  false, -500, true);  //'<= Get Ki near Bubble point temperature ) { try again.
                         dataSet[0][idx.binariesUsed] = localBinariesUseds             
                     if(tempC <= DewBubKi[0] || DewBubKi[0] === -273.15 ) {                                                                      //'DewBubKi[0] = bubble temperature, DewBubKi(1)...DewBubKi(n) are Ki's
                         StreamCondition = "At Or Below Bubble Point";
-                        if(DewBubKi[0] = -273.15 ) {
+                        if(DewBubKi[0] === -273.15 ) {
                             myErrorMsg = "FlashTP bubble point test failed. Vapor fraction does not appear to exist.";
                         }
                         VaporFractionFound = true;
                         EquilibriumFound = true;
                     }
-                    if(StreamCondition = "" ) {
+                    if(StreamCondition === "" ) {
                         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {                         // '<Flash with Wilson Ki initialization failed to converge so retry with Ki's from Dew or Bubble point calculation.
                             if(moleComp[i] > Math.pow(10, -35) ) {
                                 Ki[i] = moleComp[i] / DewBubKi[i + 2];
@@ -2678,19 +2643,19 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                 }
 
                 if(1 - Psi_New < Math.pow(10, -8) && Psi_New <= 1 ) {
-                    if(UsingDewOrBubbleFunction = false ) {
+                    if(UsingDewOrBubbleFunction === false ) {
                         UsingDewOrBubbleFunction = true;
                         DewBubKi = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false,  -500, true);  //'<= Get Ki near Dew point temperature ) { try again.
                         dataSet[0][idx.binariesUsed] = localBinariesUseds
                     if(tempC >= DewBubKi[0] || DewBubKi[0] === -273.15 ) {                                  //'DewBubKi[0] = dew temperature, DewBubKi(1)...DewBubKi(n) are Ki's
                         StreamCondition = "At or Above Dew Point";
-                        if(DewBubKi[0] = -273.15 ) {
+                        if(DewBubKi[0] === -273.15 ) {
                             myErrorMsg = "FlashTP dew point test failed. Liquid phase does not appear to exist.";
                         }
                         VaporFractionFound = true;
                         EquilibriumFound = true;
                     }
-                    if(StreamCondition = "" ) {
+                    if(StreamCondition === "" ) {
                         for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {                         //'<Flash with Wilson Ki initialization failed to converge so retry with Ki's from Dew or Bubble point calculation.
                             if(moleComp[i] > Math.pow(10, -35) ) {
                                 Ki[i] = moleComp[i] / DewBubKi[i + 2];
@@ -2714,7 +2679,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
 
                 if(Counter1 + 1 > CounterLimit1 ) {
                     myErrorMsg = "Flash failed to converge. Too many iterations in Psi calculation.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
             }  //loop
 
@@ -2753,7 +2718,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
             Phi_Vap = calculate_Phi(dataSet, "vapor", yi_Array, tempK, pBara, binariesUsed, aiArray, binaries);
 
                 if(Phi_Vap[dataSet[0][idx.iSpecies] + 1] === -500 ) {
-                    if(UsingDewOrBubbleFunction = false ) {
+                    if(UsingDewOrBubbleFunction === false ) {
                         dewTemp = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500,  true);
                         dataSet[0][idx.binariesUsed] = localBinariesUseds
                         bubTemp = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
@@ -2773,9 +2738,9 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                             }
                         }
 
-                        if(StreamCondition = "" ) {
+                        if(StreamCondition === "" ) {
                             myErrorMsg = "Flash failed to converge. Error returned from calculate_Phi.";
-                            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                            throw new Error(`${fcnName}: ${myErrorMsg}`);
                         }
                 }
             }
@@ -2783,7 +2748,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
             Phi_Liq = calculate_Phi(dataSet, "liquid", xi_Array, tempK, pBara, binariesUsed, aiArray, binaries);
 
             if(Phi_Liq[dataSet[0][idx.iSpecies] + 1] === -500 ) {
-                if(UsingDewOrBubbleFunction = false ) {
+                if(UsingDewOrBubbleFunction === false ) {
                 dewTemp = DewT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
                 dataSet[0][idx.binariesUsed] = localBinariesUseds
                 bubTemp = BubbleT(dataRange, pBara, moles, false, kij0, kijT, decomposition, false, -500, true);
@@ -2809,9 +2774,9 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
                     }
                 }
 
-                if(StreamCondition = "" ) {
+                if(StreamCondition === "" ) {
                 myErrorMsg = "Flash failed to converge. An error returned from calculate_Phi.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
             }
 
@@ -2853,7 +2818,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
 
             if(Counter2 + 1 > CounterLimit2 ) {
                 myErrorMsg = "Flash failed to converge. Too many iterations in main flash loop.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
     } // loop
@@ -2862,7 +2827,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
             if(myErrorMsg === "" ) {
                 myErrorMsg = "FlashTP failed to converge'";
             }
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         if(StreamCondition === "Vapor and liquid phases exist." ) {
@@ -2887,7 +2852,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
             }
 
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
-                outputArray[i + 2 + dataSet[0][idx.iSpecies]] = moleComp[i];
+                outputArray[i + 1 + dataSet[0][idx.iSpecies]] = moleComp[i];
             }
 
         }
@@ -2900,7 +2865,7 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
             }
 
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
-                outputArray[i + 2 + dataSet[0][idx.iSpecies]] = 0;
+                outputArray[i + 1 + dataSet[0][idx.iSpecies]] = 0;
             }
         }
         return outputArray;
@@ -2923,10 +2888,6 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
         'This function calculates the PR1978 EOS bubble point.
         '***************************************************************************/
 
-        let UsingWilson: boolean= false;
-
-        let Iter1: number = 0;
-        let Iter2: number = 0;
         let HiLoTemp_Count: number = 0;
         let Upper_yi_Bub_Count: number = 0;
         let TBub_Count: number = 0;
@@ -2939,10 +2900,8 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
         let T_Low: number = 0;
         let T_Hi: number = 0;
         let T_New: number = 0;
-        let T_Bub_Est: number = 0;
         let yi_Initial_Sum: number = 0;
         let T_Bub: number = 0
-        let LiquidFugacity: number = 0;
         let FugacityTest: number = 0;
         let Ki: (number)[] = [];
         let xi_Array: (number)[] = [];
@@ -2956,11 +2915,9 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
         let outputArray: (number)[] = [];
         let myErrorMsg: string = "";
         const fcnName: string = "BubbleT";
-        let datasetErrMsgsOn: boolean= false;
         let yiBub_Equals_yiOld: boolean= false;
         let HiAndLoTempsFound: boolean= false;
         let BubT_Found: boolean= false;
-        let passedTempK: number = 0;
         let binaries: (number)[][] = [];
         let initialTempC: number = 0
 
@@ -2968,20 +2925,15 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
     
         inputDataArray = validateData(dataRange, -500, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, Guess, false);
         
-        let dataSet: (any)[][] =  inputDataArray[idx.datasetArray];
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
 
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
-                
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
+        let dataSet =  inputDataArray[idx.datasetArray];
         
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
-        const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
         const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
         const guess: number = inputDataArray[idx.valuesArray][idx.guessT].valueOf();
@@ -2994,7 +2946,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(pBara === -500 || moleComp[0] === -500) {
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         Upper_yi_Bub_Count = 0;
@@ -3022,7 +2974,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
             }else {
                 T_Bub = 0;
                 myErrorMsg = "Calculate_T_BubDew_Est calculation failed to provide bubble T estimate.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }
 
@@ -3045,7 +2997,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
 
             if(HiLoTemp_Count > 2000) {
                 myErrorMsg = "HiLoTemp_Count > 2000.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`)
+                throw new Error(`${fcnName}: ${myErrorMsg}`)
             }
 
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -3059,7 +3011,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
 
                 if(Upper_yi_Bub_Count > 2000) {
                     myErrorMsg = `Upper_yi_Bub_Count > ${Upper_yi_Bub_Count}`;
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
 
@@ -3083,7 +3035,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
                 if(dataSet[0][idx.binariesUsed] === true) {
                     binaries = calculate_binaries(dataSet, T_Bub, kij0Array, kijTArray, aiArray, decompArray);
                     if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                        throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                        throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                     }
                 }
 
@@ -3091,14 +3043,14 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
 
                 if(Phi_Liq[dataSet[0][idx.iSpecies] + 1] === -500) {
                     myErrorMsg = "Liquid phase Phi error in inner upper loop.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
                 Phi_Vap = calculate_Phi(dataSet, "vapor", yi_Bub, T_Bub, pBara, binariesUsed, aiArray, binaries);
 
                 if(Phi_Vap[dataSet[0][idx.iSpecies] + 1] === -500) {
                     myErrorMsg = "Vapor phase Phi error in inner upper loop.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
                 for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -3168,7 +3120,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
         if(dataSet[0][idx.binariesUsed] === true) {
             binaries = calculate_binaries(dataSet, T_Bub, kij0Array, kijTArray, aiArray, decompArray);
             if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
         }
 
@@ -3177,7 +3129,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
 
             if(TBub_Count === 2000) {
                 myErrorMsg = "Warning - DewT_Count > 2000.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
     
             T_New = (T_Hi + T_Low) / 2;
@@ -3191,7 +3143,7 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
 
                 if(Lower_yi_Bub_Count > 2000) {
                     myErrorMsg = "Warning - Lower_xi_Dew_Count  > 2000.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
     
 
@@ -3216,19 +3168,19 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
 
                 if(Phi_Liq[dataSet[0][idx.iSpecies] + 1] === -500) {
                     myErrorMsg = "Liquid phase Phi error in inner lower loop.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
     
                 Phi_Vap = calculate_Phi(dataSet, "vapor", yi_Bub, T_New, pBara, binariesUsed, aiArray, binaries);
     
                 if(Phi_Vap[dataSet[0][idx.iSpecies] + 1] === -500) {
                     myErrorMsg = "Vapor phase Phi error in inner lower loop.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
                 if(Math.abs(Phi_Vap[dataSet[0][idx.iSpecies] ] - Phi_Liq[dataSet[0][idx.iSpecies] ]) < Math.pow(10, -5)) {
                     myErrorMsg = "Trival solution convergence in lower inner loop.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
                 for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -3338,8 +3290,6 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
         'This function calculates the PR1978 EOS dew point.
         '***************************************************************************/
 
-        let Iter1: number = 0;
-        let Iter2: number = 0;
         let HiLoTemp_Count : number = 0;
         let Upper_xi_Dew_Count : number = 0;
         let DewT_Count: number = 0;
@@ -3355,9 +3305,6 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
         let initialTempC: number = 0;
         let xi_Initial_Sum: number = 0;
         let T_Dew: number = 0;
-        let T_Dew_C: number = 0;
-        let T_Bub: number = 0;
-        let tempC: number = 0;
         let VaporFugacity: number = 0;
         let LiquidFugacity: number = 0;
         let FugacityTest: number = 0;
@@ -3368,13 +3315,11 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
         let xi_Array: (number)[] = [];
         let yi_Array: (number)[] = [];
         let Ki: (number)[] = [];
-        let passedTempK: number = 0;
         let Phi_Vap: (number)[] = [];
         let Phi_Liq: (number)[] = [];
         let outputArray: (number)[] = [];
         let myErrorMsg: string = "";
         const fcnName: string = "DewT";
-        let datasetErrMsgsOn: boolean = false;
         let xiDew_Equals_xiOld: boolean = false;
         let HiAndLoTempsFound: boolean = false;
         let DewT_Found:boolean = false;
@@ -3385,17 +3330,13 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
         
         inputDataArray = validateData(dataRange, -500, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, Guess, false);
                                     
-        let dataSet: (any)[][] =  inputDataArray[idx.datasetArray];
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
 
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
-                
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
+        let dataSet =  inputDataArray[idx.datasetArray];
         
         const guess: number = inputDataArray[idx.valuesArray][idx.guessT].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
@@ -3409,11 +3350,11 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(pBara === -500 || moleComp[0] === -500) {
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(!inputDataArray[idx.valuesArray][idx.validBinaries] && binariesUsed) {
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         Upper_xi_Dew_Count = 0;
@@ -3440,7 +3381,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
             }else {
                 T_Dew = 0;
                 myErrorMsg = "Calculate_T_BubDew_Est calculation failed to provide bubble T estimate.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
         }
 
@@ -3463,7 +3404,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
 
             if(HiLoTemp_Count > 2000) {
                 myErrorMsg = "Warning: HiLoTemp_Count  > 2000.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -3476,7 +3417,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
 
                 if(Upper_xi_Dew_Count > 2000) {
                     myErrorMsg = "Upper_xi_Dew_Count > 1000";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
                 xi_Old = xi_Dew.slice(0);
@@ -3500,21 +3441,21 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
                 if(dataSet[0][idx.binariesUsed] === true) {
                     binaries = calculate_binaries(dataSet, T_Dew, kij0Array, kijTArray, aiArray, decompArray);
                     if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                        throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                        throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                     }
                 }
                 Phi_Liq = calculate_Phi(dataSet, "liquid", xi_Dew, T_Dew, pBara, binariesUsed, aiArray, binaries);
 
                 if(Phi_Liq[dataSet[0][idx.iSpecies] + 2] === -500) {
                     myErrorMsg = "Liquid phase Phi error in inner upper loop.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
                 Phi_Vap = calculate_Phi(dataSet, "vapor", moleComp, T_Dew, pBara, binariesUsed, aiArray, binaries);
 
                 if(Phi_Vap[dataSet[0][idx.iSpecies] + 2] === -500) {
                     myErrorMsg = "Vapor phase Phi error in inner upper loop.";
-                    throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                    throw new Error(`${fcnName}: ${myErrorMsg}`);
                 }
 
                 for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -3586,7 +3527,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
     if(dataSet[0][idx.binariesUsed] === true) {
         binaries = calculate_binaries(dataSet, (T_Hi + T_Low)/2, kij0Array, kijTArray, aiArray, decompArray);
         if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
     }
 
@@ -3597,7 +3538,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
 
         if(DewT_Count === 2000) {
             myErrorMsg = "Warning - DewT_Count > 2000.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         T_New = (T_Hi + T_Low) / 2;
@@ -3614,7 +3555,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
 
             if(Lower_xi_Dew_Count > 2000) {
                 myErrorMsg = "Warning - Lower_xi_Dew_Count  > 2000.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             xi_Old = xi_Dew.slice(0);
@@ -3636,19 +3577,19 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
 
             if(Phi_Liq[dataSet[0][idx.iSpecies] + 2] === -500) {
                 myErrorMsg = "Liquid phase Phi error in inner lower loop.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             Phi_Vap = calculate_Phi(dataSet, "vapor", moleComp, T_New, pBara, binariesUsed, aiArray, binaries);
 
             if(Phi_Vap[dataSet[0][idx.iSpecies] + 2] === -500) {
                 myErrorMsg = "Vapor phase Phi error in inner lower loop.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             if(Math.abs(Phi_Vap[dataSet[0][idx.iSpecies]] - Phi_Liq[dataSet[0][idx.iSpecies]]) < Math.pow(10, -5)) {
                 myErrorMsg = "Trival solution convergence in lower inner loop.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             for(let i: number = 0; i < dataSet[0][idx.iSpecies]; i++) {
@@ -3771,32 +3712,26 @@ export function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinari
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
                                     
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
+
         let dataSet =  inputDataArray[idx.datasetArray];
-
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
-
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(binariesUsed){
@@ -3804,7 +3739,7 @@ export function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinari
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             
                 if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }
             z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
@@ -3835,32 +3770,26 @@ export function Volume(dataRange, temperature, pressure, moles, Phase, useBinari
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
                                     
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
+
         let dataSet =  inputDataArray[idx.datasetArray];
-
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
-
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(binariesUsed){
@@ -3868,7 +3797,7 @@ export function Volume(dataRange, temperature, pressure, moles, Phase, useBinari
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             
                 if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }
             z = calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
@@ -3895,10 +3824,8 @@ export function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, us
     try {
         const fcnName: string = "Enthalpy";
         let myErrorMsg: string = "";
-
         let binaries: (number)[][] = [];
         let inputDataArray: (any)[] = [];
-        let z: number = 0;
         let cpRanges: (number)[][] = [];
         let departureH: number = 0;
         let tempValue: number = 0;
@@ -3906,42 +3833,36 @@ export function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, us
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, inputPhase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, true);
                                     
-        let dataSet =  inputDataArray[idx.datasetArray];
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
 
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
-                
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
+        let dataSet =  inputDataArray[idx.datasetArray];
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(tempK === -500 || pBara === -500 || phase === "-500" || moleComp[0] === -500) {
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(dataSet[0][idx.binariesUsed] === true) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
         }
 
@@ -3960,7 +3881,7 @@ export function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, us
                 departureH = calculate_H_Departure(dataSet, tempK, pBara, moleComp, phase, binariesUsed, aiArray,  binaries);    //'<= vapor phase constant pressure (Cp) enthalpy change from ideal gas conditions (25 C @ 1 bara)
                 if(departureH === 987654321.123457){                                                                               //' Error flag returned from Calculate_H_Departure
                     myErrorMsg === "Enthalpy error: Departure function error: Divide by zero of log() of negative number. Check phase!";
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }else{
                 departureH = 0;
@@ -3968,7 +3889,7 @@ export function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, us
             idealGasEnthalpy = calculate_IdealGasEnthalpy(dataSet, moleComp, tempK, cpRanges);
             if(idealGasEnthalpy === 987654321.123457){
                 myErrorMsg = "calculate_IdealGasEnthalpy returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
             tempValue = departureH + idealGasEnthalpy;
         }
@@ -3978,7 +3899,7 @@ export function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, us
             
             if(tempValue === 987654321.123457){
                 myErrorMsg = "calculate_LiquidEnthalpy returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
         }
 
@@ -4002,7 +3923,6 @@ export function Entropy(dataRange, temperature, pressure, moles, Phase, useBinar
 
         let binaries: (number)[][] = [];
         let inputDataArray: (any)[] = [];
-        let z: number = 0;
         let cpRanges: (number)[][] = [];
         let departureS: number = 0;
         let tempValue: number = 0;
@@ -4010,17 +3930,13 @@ export function Entropy(dataRange, temperature, pressure, moles, Phase, useBinar
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, true);
                                     
-        let dataSet =  inputDataArray[idx.datasetArray];
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
 
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
-                
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
+        let dataSet =  inputDataArray[idx.datasetArray];
         
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
@@ -4035,13 +3951,13 @@ export function Entropy(dataRange, temperature, pressure, moles, Phase, useBinar
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(tempK === -500 || pBara === -500 || phase === "-500" || moleComp[0] === -500) {
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(dataSet[0][idx.binariesUsed] === true) {
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
         }
 
@@ -4060,7 +3976,7 @@ export function Entropy(dataRange, temperature, pressure, moles, Phase, useBinar
                 departureS = calculate_S_Departure(dataSet, tempK, pBara, moleComp, phase, binariesUsed, binaries);    //'<= vapor phase constant pressure (Cp) enthalpy change from ideal gas conditions (25 C @ 1 bara)
                 if(departureS === 987654321.123457){                                                                               //' Error flag returned from Calculate_H_Departure
                     myErrorMsg === "Enthalpy error: Departure function error: Divide by zero of log() of negative number. Check phase!";
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }else{
                 departureS = 0;
@@ -4069,7 +3985,7 @@ export function Entropy(dataRange, temperature, pressure, moles, Phase, useBinar
             idealGasEntropy = calculate_IdealGasEntropy(dataSet, moleComp, tempK, cpRanges, pBara);
             if(idealGasEntropy === 987654321.123457){
                 myErrorMsg = "calculate_IdealGasEnthalpy returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
             tempValue = departureS + idealGasEntropy;
         }
@@ -4079,7 +3995,7 @@ export function Entropy(dataRange, temperature, pressure, moles, Phase, useBinar
             
             if(tempValue === 987654321.123457){
                 myErrorMsg = "calculate_LiquidEnthalpy returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
         }
 
@@ -4125,11 +4041,11 @@ function calculate_IdealGasEnthalpy(dataSet, moleComp: (number)[], tempK: number
                 
                 CpEquation = 0;
             
-                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK]] * tempK / Denominator;
-                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 1] * ( Math.pow((tempK/Denominator), 2) )/2;
-                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 2] * ( Math.pow((tempK / Denominator), 3) ) / 3;
-                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 3] * ( Math.pow((tempK / Denominator), 4) ) / 4;
-                CpEquation = CpEquation - dataSet[i][cpRanges[i][idx.tempK] + 4] / (tempK / Denominator);
+                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK]] * local_Tempk / Denominator;
+                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 1] * ( Math.pow((local_Tempk/Denominator), 2) )/2;
+                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 2] * ( Math.pow((local_Tempk / Denominator), 3) ) / 3;
+                CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 3] * ( Math.pow((local_Tempk / Denominator), 4) ) / 4;
+                CpEquation = CpEquation - dataSet[i][cpRanges[i][idx.tempK] + 4] / (local_Tempk / Denominator);
                 CpEquation = CpEquation + dataSet[i][cpRanges[i][idx.tempK] + 5] - dataSet[i][cpRanges[i][idx.tempK] + 7];
                 
                 tempNumber = tempNumber + moleComp[i] * CpEquation / J_to_kJ;
@@ -4174,7 +4090,6 @@ function calculate_LiquidEnthalpy(dataSet, moleComp: (number)[], tempK: number, 
         'This function is called by the Enthalpy function.
         '***************************************************************************/
 
-        let LiquidCpDataRequired: boolean = false;
         let Denominator: number = 1;
         let J_to_kJ: number = 1;
         let cpEquation: number = 0;
@@ -4300,14 +4215,10 @@ export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, k
         'This function calculates the Joule-Thompson coefficient for the PR1978 EOS.
         '***************************************************************************/
 
-        let passedTempK: number = 0;
         let myErrorMsg: string = "";
         let fcnName: string = "JT_Coef";
-        let Derivatives: (number)[] = [];
-        let CvIG: number = 0;
         let CpIG: number = 0;
         let Cp: number = 0;
-        let Cv: number = 0;
         let cpRanges: (number)[][] = [];
         let CvResidual: number = 0;
         let CpResidual: number = 0;
@@ -4315,7 +4226,6 @@ export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, k
         let d2adT2: number = 0;
         let daidTArray: (number)[] = [];
         let binaries: (number)[][] = [];
-        let sum_b: number = 0;
         let derivitiveArray: (number)[] = [];
 
         let inputDataArray: (any)[] = [];
@@ -4323,31 +4233,26 @@ export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, k
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, "vapor", useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
                                     
-        let dataSet =  inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
+        let dataSet =  inputDataArray[idx.datasetArray];
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 ;
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(binariesUsed){
@@ -4355,7 +4260,7 @@ export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, k
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             
                 if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }
            
@@ -4367,8 +4272,6 @@ export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, k
 
         CpIG = calculate_Cp_IGorLiquid(dataSet, moleComp, tempK, cpRanges, "vapor");
 
-        CvIG = CpIG - gasLawR * 100000;
-
         d2aidT2Array = create_d2aidT2Array(dataSet, tempK);
 
         daidTArray = create_daidTArray(dataSet, aiArray, tempK);
@@ -4377,19 +4280,18 @@ export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, k
 
         if((derivitiveArray[idx.Z] + derivitiveArray[idx.b] * (1 + Math.pow(2, 0.5) )) / (derivitiveArray[idx.Z] + derivitiveArray[idx.b] * (1 - Math.pow(2, 0.5) )) <= 0){
             myErrorMsg = "The natural log term in the Cv residual equation retun an error. Check phase.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
     }
 
         if(derivitiveArray[idx.sumb] <= 0){
             myErrorMsg = "The term sum_b is less than or equal to zero. Check phase.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         CvResidual = 100000 * tempK * d2adT2 * Math.log((derivitiveArray[idx.Z] + derivitiveArray[idx.b] * (1 + Math.pow(2, 0.5) )) / (derivitiveArray[idx.Z] + derivitiveArray[idx.b] * (1 - Math.pow(2, 0.5) )))/ (derivitiveArray[idx.sumb] * Math.pow(8, 0.5) );
 
         CpResidual = CvResidual + (tempK * (derivitiveArray[idx.dPdT_constV]) * derivitiveArray[idx.dVdT_constP] - gasLawR) * 100000;
 
-        Cv = CvIG + CvResidual;
         Cp = CpIG + CpResidual;
 
         return (1 / Cp) * (tempK * derivitiveArray[idx.dVdT_constP] - derivitiveArray[idx.vol]) * 100000;
@@ -4515,10 +4417,6 @@ function calculate_LiquidEntropy(dataSet, moleComp: (number)[], tempK: number, c
             
         return tempValue;
 
-
-        
-
-    
     }catch(myErrorHandler){
         dataSet[0][idx.globalErrmsg] = myErrorHandler.message
         return 987654321.123457; //'<=error flag
@@ -4538,56 +4436,44 @@ export function vaporCv(dataRange, temperature, pressure, moles, useBinaries?, k
         'This function calculates the liquid, ideal gas or PR1978 EOS Cv.
         '***************************************************************************/
 
-        let passedTempK: number = 0;
         let CvIG: number = 0;
         let CpIG: number = 0;
         let CvResidual: number = 0;
         let d2adT2: number = 0;
-        let sum_b: number = 0;
         let myErrorMsg: string = "";
         let fcnName: string = "vaporCv";
         let Phase: string = "vapor";
-        let aij_Array: (number)[][] = []
         let derivatives: (number)[] = [];
         let CpRanges: (number)[][] = [];
         let d2aidT2Array: (number)[] = [];
         let daidTArray: (number)[] = [];
         let outputArray: (number)[] = [];
-        let outputArrayWithLables: (any)[] = [];
         let binaries: (number)[][] = [];
-        let datasetErrMsgsOn: boolean = false;
 
         let inputDataArray: (any)[] = [];
 
-        let z: number = 0;
-
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, true);
                                     
-        let dataSet =  inputDataArray[idx.datasetArray];
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString()
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
+        let dataSet =  inputDataArray[idx.datasetArray];
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(binariesUsed){
@@ -4596,7 +4482,7 @@ export function vaporCv(dataRange, temperature, pressure, moles, useBinaries?, k
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             
                 if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
@@ -4614,12 +4500,12 @@ export function vaporCv(dataRange, temperature, pressure, moles, useBinaries?, k
 
             if((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5) )) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5) )) <= 0){
                 myErrorMsg = "The natural log term in the Cv residual equation retun an error. Check phase.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             if(derivatives[idx.sumb] <= 0){
                 myErrorMsg = "The term sum_b is less than or equal to zero. Check phase."
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             CvResidual = 100000 * tempK * d2adT2 * Math.log((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5))) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5) ))) / (derivatives[idx.sumb] * Math.pow(8, 0.5) );
@@ -4630,7 +4516,7 @@ export function vaporCv(dataRange, temperature, pressure, moles, useBinaries?, k
 
         }else{
             myErrorMsg = "Calculate_Derivatives returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         if(myErrorMsg = ""){
@@ -4657,7 +4543,6 @@ export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinarie
         'This function calculates the liquid, ideal gas or PR1978 EOS Cv.
         '***************************************************************************/
 
-        let passedTempK: number = 0;
         let CvIG: number = 0;
         let CpIG: number = 0;
         let CvResidual: number = 0;
@@ -4666,7 +4551,6 @@ export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinarie
         let Cp: number = 0;
         let Cv: number = 0;
         let d2adT2: number = 0;
-        let sum_b: number = 0;
         let myErrorMsg: string = "";
         let fcnName: string = "SpeedOfSound";
         let Phase: string = "vapor";
@@ -4674,41 +4558,32 @@ export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinarie
         let CpRanges: (number)[][] = [];
         let d2aidT2Array: (number)[] = [];
         let daidTArray: (number)[] = [];
-        let outputArray: (number)[] = [];
-        let outputArrayWithLables: (any)[] = [];
         let binaries: (number)[][] = [];
         let inputDataArray: (any)[] = [];
-        let datasetErrMsgsOn: boolean = false;
         let tempValue: number = 0;
 
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
                                    
-        let dataSet =  inputDataArray[idx.datasetArray]
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
 
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
-        
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
+        let dataSet =  inputDataArray[idx.datasetArray];
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(binariesUsed){
@@ -4717,7 +4592,7 @@ export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinarie
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             
                 if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }
             binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
@@ -4728,7 +4603,7 @@ export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinarie
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             }
             if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
             }
         }
 
@@ -4744,12 +4619,12 @@ export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinarie
 
             if((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5) )) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5) )) <= 0){
                 myErrorMsg = "The natural log term in the Cv residual equation retun an error. Check phase.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             if(derivatives[idx.sumb] <= 0){
                 myErrorMsg = "The term sum_b is less than or equal to zero. Check phase."
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
             CvResidual = 100000 * tempK * d2adT2 * Math.log((derivatives[idx.Z] + derivatives[idx.b] * (1 + Math.pow(2, 0.5) )) / (derivatives[idx.Z] + derivatives[idx.b] * (1 - Math.pow(2, 0.5) ))) / (derivatives[idx.sumb] * Math.pow(8, 0.5) );
@@ -4770,7 +4645,7 @@ export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinarie
 
         }else{
             myErrorMsg = "Calculate_Derivatives returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         if(myErrorMsg = ""){
@@ -4918,17 +4793,13 @@ function calculate_H_Departure(dataSet, tempK: number, pbara: number,  moleComp:
         let Z: number = 0;
         let alpha_aiArray: (number)[] = [];
         let aiArray: (number)[] = [];
-        let bi_Array: (number)[] = [];
         let aij_Array: (number)[][] = [];
         let sum_a: number = 0;
         let sum_b: number = 0;
-        let Phi: (number)[] = [];
         let dadT: number = 0;
         let departH: number = 0;
         let departH0: number = 0;
-        let errorTest: number = 0;
         let myErrorMsg: string = "";
-        let dadt_Array: (number)[][] = [];
         let fcnName: string  = "calculate_H_Departure";
 
         myErrorMsg = "";
@@ -4937,12 +4808,12 @@ function calculate_H_Departure(dataSet, tempK: number, pbara: number,  moleComp:
             alpha_aiArray = create_alphaiArray(dataSet, tempK);
             if(alpha_aiArray[0] === -500) {
                 myErrorMsg = "create_alphaiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if(aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
         }else{
@@ -4952,76 +4823,76 @@ function calculate_H_Departure(dataSet, tempK: number, pbara: number,  moleComp:
         alpha_aiArray = create_alphaiArray(dataSet, tempK);
         if(alpha_aiArray[0] === -500) {
             myErrorMsg = "create_alphaiArray returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if(aij_Array[0][0] === -500 ) {
             myErrorMsg = "create_aijArray returned an error."
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
 
         if(sum_a === -500) {
             myErrorMsg = "calculate_sum_a returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         sum_b = calculate_sum_b(dataSet, moleComp);
 
         if(sum_b === -500) {
             myErrorMsg = "calculate_sum_b returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         a = calculate_A(dataSet, sum_a, tempK, pbara);
 
         if(a === -500){
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         b = calculate_B(dataSet, sum_b, tempK, pbara);
 
         if(b === -500){
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         Z = calculate_EOS_Root(dataSet, a, b, phase);
 
         if(Z === -500){
             myErrorMsg = "calculate_EOS_Root returned an error when calculating z.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         };
 
         a0 = calculate_A(dataSet, sum_a, tempK, 1);
 
         if(a0 === -500){
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         b0 = calculate_B(dataSet, sum_b, tempK, 1);
 
         if(b0 === -500){
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         Z0 = calculate_EOS_Root(dataSet, a0, b0, phase);
 
         if(Z0 === -500){
             myErrorMsg = "calculate_EOS_Root returned an error when calculating z0.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         };
 
         dadT = calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray);
 
         if((Z + (Math.pow(2, 0.5) + 1) * b)  <= 0 || (Z - (Math.pow(2, 0.5) - 1) * b)  <= 0 || (2 * Math.pow(2, 0.5) * sum_b) <= 0){
             myErrorMsg = "Check supplied Phase. The term (z + (2 ^ 0.5 + 1) * B) / (z - (2 ^ 0.5 - 1) * B) is less than or equal to zero and will cause an error in the ln() function of the Phi() expression.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         departH = 100000 * (gasLawR * tempK * (Z - 1) + (tempK * dadT - sum_a) / (2 * Math.pow(2, 0.5) * sum_b) * Math.log((Z + (Math.pow(2, 0.5) + 1) * b) / (Z - (Math.pow(2, 0.5) - 1) * b)));
@@ -5029,7 +4900,7 @@ function calculate_H_Departure(dataSet, tempK: number, pbara: number,  moleComp:
 
         if((Z0 + (Math.pow(2, 0.5) + 1) * b0)  <= 0 || (Z0 - (Math.pow(2, 0.5) - 1) * b0)  <= 0){
             myErrorMsg = "Check supplied Phase. The term (z + (2 ^ 0.5 + 1) * B) / (z - (2 ^ 0.5 - 1) * B) is less than or equal to zero and will cause an error in the ln() function of the Phi() expression.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         departH0 = 100000 * (gasLawR * tempK * (Z0 - 1) + (tempK * dadT - sum_a) / (2 * Math.pow(2, 0.5) * sum_b) * Math.log((Z0 + (Math.pow(2, 0.5) + 1) * b0) / (Z0 - (Math.pow(2, 0.5) - 1) * b0)));
@@ -5062,17 +4933,13 @@ function calculate_S_Departure(dataSet, tempK: number, pbara: number,  moleComp:
         let Z: number = 0;
         let alpha_aiArray: (number)[] = [];
         let aiArray: (number)[] = [];
-        let bi_Array: (number)[] = [];
         let aij_Array: (number)[][] = [];
         let sum_a: number = 0;
         let sum_b: number = 0;
-        let Phi: (number)[] = [];
         let dadT: number = 0;
         let departS: number = 0;
         let departS0: number = 0;
-        let errorTest: number = 0;
         let myErrorMsg: string = "";
-        let dadt_Array: (number)[][] = [];
         let fcnName: string  = "calculate_S_Departure";
 
         myErrorMsg = "";
@@ -5081,12 +4948,12 @@ function calculate_S_Departure(dataSet, tempK: number, pbara: number,  moleComp:
             alpha_aiArray = create_alphaiArray(dataSet, tempK);
             if(alpha_aiArray[0] === -500) {
                 myErrorMsg = "create_alphaiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
             aiArray = create_aiArray(dataSet, alpha_aiArray);
             if(aiArray[0] === -500) {
                 myErrorMsg = "create_aiArray returned an error.";
-                throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+                throw new Error(`${fcnName}: ${myErrorMsg}`);
             }
 
         }else{
@@ -5096,83 +4963,83 @@ function calculate_S_Departure(dataSet, tempK: number, pbara: number,  moleComp:
         alpha_aiArray = create_alphaiArray(dataSet, tempK);
         if(alpha_aiArray[0] === -500) {
             myErrorMsg = "create_alphaiArray returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         aij_Array = create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK);
         if(aij_Array[0][0] === -500 ) {
             myErrorMsg = "create_aijArray returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         sum_a = calculate_sum_a(dataSet, aij_Array, moleComp);
 
         if(sum_a === -500) {
             myErrorMsg = "calculate_sum_a returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         sum_b = calculate_sum_b(dataSet, moleComp);
 
         if(sum_b === -500) {
             myErrorMsg = "calculate_sum_b returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         a = calculate_A(dataSet, sum_a, tempK, pbara);
 
         if(a === -500){
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         b = calculate_B(dataSet, sum_b, tempK, pbara);
 
         if(b === -500){
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         Z = calculate_EOS_Root(dataSet, a, b, phase);
 
         if(Z === -500){
             myErrorMsg = "calculate_EOS_Root returned an error when calculating Z.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         };
 
         a0 = calculate_A(dataSet, sum_a, tempK, 1);
 
         if(a0 === -500){
             myErrorMsg = "calculate_A returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         b0 = calculate_B(dataSet, sum_b, tempK, 1);
 
         if(b0 === -500){
             myErrorMsg = "calculate_B returned an error.";
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         Z0 = calculate_EOS_Root(dataSet, a0, b0, phase);
 
         if(Z0 === -500){
             myErrorMsg = "calculate_EOS_Root returned an error when calculating Z0.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         };
 
         dadT = calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray);
 
         if((2 * Math.pow( 2, 0.5) * sum_b)  <= 0 || (Z - (Math.pow(2, 0.5) - 1) * b) <= 0 || (Z + (Math.pow(2, 0.5) + 1) * b) / (Z - (Math.pow(2, 0.5) - 1) * b) <= 0 ){
             myErrorMsg = "Check supplied Phase. The term (z + (2 ^ 0.5 + 1) * B) / (z - (2 ^ 0.5 - 1) * B) is less than or equal to zero and will cause an error in the ln() function of the Phi() expression.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         departS = 100000 * (gasLawR * Math.log(Z - b) + (dadT / (2 * Math.pow( 2, 0.5) * sum_b)) * Math.log((Z + (Math.pow(2, 0.5) + 1) * b) / (Z - (Math.pow(2, 0.5) - 1) * b)));
 
         if((2 * Math.pow( 2, 0.5) * sum_b)  <= 0 || (Z0 - (Math.pow(2, 0.5) - 1) * b0) <= 0 || (Z0 + (Math.pow(2, 0.5) + 1) * b0) / (Z0 - (Math.pow(2, 0.5) - 1) * b0) <= 0 ){
             myErrorMsg = "Check supplied Phase. The term (z + (2 ^ 0.5 + 1) * B) / (z - (2 ^ 0.5 - 1) * B) is less than or equal to zero and will cause an error in the ln() function of the Phi() expression.";
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         departS0 = 100000 * (gasLawR * Math.log(Z0 - b0) + (dadT / (2 * Math.pow( 2, 0.5) * sum_b)) * Math.log((Z0 + (Math.pow(2, 0.5) + 1) * b0) / (Z0 - (Math.pow(2, 0.5) - 1) * b0)));
@@ -5209,7 +5076,7 @@ function calculate_EOS_Root(dataSet, a: number, b: number, phase: string): numbe
 
         if(Z === -500){
             myErrorMsg = `${fcnName} returned an errror. Check phase.`;
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
         }
 
         //dataset[0][idx.globalErrmsg] = `${fcnName}: ${myErrorMsg}`
@@ -5232,13 +5099,6 @@ function calculate_IdealGasEntropy(dataSet, moleComp: (number)[], tempK: number,
 
 
         let Denominator: number = 0;
-        let TMN1: number = 0;
-        let TMX1: number = 0;
-        let TMX2: number = 0;
-        let TMX3: number = 0;
-        let TMX4: number = 0;
-        let TMX5: number = 0;
-        let TMX6: number = 0;
         let cpEquation: number = 0;
         let local_Tempk: number = 0;
         let myErrorMsg: string = "";
@@ -5293,8 +5153,8 @@ function calculate_IdealGasEntropy(dataSet, moleComp: (number)[], tempK: number,
                                                                             
         /*'    NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
-        '    H� = standard enthalpy (kJ/mol)
-        '    S� = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -5325,32 +5185,26 @@ export function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBina
         
         inputDataArray = validateData(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn, -500, false);
                                     
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
+
         let dataSet =  inputDataArray[idx.datasetArray];
-
-        if (typeof (dataSet[0]) === "string") {
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
-
-        if(dataSet[0][idx.globalErrmsg] !== ""){
-            myErrorMsg = dataSet[0].toString();
-            throw new Error(`Function name: ${fcnName}, ${myErrorMsg}`);
-        }
 
         const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
         const pBara: number = inputDataArray[idx.valuesArray][idx.P].valueOf();
         const phase: string = inputDataArray[idx.valuesArray][idx.phase].valueOf();
         const moleComp: (number)[] = inputDataArray[idx.moleCompArray];
         const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
-        const errorMsgsOn = inputDataArray[idx.valuesArray][idx.errsOn].valueOf();
-        const alpha_aiArray = inputDataArray[idx.alphaArray];
         const aiArray = inputDataArray[idx.aiArray];
         const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
         const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
         const decompArray: (number)[][] = inputDataArray[idx.decompArray];
 
         if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
-            throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
         }
 
         if(binariesUsed){
@@ -5358,7 +5212,7 @@ export function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBina
                 binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
             
                 if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
-                    throw new Error(`Function name: ${fcnName}, ${dataSet[0][idx.globalErrmsg]}`);
+                    throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
                 }
             }
             phi = calculate_Phi(dataSet, phase, moleComp, tempK, pBara, binariesUsed, aiArray, binaries);
@@ -5404,3 +5258,54 @@ export function calculate_ki(omega: number){
         return myErrorHandler.message
       }
   }
+  /*************************************************************** */
+  export function returnPredictiveBinaries(dataRange, temperature, moles, decomposition, errMsgsOn): (number)[][]{
+      try{                    
+        /***************************************************************************
+        'This function calculates the calculates the return_kijTs of the Predictive PR1978 EOS.
+        '***************************************************************************/
+
+        let myErrorMsg: string
+        let fcnName: string
+        let inputDataArray: (any)[][]
+        let binaries: (number)[][]
+
+        fcnName = "returnBinaries"
+
+        inputDataArray = validateData(dataRange, temperature, -500, moles, "vapor", true, [[-500][-500]], [[-500][-500]], decomposition, errMsgsOn, -500, false);
+                                    
+        let errorTest: any = inputDataArray[0][0] // If an unrecoverable error occured during validateData() execution inputDataArray[0][0] will contain an error message otherwise it will contain the 1st vapor species MW
+        if (typeof (errorTest) === "string") {
+            myErrorMsg = errorTest
+            throw new Error(`${fcnName}: ${myErrorMsg}`);
+        }
+
+        let dataSet =  inputDataArray[idx.datasetArray];
+
+        dataSet[0][idx.predictive] = true
+
+        const tempK: number = inputDataArray[idx.valuesArray][idx.T].valueOf();
+        const binariesUsed = inputDataArray[idx.valuesArray][idx.binariesOn].valueOf();
+        const aiArray = inputDataArray[idx.aiArray];
+        const kij0Array: (number)[][] = inputDataArray[idx.kij0Array];
+        const kijTArray: (number)[][] = inputDataArray[idx.kijTArray];
+        const decompArray: (number)[][] = inputDataArray[idx.decompArray];
+
+
+        if(binariesUsed && !inputDataArray[idx.valuesArray][idx.validBinaries]){
+            throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
+        }
+
+        if(inputDataArray[idx.valuesArray][idx.validBinaries]) {
+            binaries = calculate_binaries(dataSet, tempK, kij0Array, kijTArray, aiArray, decompArray);
+        
+            if(binaries[0][0] === -500 && dataSet[0][idx.binariesUsed] === true){
+                throw new Error(`${fcnName}: ${dataSet[0][idx.globalErrmsg]}`);
+            }
+        }
+
+    return binaries
+    }catch(myErrorHandler){
+        return  myErrorHandler.message;
+    }
+}
