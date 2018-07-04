@@ -75,8 +75,9 @@ const gasLawR: number = 0.000083144621;     //  m3-bar/K-mol
 const currentNumberOfGroups = 31;  /*"Groups","CH3","CH2","CH","C","CH4","C2H6","CHaro","Caro","C, aro-fused rings","CH2, cyclic","CH/C, cyclic","CO2","N2","H2S","SH","H2O","C2H4","CH2/CH, alkenic","C, alkenic","CH/C, cycloalkenic","H2","CO","He","Ar","SO2","O2","NO","COS","NH3","NO2/N2O4","N2O"],*/
                                     /*"Groups","(GROUP 1)","(GROUP 2)","(GROUP 3)","(GROUP 4)","(GROUP 5)","(GROUP 6)","(GROUP 7)","(GROUP 8)","(GROUP 9)","(GROUP 10)","(GROUP 11)","(GROUP 12)","(GROUP 13)","(GROUP 14)","(GROUP 15)","(GROUP 16)","(GROUP 17)","(GROUP 18)","(GROUP 19)","(GROUP 20)","(GROUP 21)","(GROUP 22)","(GROUP 23)","(GROUP 24)","(GROUP 25)","(GROUP 26)","(GROUP 27)","(GROUP 28)","(GROUP 29)","(GROUP 30)","(GROUP 31)"*/
 /***********************************************************************************************/
+
 function create_alphaiArray(dataSet, tempK: number): number[] {
-    // @customfunction
+
     const fcnName: string = "create_alphaiArray";
     try {
             
@@ -136,6 +137,8 @@ function create_alphaiArray(dataSet, tempK: number): number[] {
     }
 }
 /****************************************************************************************************/
+
+
 function create_aiArray(dataSet, alpha_aiArray: (number)[] ): (number)[] {
     const fcnName: string = "create_aiArray";
     try {
@@ -170,10 +173,11 @@ function create_aiArray(dataSet, alpha_aiArray: (number)[] ): (number)[] {
 
     }
 }
-/**************************************************************************************************/
+/*************************************************************************************/
+
 function create_aijArray(dataSet, binariesUsed: boolean, aiArray: (number)[], binaries: (number)[][], tempK: number): (number)[][] {
     const fcnName: string = "create_aijArray";
-    // @customfunction
+    
     
     try {
         /*'***************************************************************************
@@ -207,9 +211,10 @@ function create_aijArray(dataSet, binariesUsed: boolean, aiArray: (number)[], bi
     }
 }
 /********************************************************************************************************************* */
+
 function create_xi_aijArray(dataSet, aij_Array: (number)[][], molarComp: (number)[]): (number)[] {
     const fcnName: string = "create_xi_aijArray"
-    // @customfunction
+
     try{
             
         /*'***************************************************************************
@@ -241,9 +246,10 @@ function create_xi_aijArray(dataSet, aij_Array: (number)[][], molarComp: (number
     }
 }
 /*************************************************************************************************** */
+
 function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array: (number)[][], alpha_aiArray: (number)[]): number {
     const fcnName: string = "calculate_dadt";
-    // @customfunction
+
     try {
         /***************************************************************************
         'This function is called by the Enthalpy, Entropy and Derivatives function
@@ -279,19 +285,14 @@ function calculate_dadt(dataSet, tempK: number, moleComp: (number)[], aij_Array:
     }
 }
 /****************************************************************************** */
-  /**
- * Calculates constant pressure heat capacity (j/mol/K) given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
- *
- * @customfunction
+
+/**
+ * 
+ * Calculates constant pressure heat capacity (j/mol/K) given T (C), P (pbara), mole amounts, phase (vapor or liquid) and a dataSet.
  */
 export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): (number)[]{
-    
-       // @customfunction
-       try{
 
-        /***************************************************************************
-        'This function calculates the liquid, ideal gas or PR1978 EOS real gas Cv.
-        '***************************************************************************/
+       try{
         
         let CpIG: number = 0;
         let CvResidual: number = 0;
@@ -410,9 +411,10 @@ export function phaseCp(dataRange, temperature, pressure, moles, inputPhase, use
     }
 }
 /****************************************************************** */
+
 function create_d2aidT2Array(dataSet, tempK): (number)[] {
     const fcnName: string = "create_d2aidT2Array";
-    // @customfunction
+    
 
     try{
             
@@ -442,9 +444,10 @@ function create_d2aidT2Array(dataSet, tempK): (number)[] {
     }
 }
 /******************************************************************************************/
+
 function create_daidTArray(dataSet, aiArray: (number)[], tempK: number): (number)[] {
     const fcnName: string = "create_daidTArray";
-    // @customfunction
+    
     try{
         /***************************************************************************
         'The function is called directly of indirectly by vaporCv, PhaseCp, Derivatives, SpeedOfSound and JTCoef
@@ -470,9 +473,10 @@ function create_daidTArray(dataSet, aiArray: (number)[], tempK: number): (number
     }
 }
 /*********************************************************************************************************************/
+
 function calculate_sum_a(dataSet, aij_Array: (number)[][], molarComp:(number)[]): number {
     const fcnName: string = "calculate_sum_a";
-    // @customfunction
+    
     try {
 
             
@@ -501,9 +505,10 @@ function calculate_sum_a(dataSet, aij_Array: (number)[][], molarComp:(number)[])
     }
 }
 /**************************************************************************/
+
 function calculate_sum_b(dataSet, molarComp: (number)[]): number {
     const fcnName: string = "calculate_sum_b";
-    // @customfunction
+    
     try {            
         
         /*'***************************************************************************
@@ -531,9 +536,10 @@ function calculate_sum_b(dataSet, molarComp: (number)[]): number {
 
 }
 /**************************************************************************************/
+
 function calculate_A(dataSet, sum_a: number, tempK: number, pbara: number): number {
     const fcnName: string = "calculate_A";
-    // @customfunction
+    
     try {
     
         /*'***************************************************************************
@@ -555,9 +561,10 @@ function calculate_A(dataSet, sum_a: number, tempK: number, pbara: number): numb
 
 }
 /*******************************************************************************/
+
 function calculate_B(dataSet, sum_b: number, tempK:number, pbara: number): number {
     const fcnName: string = "calculate_B";
-    // @customfunction
+    
     try {
     
         /*'***************************************************************************
@@ -579,8 +586,9 @@ function calculate_B(dataSet, sum_b: number, tempK:number, pbara: number): numbe
     }
 }
 /***********************************************************************************************/
+
 function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
-    // @customfunction
+    
         try {
         let myErrorMsg: string = "";
         const fcnName: string = "validateBinariyArrays";
@@ -681,8 +689,9 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
 
 }
 /****************************************************************************************/
+
 function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (number)[][], passed_aiArray: (number)[], deComp: (number)[][]): (number)[][] {
-    // @customfunction
+    
 
     try {
         let myErrorMsg: string = "";
@@ -768,9 +777,10 @@ function calculate_binaries(dataSet, tempK: number, kij0: (number)[][], kijT: (n
 
 }
 /******************************************************************** */
+
 function createPredictiveBinaries(dataSet, deComp: (number)[][], tempK: number, aiArray: (number)[]): (number)[][] {
     const fcnName: string = "createPredictiveBinaries";
-    // @customfunction
+    
     try{
 
         let array_1to17: (number)[][] = [];
@@ -933,8 +943,9 @@ function createPredictiveBinaries(dataSet, deComp: (number)[][], tempK: number, 
     }
 }
 /********************************************************************* */
+
 function calculate_Derivatives(dataSet, tempK: number, pBara: number, moleComp: (number)[], phase: string, binariesUsed: boolean, passed_aiArray: (number)[] = [-500], binaries: (number)[][]): (number)[] {
-    // @customfunction
+
     try {
 
         /***************************************************************************
@@ -1092,8 +1103,8 @@ function calculate_Derivatives(dataSet, tempK: number, pBara: number, moleComp: 
         }
 
 /***********************************************************************/
+
 function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: boolean = false, binariesUsed: boolean = false, errorMsgsOn: boolean = false): (number | string)[][]  {
-    // @customfunction
     try {
 
         /*************************************************************************** 
@@ -1257,8 +1268,9 @@ function validateDataSet(dataRange: (any)[][], phase: string, cpDataRequired: bo
         } // catch end
 }
 /*******************************************************************************/
+
 function validateMoles(dataSet, moles, arraySize: (any)[]) {
-        // @customfunction
+
     /*'***************************************************************************
     'This function checks for user input errors and returns
     'a one dimersional array of mole composition
@@ -1356,8 +1368,9 @@ function validateMoles(dataSet, moles, arraySize: (any)[]) {
     }  // catch end
 } 
 /*************************************************************************/
+
 function calculate_PhaseZ(dataSet, phase: string, moleComp: (number)[], tempK: number, pBara: number, binariesUsed: boolean, passed_aiArray: (number)[] = [-500], binaries: (number)[][] = [[-500],[-500]]): number {
-    // @customfunction
+
     try {
 
         /*'***************************************************************************
@@ -1447,8 +1460,9 @@ function calculate_PhaseZ(dataSet, phase: string, moleComp: (number)[], tempK: n
     }
 }
 /****************************************************************************** */
+
 function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: number, pBara: number, binariesUsed: boolean, passed_aiArray: (number)[] = [-500], binaries: (number)[][] = [[-500],[-500]]): (number)[] {
-    // @customfunction
+
     try{
 
         /*'***************************************************************************
@@ -1569,7 +1583,7 @@ function calculate_Phi(dataSet, phase: string, moleComp: (number)[], tempK: numb
 }
 /***************************************************************************** */
 function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase: string): (number)[][]{
-    // @customfunction
+    
     try{
             
         /***************************************************************************
@@ -1756,7 +1770,7 @@ function selectCpDataRanges(dataSet: (number | string)[][], tempK: number, Phase
 
 function calculate_Wilson_K(dataSet, tempK: number, pBara: number): (number)[] {
     const fcnName: string = "calculate_Wilson_K";
-    // @customfunction
+    
     try {    
         /***************************************************************************
         'This function is called from the FlashTP function.
@@ -1786,13 +1800,13 @@ function calculate_Wilson_K(dataSet, tempK: number, pBara: number): (number)[] {
 }
 /************************************************************************** */
   /**
- * Calculates estimates of the dew or bubble points (C) given P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+ * Calculates estimates of the dew or bubble points (C) given P (pbara), mole amounts or composition, phase (vapor or liquid) and a dataSet.
  *
  * @customfunction
  */
 
 export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOrBub, errMsgsOn?, passedDataSet = [[-500],[-500]], passedMoleComp =[-500], passedPressure = -500): number {
-    // @customfunction
+    
         try{
         
         /***************************************************************************
@@ -2011,7 +2025,7 @@ export function calculate_T_BubDew_Est(dataRange, pressure: number, moles, dewOr
 }
 /************************************************************************** */
 function initial2D_Array(rows, cols) {
-    // @customfunction
+    
     let array: (number)[][] = [];
     let row: (number)[] = [];
     while (cols--) row.push(0);
@@ -2020,12 +2034,12 @@ function initial2D_Array(rows, cols) {
 }
 /************************************************************************** */
 function inRange(low: number, high: number, x: number): boolean{
-    // @customfunction
+    
     return ((x-high)*(x-low) <= 0);  // Returns true if x is in range [low..high], else false
 }
 /************************************************************************** */
 function size(ar){
-    // @customfunction
+    
     /* This funciton is used to determine if the user input a hard number or a cell reference as a custom funciton parameter. If a cell reference is passed it reports
        the number of dimensions.*/
     let row_count = ar.length;
@@ -2050,7 +2064,7 @@ function size(ar){
 }
 /*************************************************************************** */
 function validateData(dataRange, temperature, pressure, moles, inputPhase, binariesUsed, kij0, kijT, decomposition, errorMsgsOn, guessedTemp, CpDataRequired = false): (any)[] {
-    // @customfunction
+    
     try {
         
         let myErrorMsg: string = "";
@@ -2202,11 +2216,6 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             myErrorMsg = dataSet[0][0];
             return dataSet;
         };
-
-        if(phase === "liquid" && dataSet[0][idx.liquidsFound] === false){
-            myErrorMsg = `${fcnName}: The supplied phase is (liquid) but no liquids are found in the dataSet.`;
-            return [[],[myErrorMsg]];
-        }
 
         currIndex = inputArrayNames.indexOf("moles");
         moleComp = (validateMoles(dataSet, moles, arraySizes[currIndex]));
@@ -2370,12 +2379,12 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
 }
 /*****************************************************************************/
   /**
- * Calculates vapor phase derivatives and other parameters of the PPR1978 EPS given T (C), P (pbara), mole amounts and a dataSet.
+ * Calculates vapor phase derivatives and other parameters of the PPR1978 EPS given T (C), P (pbara), mole amounts or composition.
  *
  * @customfunction
  */
 export function Derivatives(dataRange, temperature, pressure, moles, useBinaries, kij0, kijT, decomposition, returnUnits: boolean = false, errMsgsOn: boolean = false): (number)[] {
-    // @customfunction
+    
     try{
                         
         /***************************************************************************
@@ -2484,12 +2493,12 @@ export function Derivatives(dataRange, temperature, pressure, moles, useBinaries
 }
   /***************************************************************************** */
   /**
- * Calculates the flash result given T (C), P (pbara), mole amounts and a dataSet.
+ * Calculates the flash result given T (C), P (pbara), mole amounts or composition.
  *
  * @customfunction
  */
 export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): (number)[] {
-      // @customfunction
+      
       try {
         
     
@@ -2876,12 +2885,12 @@ export function FlashTP(dataRange, temperature, pressure, moles, useBinaries?, k
 }
 /***************************************************************************** */
 /**
- * Calculates the dew point given a dataSet, mole amounts and pressure.
+ * Calculates the bubble point given a dataSet, mole amounts or composition and pressure. In GSheets this funciton will fail if binaries are used due to slow execution times.
  *
  * @customfunction
  */
 export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, decomposition?, errMsgsOn?, Guess?, CallFromFlash = false): (number)[] {
-      // @customfunction
+      
     try{
 
         /***************************************************************************
@@ -3278,12 +3287,12 @@ export function BubbleT(dataRange, pressure, moles, useBinaries, kij0?, kijT?, d
   }
 /****************************************************************************** */
 /**
- * Calculates the dew point given a dataSet, mole amounts and pressure.
+ * Calculates the dew point given a dataSet, mole amounts or composition and pressure. In GSheets this funciton will fail if binaries are used due to slow execution times.
  *
  * @customfunction
  */
 export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?, Guess?, CallFromFlash = false): (number)[] {
-    // @customfunction
+    
     try{     
 
         /***************************************************************************
@@ -3702,7 +3711,7 @@ export function DewT(dataRange, pressure, moles, useBinaries?, kij0?, kijT?, dec
  * @customfunction
  */
 export function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0?, kijT?, decomposition?, errMsgsOn?) {
-    // @customfunction
+    
     try {
         const fcnName: string = "PhaseZ";
         let myErrorMsg: string = "";
@@ -3760,7 +3769,7 @@ export function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinari
  * @customfunction
  */
 export function Volume(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0?, kijT?, decomposition?, errMsgsOn?) {
-    // @customfunction
+    
     try {
         const fcnName: string = "PhaseZ";
         let myErrorMsg: string = "";
@@ -3814,13 +3823,13 @@ export function Volume(dataRange, temperature, pressure, moles, Phase, useBinari
 
 /******************************************************************************* */
   /**
- * Calculates enthalpy (kj/kg-mole) given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+ * Calculates enthalpy (kj/kg-mole) given T (C), P (pbara), mole amounts or composition, phase (vapor or liquid) and a dataSet.
  *
  * @customfunction
  */
 
 export function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): number {
-    // @customfunction
+    
     try {
         const fcnName: string = "Enthalpy";
         let myErrorMsg: string = "";
@@ -3916,7 +3925,7 @@ export function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, us
  * @customfunction
  */
 export function Entropy(dataRange, temperature, pressure, moles, Phase, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): number {
-    // @customfunction
+    
     try {
         const fcnName: string = "Entropy";
         let myErrorMsg: string = "";
@@ -4007,7 +4016,7 @@ export function Entropy(dataRange, temperature, pressure, moles, Phase, useBinar
 }
 /******************************************************************************* */
 function calculate_IdealGasEnthalpy(dataSet, moleComp: (number)[], tempK: number, cpRanges: (number)[][]): number {
-    // @customfunction
+    
     try{
                         
         /***************************************************************************
@@ -4065,10 +4074,10 @@ function calculate_IdealGasEnthalpy(dataSet, moleComp: (number)[], tempK: number
             dataSet[0][idx.globalErrmsg] = `${fcnName}: ${myErrorMsg}`;
             return tempNumber * 1000;  //'<convert from kJmols to kJ/kg-moles
 
-        /*    NIST Data (units for H & S are different)
+        /*   NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
-        '    H� = standard enthalpy (kJ/mol)
-        '    S� = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -4083,7 +4092,7 @@ function calculate_IdealGasEnthalpy(dataSet, moleComp: (number)[], tempK: number
 }
 /******************************************************************************* */
 function calculate_LiquidEnthalpy(dataSet, moleComp: (number)[], tempK: number, cpRanges: (number)[][]): number{
-    // @customfunction
+    
     try{
             
         /***************************************************************************
@@ -4181,10 +4190,10 @@ function calculate_LiquidEnthalpy(dataSet, moleComp: (number)[], tempK: number, 
             }
         }
 
-        /*'    NIST Data (units for H & S are different)
+        /*'  NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
-        '    H° = standard enthalpy (kJ/mol)
-        '    S° = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -4203,12 +4212,12 @@ function calculate_LiquidEnthalpy(dataSet, moleComp: (number)[], tempK: number, 
 }
 /******************************************************************************* */
   /**
- * Calculates the Joule-Thompson coefficient (K/bar) of a gas given T (C), P (pbara), mole amounts and a dataSet.
+ * Calculates the Joule-Thompson coefficient (K/bar) of a gas given T (C), P (pbara) and mole amounts or composition.
  *
  * @customfunction
  */
 export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): number {
-// @customfunction
+
     try{
 
         /***************************************************************************
@@ -4304,7 +4313,7 @@ export function JT_Coef(dataRange, temperature, pressure, moles, useBinaries?, k
 }
 /******************************************************************************* */
 function calculate_LiquidEntropy(dataSet, moleComp: (number)[], tempK: number, cpRanges: (number)[][]): number{
-    // @customfunction
+    
     try{
             
         /***************************************************************************
@@ -4403,10 +4412,10 @@ function calculate_LiquidEntropy(dataSet, moleComp: (number)[], tempK: number, c
             }
         }
 
-        /*'    NIST Data (units for H & S are different)
+        /*'  NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
-        '    H° = standard enthalpy (kJ/mol)
-        '    S° = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -4424,12 +4433,12 @@ function calculate_LiquidEntropy(dataSet, moleComp: (number)[], tempK: number, c
 }
 /******************************************************************************* */
   /**
- * Calculates the constant volume heat capacity of a vapor (j/mol/K) of a gas given T (C), P (pbara), mole amounts and a dataSet.
+ * Calculates the constant volume heat capacity of a vapor (j/mol/K) of a gas given T (C), P (pbara), mole amounts.
  *
  * @customfunction
  */
 export function vaporCv(dataRange, temperature, pressure, moles, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): (number)[] {
-    // @customfunction
+    
     try{
 
         /***************************************************************************
@@ -4531,12 +4540,12 @@ export function vaporCv(dataRange, temperature, pressure, moles, useBinaries?, k
 }
 /******************************************************************************* */
   /**
- * Calculates the speed of sound  (m/s) of a gas given T (C), P (pbara), mole amounts
+ * Calculates the speed of sound  (m/s) of a gas given T (C), P (pbara), mole amounts or composition
  *
  * @customfunction
  */
 export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): number {
-    // @customfunction
+    
     try{
 
         /***************************************************************************
@@ -4661,7 +4670,7 @@ export function SpeedOfSound(dataRange, temperature, pressure, moles, useBinarie
 }
 /******************************************************************************* */
 function calculate_d2adT2(dataSet,  tempK: number, moleComp: (number)[], aiArray: (number)[], daidTArray: (number)[], d2aidT2Array: (number)[], binariesUsed: boolean, binaries: (number)[][]): number{
-    // @customfunction
+    
     try{
 
         /***************************************************************************
@@ -4705,7 +4714,7 @@ function calculate_d2adT2(dataSet,  tempK: number, moleComp: (number)[], aiArray
 }
 /******************************************************************************* */
 function calculate_Cp_IGorLiquid(dataSet, moleComp: (number)[], tempK: number, cpRanges: (number)[][], phase: string): number{
-    // @customfunction
+    
     try{
                         
         /***************************************************************************
@@ -4755,10 +4764,10 @@ function calculate_Cp_IGorLiquid(dataSet, moleComp: (number)[], tempK: number, c
             }
         }
                 
-        /*'   NIST Data
+        /*'  NIST Data
         '    Cp = heat capacity (J/mol*K)
-        '    H° = standard enthalpy (kJ/mol)
-        '    S° = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -4778,7 +4787,7 @@ function calculate_Cp_IGorLiquid(dataSet, moleComp: (number)[], tempK: number, c
 }
 /******************************************************************************* */
 function calculate_H_Departure(dataSet, tempK: number, pbara: number,  moleComp: (number)[], phase: string, binariesUsed: boolean, passed_aiArray: (number)[] = [-500], binaries: (number)[][] = [[-500],[-500]]): number {
-    // @customfunction
+    
     try{
         /***************************************************************************
         'This function is called by the Enthalpy function
@@ -4918,7 +4927,7 @@ function calculate_H_Departure(dataSet, tempK: number, pbara: number,  moleComp:
 }
 /******************************************************************************* */
 function calculate_S_Departure(dataSet, tempK: number, pbara: number,  moleComp: (number)[], phase: string, binariesUsed: boolean, binaries: (number)[][] = [[-500],[-500]], passed_aiArray: (number)[] = [-500]): number {
-    // @customfunction
+    
     try{
         /***************************************************************************
         'This function is called by the Entropy function
@@ -5057,13 +5066,13 @@ function calculate_S_Departure(dataSet, tempK: number, pbara: number,  moleComp:
 }
 /******************************************************************************* */
 function calculate_EOS_Root(dataSet, a: number, b: number, phase: string): number {
-    // @customfunction
+    
     try{
             
         /***************************************************************************
         'This function is called by all of the PR1978 EOS functions
         'This function calculates the the root to the PR1978 EOS (reference 1)
-        'This function uses the GetLargestRoot function in the Math module (reference 6)
+        'This function uses the GetLargestRoot function in the findCubicRoots.js module (reference 6)
         '***************************************************************************/
 
         let Z: number;
@@ -5090,7 +5099,7 @@ function calculate_EOS_Root(dataSet, a: number, b: number, phase: string): numbe
 }
 /******************************************************************************* */
 function calculate_IdealGasEntropy(dataSet, moleComp: (number)[], tempK: number, cpRanges: (number)[][], pBara: number): number {
-    // @customfunction
+    
             try{
             
         /***************************************************************************
@@ -5151,7 +5160,7 @@ function calculate_IdealGasEntropy(dataSet, moleComp: (number)[], tempK: number,
 
             return tempValue;
                                                                             
-        /*'    NIST Data (units for H & S are different)
+        /*'  NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
         '    H = standard enthalpy (kJ/mol)
         '    S = standard entropy (J/mol*K)
@@ -5168,12 +5177,12 @@ function calculate_IdealGasEntropy(dataSet, moleComp: (number)[], tempK: number,
 }
 /******************************************************************************* */
   /**
- * Calculates the fugacity coefficients of a phase given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+ * Calculates the fugacity coefficients of a phase given T (C), P (pbara), mole amounts or composition, phase (vapor or liquid).
  *
  * @customfunction
  */
 export function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBinaries?, kij0?, kijT?, decomposition?, errMsgsOn?): (number)[] {
-    // @customfunction
+    
     try {
        
         let myErrorMsg: string = "";
@@ -5233,7 +5242,11 @@ export function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBina
 }
 
 /***************************************************************/
-
+  /**
+ * Calculates the pure component PR1978 property ki.
+ *
+ * @customfunction
+ */
 export function calculate_ki(omega: number){
     try{
       if(Number(omega) === NaN){
@@ -5250,7 +5263,12 @@ export function calculate_ki(omega: number){
         return myErrorHandler.message
     }
   }
-
+  /*************************************************************** */
+ /**
+ * Calculates the pure component PR1978 property bi.
+ *
+ * @customfunction
+ */
   export function calculate_bi(tc: number, pc: number){
       try{
         return 0.0778 * gasLawR * tc / pc ; 

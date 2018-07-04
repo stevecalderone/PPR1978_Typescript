@@ -130,7 +130,6 @@ var currentNumberOfGroups = 31; /*"Groups","CH3","CH2","CH","C","CH4","C2H6","CH
 /*"Groups","(GROUP 1)","(GROUP 2)","(GROUP 3)","(GROUP 4)","(GROUP 5)","(GROUP 6)","(GROUP 7)","(GROUP 8)","(GROUP 9)","(GROUP 10)","(GROUP 11)","(GROUP 12)","(GROUP 13)","(GROUP 14)","(GROUP 15)","(GROUP 16)","(GROUP 17)","(GROUP 18)","(GROUP 19)","(GROUP 20)","(GROUP 21)","(GROUP 22)","(GROUP 23)","(GROUP 24)","(GROUP 25)","(GROUP 26)","(GROUP 27)","(GROUP 28)","(GROUP 29)","(GROUP 30)","(GROUP 31)"*/
 /***********************************************************************************************/
 function create_alphaiArray(dataSet, tempK) {
-    // @customfunction
     var fcnName = "create_alphaiArray";
     try {
         /*'***************************************************************************
@@ -211,10 +210,9 @@ function create_aiArray(dataSet, alpha_aiArray) {
         return [-500];
     }
 }
-/**************************************************************************************************/
+/*************************************************************************************/
 function create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK) {
     var fcnName = "create_aijArray";
-    // @customfunction
     try {
         /*'***************************************************************************
         'The function is called by all of the PR1978 functions
@@ -244,7 +242,6 @@ function create_aijArray(dataSet, binariesUsed, aiArray, binaries, tempK) {
 /********************************************************************************************************************* */
 function create_xi_aijArray(dataSet, aij_Array, molarComp) {
     var fcnName = "create_xi_aijArray";
-    // @customfunction
     try {
         /*'***************************************************************************
         'The function is called by calculate_Phi function
@@ -272,7 +269,6 @@ function create_xi_aijArray(dataSet, aij_Array, molarComp) {
 /*************************************************************************************************** */
 function calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray) {
     var fcnName = "calculate_dadt";
-    // @customfunction
     try {
         /***************************************************************************
         'This function is called by the Enthalpy, Entropy and Derivatives function
@@ -302,16 +298,11 @@ function calculate_dadt(dataSet, tempK, moleComp, aij_Array, alpha_aiArray) {
 }
 /****************************************************************************** */
 /**
-* Calculates constant pressure heat capacity (j/mol/K) given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
-*
-* @customfunction
-*/
+ *
+ * Calculates constant pressure heat capacity (j/mol/K) given T (C), P (pbara), mole amounts, phase (vapor or liquid) and a dataSet.
+ */
 function phaseCp(dataRange, temperature, pressure, moles, inputPhase, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
-        /***************************************************************************
-        'This function calculates the liquid, ideal gas or PR1978 EOS real gas Cv.
-        '***************************************************************************/
         var CpIG = 0;
         var CvResidual = 0;
         var CpResidual = 0;
@@ -408,7 +399,6 @@ exports.phaseCp = phaseCp;
 /****************************************************************** */
 function create_d2aidT2Array(dataSet, tempK) {
     var fcnName = "create_d2aidT2Array";
-    // @customfunction
     try {
         /*'***************************************************************************
         'The function is called directly of indirectly by vaporCv, PhaseCp, Derivatives, SpeedOfSound and JTCoef
@@ -434,7 +424,6 @@ function create_d2aidT2Array(dataSet, tempK) {
 /******************************************************************************************/
 function create_daidTArray(dataSet, aiArray, tempK) {
     var fcnName = "create_daidTArray";
-    // @customfunction
     try {
         /***************************************************************************
         'The function is called directly of indirectly by vaporCv, PhaseCp, Derivatives, SpeedOfSound and JTCoef
@@ -456,7 +445,6 @@ function create_daidTArray(dataSet, aiArray, tempK) {
 /*********************************************************************************************************************/
 function calculate_sum_a(dataSet, aij_Array, molarComp) {
     var fcnName = "calculate_sum_a";
-    // @customfunction
     try {
         /*'***************************************************************************
         'The function is called by all of the PR1978 functions
@@ -480,7 +468,6 @@ function calculate_sum_a(dataSet, aij_Array, molarComp) {
 /**************************************************************************/
 function calculate_sum_b(dataSet, molarComp) {
     var fcnName = "calculate_sum_b";
-    // @customfunction
     try {
         /*'***************************************************************************
         'The function is called by all of the PR1978 functions
@@ -502,7 +489,6 @@ function calculate_sum_b(dataSet, molarComp) {
 /**************************************************************************************/
 function calculate_A(dataSet, sum_a, tempK, pbara) {
     var fcnName = "calculate_A";
-    // @customfunction
     try {
         /*'***************************************************************************
         'The function is called by all of the PR1978 functions
@@ -520,7 +506,6 @@ function calculate_A(dataSet, sum_a, tempK, pbara) {
 /*******************************************************************************/
 function calculate_B(dataSet, sum_b, tempK, pbara) {
     var fcnName = "calculate_B";
-    // @customfunction
     try {
         /*'***************************************************************************
         'The function is called by the 'CreateDataset' function
@@ -537,7 +522,6 @@ function calculate_B(dataSet, sum_b, tempK, pbara) {
 }
 /***********************************************************************************************/
 function validateBinariyArrays(dataSet, kij0, kijT, decomposition) {
-    // @customfunction
     try {
         var myErrorMsg = "";
         var fcnName = "validateBinariyArrays";
@@ -636,7 +620,6 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition) {
 }
 /****************************************************************************************/
 function calculate_binaries(dataSet, tempK, kij0, kijT, passed_aiArray, deComp) {
-    // @customfunction
     try {
         var myErrorMsg = "";
         var errorSum = 0;
@@ -716,7 +699,6 @@ function calculate_binaries(dataSet, tempK, kij0, kijT, passed_aiArray, deComp) 
 /******************************************************************** */
 function createPredictiveBinaries(dataSet, deComp, tempK, aiArray) {
     var fcnName = "createPredictiveBinaries";
-    // @customfunction
     try {
         var array_1to17 = [];
         var array_18to31 = [];
@@ -862,7 +844,6 @@ function createPredictiveBinaries(dataSet, deComp, tempK, aiArray) {
 /********************************************************************* */
 function calculate_Derivatives(dataSet, tempK, pBara, moleComp, phase, binariesUsed, passed_aiArray, binaries) {
     if (passed_aiArray === void 0) { passed_aiArray = [-500]; }
-    // @customfunction
     try {
         /***************************************************************************
         'The function calculates various derivatives of the PR1978 EOS
@@ -992,7 +973,6 @@ function validateDataSet(dataRange, phase, cpDataRequired, binariesUsed, errorMs
     if (cpDataRequired === void 0) { cpDataRequired = false; }
     if (binariesUsed === void 0) { binariesUsed = false; }
     if (errorMsgsOn === void 0) { errorMsgsOn = false; }
-    // @customfunction
     try {
         /***************************************************************************
         'This function reads the input dataRange cells and creates/returns and array of vapor or vapor and liquid species data
@@ -1149,7 +1129,6 @@ function validateDataSet(dataRange, phase, cpDataRequired, binariesUsed, errorMs
 }
 /*******************************************************************************/
 function validateMoles(dataSet, moles, arraySize) {
-    // @customfunction
     /*'***************************************************************************
     'This function checks for user input errors and returns
     'a one dimersional array of mole composition
@@ -1245,7 +1224,6 @@ function validateMoles(dataSet, moles, arraySize) {
 function calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, passed_aiArray, binaries) {
     if (passed_aiArray === void 0) { passed_aiArray = [-500]; }
     if (binaries === void 0) { binaries = [[-500], [-500]]; }
-    // @customfunction
     try {
         /*'***************************************************************************
         'This function is called by all of the PR1978 functions
@@ -1318,7 +1296,6 @@ function calculate_PhaseZ(dataSet, phase, moleComp, tempK, pBara, binariesUsed, 
 function calculate_Phi(dataSet, phase, moleComp, tempK, pBara, binariesUsed, passed_aiArray, binaries) {
     if (passed_aiArray === void 0) { passed_aiArray = [-500]; }
     if (binaries === void 0) { binaries = [[-500], [-500]]; }
-    // @customfunction
     try {
         /*'***************************************************************************
         'This function is called by all of the PR1978 functions
@@ -1410,7 +1387,6 @@ function calculate_Phi(dataSet, phase, moleComp, tempK, pBara, binariesUsed, pas
 }
 /***************************************************************************** */
 function selectCpDataRanges(dataSet, tempK, Phase) {
-    // @customfunction
     try {
         /***************************************************************************
         'The function is called by Enthalpy and Entropy
@@ -1592,7 +1568,6 @@ function selectCpDataRanges(dataSet, tempK, Phase) {
 /***************************************************************************** */
 function calculate_Wilson_K(dataSet, tempK, pBara) {
     var fcnName = "calculate_Wilson_K";
-    // @customfunction
     try {
         /***************************************************************************
         'This function is called from the FlashTP function.
@@ -1616,7 +1591,7 @@ function calculate_Wilson_K(dataSet, tempK, pBara) {
 }
 /************************************************************************** */
 /**
-* Calculates estimates of the dew or bubble points (C) given P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+* Calculates estimates of the dew or bubble points (C) given P (pbara), mole amounts or composition, phase (vapor or liquid) and a dataSet.
 *
 * @customfunction
 */
@@ -1624,7 +1599,6 @@ function calculate_T_BubDew_Est(dataRange, pressure, moles, dewOrBub, errMsgsOn,
     if (passedDataSet === void 0) { passedDataSet = [[-500], [-500]]; }
     if (passedMoleComp === void 0) { passedMoleComp = [-500]; }
     if (passedPressure === void 0) { passedPressure = -500; }
-    // @customfunction
     try {
         /***************************************************************************
         'This function is called by BubbleT and DewT functions to calculate the initial guess of the dew or bubble temperature
@@ -1801,7 +1775,6 @@ function calculate_T_BubDew_Est(dataRange, pressure, moles, dewOrBub, errMsgsOn,
 exports.calculate_T_BubDew_Est = calculate_T_BubDew_Est;
 /************************************************************************** */
 function initial2D_Array(rows, cols) {
-    // @customfunction
     var array = [];
     var row = [];
     while (cols--)
@@ -1812,12 +1785,10 @@ function initial2D_Array(rows, cols) {
 }
 /************************************************************************** */
 function inRange(low, high, x) {
-    // @customfunction
     return ((x - high) * (x - low) <= 0); // Returns true if x is in range [low..high], else false
 }
 /************************************************************************** */
 function size(ar) {
-    // @customfunction
     /* This funciton is used to determine if the user input a hard number or a cell reference as a custom funciton parameter. If a cell reference is passed it reports
        the number of dimensions.*/
     var row_count = ar.length;
@@ -1845,7 +1816,6 @@ function size(ar) {
 /*************************************************************************** */
 function validateData(dataRange, temperature, pressure, moles, inputPhase, binariesUsed, kij0, kijT, decomposition, errorMsgsOn, guessedTemp, CpDataRequired) {
     if (CpDataRequired === void 0) { CpDataRequired = false; }
-    // @customfunction
     try {
         var myErrorMsg = "";
         var fcnName = "validateData";
@@ -2005,10 +1975,6 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             return dataSet;
         }
         ;
-        if (phase === "liquid" && dataSet[0][idx.liquidsFound] === false) {
-            myErrorMsg = fcnName + ": The supplied phase is (liquid) but no liquids are found in the dataSet.";
-            return [[], [myErrorMsg]];
-        }
         currIndex = inputArrayNames.indexOf("moles");
         moleComp = (validateMoles(dataSet, moles, arraySizes[currIndex]));
         if (moleComp[0] === -500) {
@@ -2180,14 +2146,13 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
 }
 /*****************************************************************************/
 /**
-* Calculates vapor phase derivatives and other parameters of the PPR1978 EPS given T (C), P (pbara), mole amounts and a dataSet.
+* Calculates vapor phase derivatives and other parameters of the PPR1978 EPS given T (C), P (pbara), mole amounts or composition.
 *
 * @customfunction
 */
 function Derivatives(dataRange, temperature, pressure, moles, useBinaries, kij0, kijT, decomposition, returnUnits, errMsgsOn) {
     if (returnUnits === void 0) { returnUnits = false; }
     if (errMsgsOn === void 0) { errMsgsOn = false; }
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the calculates the derivatives of the PR1978 EOS.
@@ -2275,12 +2240,11 @@ function derivativesUnits() {
 exports.derivativesUnits = derivativesUnits;
 /***************************************************************************** */
 /**
-* Calculates the flash result given T (C), P (pbara), mole amounts and a dataSet.
+* Calculates the flash result given T (C), P (pbara), mole amounts or composition.
 *
 * @customfunction
 */
 function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the PR1978 EOS vapor fraction, vapor composition
@@ -2604,13 +2568,12 @@ function FlashTP(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
 exports.FlashTP = FlashTP;
 /***************************************************************************** */
 /**
- * Calculates the dew point given a dataSet, mole amounts and pressure.
+ * Calculates the bubble point given a dataSet, mole amounts or composition and pressure. In GSheets this funciton will fail if binaries are used due to slow execution times.
  *
  * @customfunction
  */
 function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition, errMsgsOn, Guess, CallFromFlash) {
     if (CallFromFlash === void 0) { CallFromFlash = false; }
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the PR1978 EOS bubble point.
@@ -2921,13 +2884,12 @@ function BubbleT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposit
 exports.BubbleT = BubbleT;
 /****************************************************************************** */
 /**
- * Calculates the dew point given a dataSet, mole amounts and pressure.
+ * Calculates the dew point given a dataSet, mole amounts or composition and pressure. In GSheets this funciton will fail if binaries are used due to slow execution times.
  *
  * @customfunction
  */
 function DewT(dataRange, pressure, moles, useBinaries, kij0, kijT, decomposition, errMsgsOn, Guess, CallFromFlash) {
     if (CallFromFlash === void 0) { CallFromFlash = false; }
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the PR1978 EOS dew point.
@@ -3258,7 +3220,6 @@ exports.DewT = DewT;
 * @customfunction
 */
 function PhaseZ(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         var fcnName = "PhaseZ";
         var myErrorMsg = "";
@@ -3310,7 +3271,6 @@ exports.PhaseZ = PhaseZ;
 * @customfunction
 */
 function Volume(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         var fcnName = "PhaseZ";
         var myErrorMsg = "";
@@ -3357,12 +3317,11 @@ function Volume(dataRange, temperature, pressure, moles, Phase, useBinaries, kij
 exports.Volume = Volume;
 /******************************************************************************* */
 /**
-* Calculates enthalpy (kj/kg-mole) given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+* Calculates enthalpy (kj/kg-mole) given T (C), P (pbara), mole amounts or composition, phase (vapor or liquid) and a dataSet.
 *
 * @customfunction
 */
 function Enthalpy(dataRange, temperature, pressure, moles, inputPhase, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         var fcnName = "Enthalpy";
         var myErrorMsg = "";
@@ -3446,7 +3405,6 @@ exports.Enthalpy = Enthalpy;
 * @customfunction
 */
 function Entropy(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         var fcnName = "Entropy";
         var myErrorMsg = "";
@@ -3524,7 +3482,6 @@ function Entropy(dataRange, temperature, pressure, moles, Phase, useBinaries, ki
 exports.Entropy = Entropy;
 /******************************************************************************* */
 function calculate_IdealGasEnthalpy(dataSet, moleComp, tempK, cpRanges) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the ideal gas enthalpy
@@ -3573,10 +3530,10 @@ function calculate_IdealGasEnthalpy(dataSet, moleComp, tempK, cpRanges) {
         }
         dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorMsg;
         return tempNumber * 1000; //'<convert from kJmols to kJ/kg-moles
-        /*    NIST Data (units for H & S are different)
+        /*   NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
-        '    H� = standard enthalpy (kJ/mol)
-        '    S� = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -3590,7 +3547,6 @@ function calculate_IdealGasEnthalpy(dataSet, moleComp, tempK, cpRanges) {
 }
 /******************************************************************************* */
 function calculate_LiquidEnthalpy(dataSet, moleComp, tempK, cpRanges) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function is called by the Enthalpy function.
@@ -3672,10 +3628,10 @@ function calculate_LiquidEnthalpy(dataSet, moleComp, tempK, cpRanges) {
                 tempValue = tempValue - moleComp[g] * cpEquation / J_to_kJ;
             }
         }
-        /*'    NIST Data (units for H & S are different)
+        /*'  NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
-        '    H° = standard enthalpy (kJ/mol)
-        '    S° = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -3691,12 +3647,11 @@ function calculate_LiquidEnthalpy(dataSet, moleComp, tempK, cpRanges) {
 }
 /******************************************************************************* */
 /**
-* Calculates the Joule-Thompson coefficient (K/bar) of a gas given T (C), P (pbara), mole amounts and a dataSet.
+* Calculates the Joule-Thompson coefficient (K/bar) of a gas given T (C), P (pbara) and mole amounts or composition.
 *
 * @customfunction
 */
 function JT_Coef(dataRange, temperature, pressure, moles, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the Joule-Thompson coefficient for the PR1978 EOS.
@@ -3768,7 +3723,6 @@ function JT_Coef(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
 exports.JT_Coef = JT_Coef;
 /******************************************************************************* */
 function calculate_LiquidEntropy(dataSet, moleComp, tempK, cpRanges) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function is called by the Enthalpy function.
@@ -3851,10 +3805,10 @@ function calculate_LiquidEntropy(dataSet, moleComp, tempK, cpRanges) {
                 tempValue = tempValue - moleComp[g] * cpEquation / J_to_kJ;
             }
         }
-        /*'    NIST Data (units for H & S are different)
+        /*'  NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
-        '    H° = standard enthalpy (kJ/mol)
-        '    S° = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -3870,12 +3824,11 @@ function calculate_LiquidEntropy(dataSet, moleComp, tempK, cpRanges) {
 }
 /******************************************************************************* */
 /**
-* Calculates the constant volume heat capacity of a vapor (j/mol/K) of a gas given T (C), P (pbara), mole amounts and a dataSet.
+* Calculates the constant volume heat capacity of a vapor (j/mol/K) of a gas given T (C), P (pbara), mole amounts.
 *
 * @customfunction
 */
 function vaporCv(dataRange, temperature, pressure, moles, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the liquid, ideal gas or PR1978 EOS Cv.
@@ -3959,12 +3912,11 @@ function vaporCv(dataRange, temperature, pressure, moles, useBinaries, kij0, kij
 exports.vaporCv = vaporCv;
 /******************************************************************************* */
 /**
-* Calculates the speed of sound  (m/s) of a gas given T (C), P (pbara), mole amounts
+* Calculates the speed of sound  (m/s) of a gas given T (C), P (pbara), mole amounts or composition
 *
 * @customfunction
 */
 function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the liquid, ideal gas or PR1978 EOS Cv.
@@ -4066,7 +4018,6 @@ function SpeedOfSound(dataRange, temperature, pressure, moles, useBinaries, kij0
 exports.SpeedOfSound = SpeedOfSound;
 /******************************************************************************* */
 function calculate_d2adT2(dataSet, tempK, moleComp, aiArray, daidTArray, d2aidT2Array, binariesUsed, binaries) {
-    // @customfunction
     try {
         /***************************************************************************
         'The function is called by vaporCv, PhaseCp, Derivatives, SpeedOfSound and JTCoef
@@ -4102,7 +4053,6 @@ function calculate_d2adT2(dataSet, tempK, moleComp, aiArray, daidTArray, d2aidT2
 }
 /******************************************************************************* */
 function calculate_Cp_IGorLiquid(dataSet, moleComp, tempK, cpRanges, phase) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the Cp for an ideal gas or a liquid
@@ -4147,10 +4097,10 @@ function calculate_Cp_IGorLiquid(dataSet, moleComp, tempK, cpRanges, phase) {
                 tempValue = tempValue + moleComp[i] * cpEquation / J_to_kJ; //'<= Cp = heat capacity (J/mol*K)
             }
         }
-        /*'   NIST Data
+        /*'  NIST Data
         '    Cp = heat capacity (J/mol*K)
-        '    H° = standard enthalpy (kJ/mol)
-        '    S° = standard entropy (J/mol*K)
+        '    H = standard enthalpy (kJ/mol)
+        '    S = standard entropy (J/mol*K)
         '    t = temperature(k) / 1000
 
         '   HSC Data
@@ -4168,7 +4118,6 @@ function calculate_Cp_IGorLiquid(dataSet, moleComp, tempK, cpRanges, phase) {
 function calculate_H_Departure(dataSet, tempK, pbara, moleComp, phase, binariesUsed, passed_aiArray, binaries) {
     if (passed_aiArray === void 0) { passed_aiArray = [-500]; }
     if (binaries === void 0) { binaries = [[-500], [-500]]; }
-    // @customfunction
     try {
         /***************************************************************************
         'This function is called by the Enthalpy function
@@ -4284,7 +4233,6 @@ function calculate_H_Departure(dataSet, tempK, pbara, moleComp, phase, binariesU
 function calculate_S_Departure(dataSet, tempK, pbara, moleComp, phase, binariesUsed, binaries, passed_aiArray) {
     if (binaries === void 0) { binaries = [[-500], [-500]]; }
     if (passed_aiArray === void 0) { passed_aiArray = [-500]; }
-    // @customfunction
     try {
         /***************************************************************************
         'This function is called by the Entropy function
@@ -4397,12 +4345,11 @@ function calculate_S_Departure(dataSet, tempK, pbara, moleComp, phase, binariesU
 }
 /******************************************************************************* */
 function calculate_EOS_Root(dataSet, a, b, phase) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function is called by all of the PR1978 EOS functions
         'This function calculates the the root to the PR1978 EOS (reference 1)
-        'This function uses the GetLargestRoot function in the Math module (reference 6)
+        'This function uses the GetLargestRoot function in the findCubicRoots.js module (reference 6)
         '***************************************************************************/
         var Z = void 0;
         var myErrorMsg = "";
@@ -4422,7 +4369,6 @@ function calculate_EOS_Root(dataSet, a, b, phase) {
 }
 /******************************************************************************* */
 function calculate_IdealGasEntropy(dataSet, moleComp, tempK, cpRanges, pBara) {
-    // @customfunction
     try {
         /***************************************************************************
         'This function calculates the ideal gas entropy
@@ -4470,7 +4416,7 @@ function calculate_IdealGasEntropy(dataSet, moleComp, tempK, cpRanges, pBara) {
         tempValue = tempValue - 100000 * gasLawR * Math.log(pBara / 1);
         dataSet[0][idx.globalErrmsg] = fcnName + ": " + myErrorMsg;
         return tempValue;
-        /*'    NIST Data (units for H & S are different)
+        /*'  NIST Data (units for H & S are different)
         '    Cp = heat capacity (J/mol*K)
         '    H = standard enthalpy (kJ/mol)
         '    S = standard entropy (J/mol*K)
@@ -4487,12 +4433,11 @@ function calculate_IdealGasEntropy(dataSet, moleComp, tempK, cpRanges, pBara) {
 }
 /******************************************************************************* */
 /**
-* Calculates the fugacity coefficients of a phase given T (C), P (pbara), mole amounts (kg-moles), phase (vapor or liquid) and a dataSet.
+* Calculates the fugacity coefficients of a phase given T (C), P (pbara), mole amounts or composition, phase (vapor or liquid).
 *
 * @customfunction
 */
 function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBinaries, kij0, kijT, decomposition, errMsgsOn) {
-    // @customfunction
     try {
         var myErrorMsg = "";
         var fcnName = "PhasePhi";
@@ -4542,6 +4487,11 @@ function PhasePhi(dataRange, temperature, pressure, moles, Phase, useBinaries, k
 }
 exports.PhasePhi = PhasePhi;
 /***************************************************************/
+/**
+* Calculates the pure component PR1978 property ki.
+*
+* @customfunction
+*/
 function calculate_ki(omega) {
     try {
         if (Number(omega) === NaN) {
@@ -4559,6 +4509,12 @@ function calculate_ki(omega) {
     }
 }
 exports.calculate_ki = calculate_ki;
+/*************************************************************** */
+/**
+* Calculates the pure component PR1978 property bi.
+*
+* @customfunction
+*/
 function calculate_bi(tc, pc) {
     try {
         return 0.0778 * gasLawR * tc / pc;
