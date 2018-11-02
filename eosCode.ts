@@ -601,7 +601,8 @@ function validateBinariyArrays(dataSet, kij0, kijT, decomposition): (any)[] {
             throw new Error(`${fcnName}: ${myErrorMsg}`);
             }else{
                 if(decomposition.length  !== dataSet[0][idx.iSpecies] + 1){
-                dataSet[0][idx.globalErrmsg] =  `${fcnName}: The supplied decomposition row count must equal the number of species plus one for the header row. Correct decomposition.`;
+                    dataSet[0][idx.globalErrmsg] =  `${fcnName}: The supplied decomposition row count must equal the number of species plus one for the header row. Correct decomposition.`;
+                    return [false]
                 }else{
                     for(let i: number = 1; i < decomposition.length; i++){
                             if(decomposition[i].length !==  currentNumberOfGroups + 1) {
@@ -2138,7 +2139,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                     if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){
                     myErrorMsg =  `${fcnName}: The supplied phase and must be a string or a single cell reference to a string equal to 'vapor' or 'liquid'.`;
-                    return [[],[myErrorMsg]];
+                    return [[myErrorMsg],[0]];
                 }
             }else{
                 phase = inputArray[currIndex][0].toString().toLowerCase();
@@ -2148,7 +2149,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         }
         if(phase !== "liquid" && phase !== "vapor"){
             myErrorMsg = `${fcnName}: The supplied phase (${phase}) and must be a string or a single cell reference equal to vapor or liquid.`;
-            return [[],[myErrorMsg]];
+            return [[myErrorMsg],[0]];
         }
 
         currIndex = inputArrayNames.indexOf("binariesUsed");
@@ -2157,7 +2158,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 binariesUsed = inputArray[currIndex][0];
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                myErrorMsg =  `${fcnName}: The supplied parameter 'binariesUsed' (${binariesUsed}) and must be an expression  or a single cell reference to an expression that evaluates to true or false.`;
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             }
             }else{
                 binariesUsed = inputArray[currIndex][0];
@@ -2174,7 +2175,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             binariesUsed = false;
         }else{
             myErrorMsg =  `${fcnName}: The supplied parameter 'binariesUsed' (${binariesUsed}) and must be an expression  or a single cell reference to an expression that evaluates to true or false.`;
-            return [[],[myErrorMsg]];
+            return [[myErrorMsg],[0]];
         };
         
         currIndex = inputArrayNames.indexOf("errorMsgsOn");
@@ -2184,7 +2185,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                
                     myErrorMsg =  `${fcnName}: The supplied parameter 'errorMsgsOn' (${errorMsgsOn}) and must be an expression or a single cell reference to an expression that evaluates to true or false.`;
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             }
             }else{
                 errorMsgsOn = inputArray[currIndex][0];
@@ -2201,7 +2202,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         errorMsgsOn = false;
         }else{
             myErrorMsg =  `${fcnName}: The supplied parameter 'errorMsgsOn' (${errorMsgsOn}) and must be an expression or a single cell reference to an expression that evaluates to true or false.`;
-            return [[],[myErrorMsg]];
+            return [[myErrorMsg],[0]];
         };
 
         currIndex = inputArrayNames.indexOf("dataRange");
@@ -2209,7 +2210,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             dataSet = validateDataSet(dataRange, phase, CpDataRequired, binariesUsed, errorMsgsOn);
         }else{
             myErrorMsg = `${fcnName}: The supplied dataSet range must contain ${idx.NIST_H6} columns. The first column contains the specie names. The top row contains the column header labels. The row count equals the number of species plus one for the header row for vapors. For liquids the row count equal twice the number of species plus two rows (one for the column headers and one for the liquid phase label).`;
-            return [[],[myErrorMsg]];
+            return [[myErrorMsg],[0]];
         }
         
         if(typeof(dataSet[0][0]) === "string"){
@@ -2221,7 +2222,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
         moleComp = (validateMoles(dataSet, moles, arraySizes[currIndex]));
         if(moleComp[0] === -500){
             myErrorMsg =  dataSet[0][idx.globalErrmsg];
-            return [[],[myErrorMsg]];;
+            return [[myErrorMsg],[0]];;
         };
 
         currIndex = inputArrayNames.indexOf("temperature");
@@ -2231,7 +2232,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                
                     myErrorMsg = `${fcnName}: The supplied temperature (${temperature}) must be either a number or a reference to a single cell containing a number. `;
-                    return [[],[myErrorMsg]];                
+                    return [[myErrorMsg],[0]];                
             }else{
                 temperature = inputArray[currIndex][0];
             }
@@ -2245,7 +2246,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 tempK = tempC + 273.15
             }else{
                 myErrorMsg = `${fcnName}: The supplied temperature (${tempC}) must be either a number or a reference to a single cell containing a number. `;
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             }
         
         }else{
@@ -2259,7 +2260,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                
                     myErrorMsg = `${fcnName}: The supplied initialization temperature (${guessedTemp}) must be either a number or a reference to a single cell containing a number. `;
-                    return [[],[myErrorMsg]];
+                    return [[myErrorMsg],[0]];
                 }
                 
             }else{
@@ -2276,7 +2277,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 guessedTempK = guessedTempC + 273.15
             }else{
                 myErrorMsg = `${fcnName}: The supplied initialization temperature (${guessedTempC})must be either a number or a reference to a single cell containing a number. `;
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             };
         }else{
             guessedTempK = -500
@@ -2289,7 +2290,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             }else if(typeof(arraySizes[currIndex][index.Dim2TestORlength2]) === "number"){
                 if(Number(arraySizes[currIndex][index.Dim2TestORlength2]>1)){                
                     myErrorMsg = `${fcnName}: The supplied pressure (${pressure}) must be either a number or a reference to a single cell containing a number. `;
-                    return [[],[myErrorMsg]];
+                    return [[myErrorMsg],[0]];
                 }
                 
             }else{
@@ -2305,7 +2306,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 pBara = Number(pressure);
             }else{
                 myErrorMsg = `${fcnName}: The supplied pressure (${pressure}) must be either a number or a reference to a single cell containing a number greater than zero. `;
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             };
         }else{
             pBara = pressure
@@ -2315,19 +2316,19 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
             currIndex = inputArrayNames.indexOf("kij0");
             if(arraySizes[currIndex][0]===false && arraySizes[currIndex][2]===false && dataSet[0][idx.predictive]===false){
                 myErrorMsg = `${fcnName}: The supplied useBinaries parameter is true but no kij0 range is provided. `;
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             }
             currIndex = inputArrayNames.indexOf("decomposition");
             if(arraySizes[currIndex][0]===false && arraySizes[currIndex][2]===false && dataSet[0][idx.predictive]===true){
                 myErrorMsg = `${fcnName}: The supplied useBinaries parameter is true and predictive mode is on but no decomposition is provided. `;
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             }
             kij0_kijT_deComp_Array = validateBinariyArrays(dataSet, kij0, kijT, decomposition);
             if(kij0_kijT_deComp_Array[0]){
                 outputArray.push([tempK, pBara, phase, binariesUsed, errorMsgsOn, kij0_kijT_deComp_Array[0], guessedTempK]);
             }else{
                 myErrorMsg = dataSet[0][idx.globalErrmsg];
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             }
         }else{
             outputArray.push([tempK, pBara, phase, binariesUsed, errorMsgsOn, false, guessedTempK]);
@@ -2345,7 +2346,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 outputArray.push(kij0_kijT_deComp_Array[3]);
             }else{
                 myErrorMsg = dataSet[0][idx.globalErrmsg];
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             }
         }else{
             outputArray.push([[-500],[-500]]);
@@ -2361,7 +2362,7 @@ function validateData(dataRange, temperature, pressure, moles, inputPhase, binar
                 outputArray.push(aiArray);
             } else{
                 myErrorMsg = dataSet[0][idx.globalErrmsg];
-                return [[],[myErrorMsg]];
+                return [[myErrorMsg],[0]];
             }
         }else{
             outputArray.push([-500]);
